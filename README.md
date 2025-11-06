@@ -22,5 +22,5 @@ Docente: Edwin Jesús León Bojorquez
 ## Mock up del Proyecto
 
 Diseño: https://www.figma.com/design/6CsOqKYLriSnUplBNz01eX/Untitled?node-id=0-1&t=ORVzN7YKdsZklvEt-1
-| ![](Artefactos/Auth.jpg) | ![](Artefactos/List.jpeg) | ![](Artefactos/Expediente.jpg) | ![](Artefactos/Patient%20Record.png.png) |
+| ![](Artefactos/Auth.png) | ![](Artefactos/List.png) | ![](Artefactos/Expediente.png) | ![](Artefactos/Patient%20Record.png) |
 
