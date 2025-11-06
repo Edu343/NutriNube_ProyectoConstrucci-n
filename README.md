@@ -24,3 +24,7 @@ Docente: Edwin Jesús León Bojorquez
 Diseño: https://www.figma.com/design/6CsOqKYLriSnUplBNz01eX/Untitled?node-id=0-1&t=ORVzN7YKdsZklvEt-1
 | ![](Artefactos/Auth.png) | ![](Artefactos/List.png) | ![](Artefactos/Expediente.png) | ![](Artefactos/Patient%20Record.png) |
 
+## Requisitos y Plan de Trabajo
+
+Documento: https://alumnosuady-my.sharepoint.com/:w:/g/personal/a20201625_alumnos_uady_mx/ESvydrc-YLVDjnag0MLEuesBB-0LXHslnZZJehdSf8eB6w?e=1rL9gJ
+
