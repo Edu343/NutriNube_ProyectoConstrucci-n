@@ -22,7 +22,7 @@ Docente: Edwin Jesús León Bojorquez
 ## Mock up del Proyecto
 
 Diseño: https://www.figma.com/design/6CsOqKYLriSnUplBNz01eX/Untitled?node-id=0-1&t=ORVzN7YKdsZklvEt-1
-| ![](Artefactos/Auth.png) | ![](Artefactos/List.png) | ![](Artefactos/Expediente.png) | ![](Artefactos/Patient%20Record.png) |
+ ![](Artefactos/Auth.png)  ![](Artefactos/List.png)  ![](Artefactos/Expediente.png)  ![](Artefactos/Patient%20Record.png) 
 
 ## Requisitos y Estándar de Programación
 
