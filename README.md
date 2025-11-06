@@ -1,4 +1,4 @@
-# NutriNube_ProyectoConstrucción
+# NutriNube
 Repositorio para el proyecto NutriNube
 
 Docente: Edwin Jesús León Bojorquez
