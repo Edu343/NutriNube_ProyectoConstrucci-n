@@ -7,4 +7,4 @@ Docente: Edwin Jesús León Bojorquez
 
 | Manuel Eduardo Del Rio Camacho | Jorge Gabriel Várguez Suárez | Eduardo José Matos Uc | Cristian De Martino Ricci |
 |---|---|---|---|
-| ![](https://github.com/Edu343/Proyecto_DesarrolloWeb/blob/Artefactos/imagenes/Eduardo.jpg) | ![](https://github.com/Edu343/Proyecto_DesarrolloWeb/blob/Artefactos/imagenes/Jorge.jpeg) | ![](https://github.com/Edu343/Proyecto_DesarrolloWeb/blob/Artefactos/imagenes/Matos.jpg) |  |
+| ![](Artefactos/Eduardo.jpg) | ![](Artefactos/Jorge.jpeg) | ![](Artefactos/Matos.jpg) | ![](Artefactos/cristian.png) |
