@@ -27,7 +27,20 @@ Docente: Edwin Jesús León Bojorquez
 Diseño: https://www.figma.com/design/6CsOqKYLriSnUplBNz01eX/Untitled?node-id=0-1&t=ORVzN7YKdsZklvEt-1
  ![](Artefactos/Auth.png)  ![](Artefactos/List.png)  ![](Artefactos/Expediente.png)  ![](Artefactos/Patient%20Record.png) 
 
-## Especificación de Requisitos y Estándar de Programación
+## Especificación de Requisitos
 
 Documento: https://alumnosuady-my.sharepoint.com/:w:/g/personal/a20201625_alumnos_uady_mx/ESvydrc-YLVDjnag0MLEuesBB-0LXHslnZZJehdSf8eB6w?e=1rL9gJ
+
+
+##  Estándar de Programación para NutriNube
+
+Hemos optado por las convenciones de programación estándar para Java para asegurar la coherencia y la mantenibilidad del código.
+
+---
+
+### Convenciones de Nomenclatura (Estándar Java de Oracle)
+
+Para la nomenclatura de paquetes, clases, interfaces, métodos, variables, y constantes, adoptaremos las directrices establecidas por el estándar de Oracle/Sun, que es la base para la gran mayoría de proyectos en el ecosistema Java.
+
+**Referencia Oficial:** [Java Code Conventions](https://www.oracle.com/java/technologies/javase/codeconventions-contents.html)
 
