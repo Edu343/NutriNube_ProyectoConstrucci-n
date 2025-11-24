@@ -7,13 +7,17 @@ package POJOs;
  */
 public class CaloriasCalculo {
 
-    private String sexo;
+    private int sexo;
     private double peso;
     private int nivelActividadFisica;
     private double calorias;
     private int razonConsulta;
 
     public CaloriasCalculo() {
+    }
+
+    public int getSexo() {
+        return sexo;
     }
 
     public double getPeso() {
@@ -24,14 +28,18 @@ public class CaloriasCalculo {
         return nivelActividadFisica;
     }
 
-    public double getTotalCalorias() {
+    public int getRazonConsulta() {
+        return razonConsulta;
+    } 
+
+    public double getCalorias() {
         return calorias;
     }
 
-    public int getRazonConsulta() {
-        return razonConsulta;
+    public void setSexo(int sexo) {
+        this.sexo = sexo;
     }
-
+    
     public void setPeso(double peso) {
         this.peso = peso;
     }
@@ -40,8 +48,8 @@ public class CaloriasCalculo {
         this.nivelActividadFisica = nivelActividadFisica;
     }
 
-    public void setTotalCalorias(double totalCalorias) {
-        this.calorias = totalCalorias;
+    public void setCalorias(double calorias) {
+        this.calorias = calorias;
     }
 
     public void setRazonConsulta(int razonConsulta) {
