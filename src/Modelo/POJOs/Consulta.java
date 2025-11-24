@@ -17,7 +17,7 @@ public class Consulta {
     
     private AnamnesisData anamnesisData;
 
-    private CaloriasCalculo totalCalorias;
+    private CaloriasCalculo caloriasCalculo;
 
     private Macronutrientes macronutrientes;
 
@@ -32,20 +32,12 @@ public class Consulta {
         return clavePaciente;
     }
 
-    public String getFechaVisita() {
-        return fechaVisita;
-    }
-
     public String getClaveNutriologo() {
         return claveNutriologo;
     }
 
-    public CaloriasCalculo getTotalCalorias() {
-        return totalCalorias;
-    }
-
-    public AnamnesisData getAnamnesisData() {
-        return anamnesisData;
+    public String getFechaVisita() {
+        return fechaVisita;
     }
 
     public int getEdad() {
@@ -54,6 +46,14 @@ public class Consulta {
 
     public double getAltura() {
         return altura;
+    }
+
+    public AnamnesisData getAnamnesisData() {
+        return anamnesisData;
+    }
+
+    public CaloriasCalculo getCaloriasCalculo() {
+        return caloriasCalculo;
     }
 
     public Macronutrientes getMacronutrientes() {
@@ -68,20 +68,12 @@ public class Consulta {
         this.clavePaciente = clavePaciente;
     }
 
-    public void setFechaVisita(String fechaVisita) {
-        this.fechaVisita = fechaVisita;
-    }
-
     public void setClaveNutriologo(String claveNutriologo) {
         this.claveNutriologo = claveNutriologo;
     }
 
-    public void setTotalCalorias(CaloriasCalculo totalCalorias) {
-        this.totalCalorias = totalCalorias;
-    }
-
-    public void setAnamnesisData(AnamnesisData anamnesisData) {
-        this.anamnesisData = anamnesisData;
+    public void setFechaVisita(String fechaVisita) {
+        this.fechaVisita = fechaVisita;
     }
 
     public void setEdad(int edad) {
@@ -92,7 +84,17 @@ public class Consulta {
         this.altura = altura;
     }
 
+    public void setAnamnesisData(AnamnesisData anamnesisData) {
+        this.anamnesisData = anamnesisData;
+    }
+
+    public void setTotalCalorias(CaloriasCalculo totalCalorias) {
+        this.caloriasCalculo = totalCalorias;
+    }
+
     public void setMacronutrientes(Macronutrientes macronutrientes) {
         this.macronutrientes = macronutrientes;
     }
+
+
 }
