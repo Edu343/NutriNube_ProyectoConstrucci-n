@@ -32,7 +32,7 @@ public class PacienteDAO extends DatabaseManager {
             stmt.setString(2, paciente.getNombre());
             stmt.setString(3, paciente.getApellido());
             stmt.setString(4, paciente.getCorreo());
-            stmt.setBoolean(5, paciente.getSexo());
+            stmt.setInt(5, paciente.getSexo());
             stmt.setInt(6, paciente.getTelefono());
             stmt.setString(7, paciente.getClaveNutriologo());
             stmt.setDouble(8, paciente.getAltura());
@@ -60,9 +60,9 @@ public class PacienteDAO extends DatabaseManager {
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             stmt.setString(1, paciente.getNombre());
-            stmt.setString(2, paciente.getCorreo());
-            stmt.setString(3, paciente.getApellido());
-            stmt.setBoolean(4, paciente.getSexo());
+            stmt.setString(2, paciente.getApellido());
+            stmt.setString(3, paciente.getCorreo());
+            stmt.setInt(4, paciente.getSexo());
             stmt.setInt(5, paciente.getTelefono());
             stmt.setString(6, paciente.getClaveNutriologo());
             stmt.setDouble(7, paciente.getAltura());
@@ -108,7 +108,7 @@ public class PacienteDAO extends DatabaseManager {
             paciente.setNombre(rs.getString("nombre"));
             paciente.setApellido(rs.getString("apellido"));
             paciente.setCorreo(rs.getString("correo"));
-            paciente.setSexo(rs.getBoolean("sexo"));
+            paciente.setSexo(rs.getInt("sexo"));
             paciente.setTelefono(rs.getInt("telefono"));
             paciente.setClaveNutriologo(rs.getString("claveNutriologo"));
             paciente.setAltura(rs.getDouble("altura"));

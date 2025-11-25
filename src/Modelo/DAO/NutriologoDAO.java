@@ -16,7 +16,7 @@ public class NutriologoDAO extends DatabaseManager {
         Nutriologo nutriologo = (Nutriologo) entidad;
 
         String sql = """
-            INSERT INTO nutriologos
+            INSERT INTO nutriologo
             (clave, nombre, apellido, correo, hashContrasena, saltContrasena)
             VALUES (?, ?, ?, ?, ?, ?)
         """;
@@ -43,7 +43,7 @@ public class NutriologoDAO extends DatabaseManager {
         Nutriologo nutriologo = (Nutriologo) entidad;
 
         String sql = """
-            UPDATE nutriologos SET
+            UPDATE nutriologo SET
                 nombre = ?, apellido = ?, correo = ?,
                 saltContrasena = ?, hashContrasena = ?
             WHERE clave = ?
@@ -68,7 +68,7 @@ public class NutriologoDAO extends DatabaseManager {
      */
     @Override
     public void eliminar(String clave) throws SQLException {
-        String sql = "DELETE FROM nutriologos WHERE clave = ?";
+        String sql = "DELETE FROM nutriologo WHERE clave = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -82,13 +82,13 @@ public class NutriologoDAO extends DatabaseManager {
      * Recupera un nutriólogo según su clave visible.
      */
     public Nutriologo leerPorClave(String clave) throws SQLException {
-        String sql = "SELECT * FROM nutriologos WHERE clave = ?";
+        String sql = "SELECT * FROM nutriologo WHERE clave = ?";
 
         try (Connection connection = getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, clave);
-            ResultSet rs = stmt.executeQuery();
+            statement.setString(1, clave);
+            ResultSet rs = statement.executeQuery();
 
             if (!rs.next()) return null;
 
