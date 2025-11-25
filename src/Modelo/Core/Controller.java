@@ -4,12 +4,19 @@ import POJOs.CaloriasCalculo;
 import POJOs.Consulta;
 import Servicios.NutriNubeModelo;
 
+/**
+ * Clase base abstracta para todos los controladores del sistema.
+ * Implementa la interfaz Observer y maneja la comunicación entre el Modelo y la Vista.
+ * Centraliza la Inyección de Dependencia para la navegación (cambiarVista).
+ */
+
+
 public abstract class Controller implements Observer {
     protected NutriNubeModelo myModel;
     protected View myView;
     protected String tag;
     
-    // 🚨 NUEVO: Referencia directa inyectada al MainViewLayout
+
     private MainViewLayout mainLayout; 
 
     public Controller(String tag) {
@@ -19,18 +26,18 @@ public abstract class Controller implements Observer {
     public void initialize(NutriNubeModelo model, View view, MainViewLayout layout) {
         myModel = model;
         myView = view;
-        this.mainLayout = layout; // 🚨 INYECCIÓN DE DEPENDENCIA
+        this.mainLayout = layout; 
         myModel.attach(this);
     }
     
-    // 🚨 NUEVO: Función limpia para cambiar de vista
+
     protected void cambiarVista(String vistaNombre, Object data) {
         if (mainLayout != null) {
             mainLayout.cambiarAVista(vistaNombre, data);
         }
     }
     
-    // 🚨 (La función obtenerLayoutPrincipal/getMainLayout se elimina de las clases hijas)
+    
 
     public void handleLogin(String usuario, String contrasena) {
     	

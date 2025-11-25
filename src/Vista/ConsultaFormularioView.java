@@ -11,6 +11,11 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+/**
+ * Vista del formulario detallado para agregar o editar una consulta nutricional.
+ * Recolecta datos de anamnesis, metas y resultados de cálculo.
+ */
+
 public class ConsultaFormularioView extends View {
     
     private ConsultaFormularioViewLayout formularioLayout;
@@ -23,7 +28,7 @@ public class ConsultaFormularioView extends View {
 
     @Override
     protected void crearController() {
-        myController = new ConsultaController(tag); 
+        myController = new Controladores.ConsultaController(tag); 
     }
 
     @Override
@@ -34,7 +39,7 @@ public class ConsultaFormularioView extends View {
         formularioLayout.getBtnCalcular().addActionListener(e -> {
             try {
                 CaloriasCalculo calculoData = collectCaloriasCalculoData();
-                ((ConsultaController)myController).handleCalcularCalorias(calculoData, clavePacienteActual);
+                myController.handleCalcularCalorias(calculoData, null);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(formularioLayout.getPanel(), 
                     "Verifique los campos numéricos (Peso, Altura, Cantidad de Líquido) o si faltan datos de selección.", 
@@ -46,7 +51,7 @@ public class ConsultaFormularioView extends View {
         formularioLayout.getBtnGuardar().addActionListener(e -> {
             try {
                 Consulta consultaAGuardar = buildConsultaObject();
-                ((ConsultaController)myController).handleGuardarConsulta(consultaAGuardar);
+                myController.handleGuardarConsulta(consultaAGuardar);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(formularioLayout.getPanel(), 
                     "Error al guardar. Verifique entradas numéricas o faltantes.", 
@@ -61,11 +66,11 @@ public class ConsultaFormularioView extends View {
     }
 
     public CaloriasCalculo collectCaloriasCalculoData() throws NumberFormatException {
+        // Recolección de datos para cálculo
         CaloriasCalculo cc = new CaloriasCalculo();
         
         cc.setPeso(Double.parseDouble(formularioLayout.getPesoField().getText()));
         
-
         cc.setNivelActividadFisica(Integer.parseInt(formularioLayout.getCmbNivelActividad().getSelectedItem().toString()));
         
         int razonConsulta = formularioLayout.getCmbRazonConsulta().getSelectedIndex() + 1;
@@ -80,8 +85,8 @@ public class ConsultaFormularioView extends View {
     }
     
    
-
     public AnamnesisData collectAnamnesisData() {
+        // Recolección de datos de anamnesis
         AnamnesisData ad = new AnamnesisData();
         
         ad.setCondicionesMedicas(formularioLayout.getTxtCondicionesMedicasField().getText());
@@ -110,6 +115,7 @@ public class ConsultaFormularioView extends View {
     }
     
     public Macronutrientes collectMacronutrientesData() throws NumberFormatException {
+        // Recolección de datos de macronutrientes
         Macronutrientes mac = new Macronutrientes();
         
         String proteinasText = formularioLayout.getTxtProteinas().getText();
@@ -130,6 +136,7 @@ public class ConsultaFormularioView extends View {
     }
     
     public Consulta buildConsultaObject() throws NumberFormatException {
+        // Construye el objeto Consulta a partir de los datos recolectados.
         Consulta c = (consultaActual != null) ? consultaActual : new Consulta();
         
         c.setClavePaciente(clavePacienteActual);
@@ -142,14 +149,11 @@ public class ConsultaFormularioView extends View {
         return c;
     }
 
- // Archivo: ConsultaFormularioView.java
-
     @Override
     public void display() {
-        // Leer el modo desde el layout
+        // Muestra el formulario según el modo (AGREGAR o EDITAR).
         String modo = formularioLayout.getModoActual();
         
-        // Si es MODO_EDITAR y tenemos una consulta, la cargamos. Si no, limpiamos campos.
         if (Controladores.ConsultaController.MODO_EDITAR.equals(modo) && consultaActual != null) {
             loadConsultaToForm(consultaActual);
         } else {
@@ -159,6 +163,7 @@ public class ConsultaFormularioView extends View {
     }
     
     private void loadConsultaToForm(Consulta consulta) {
+        // Carga los datos de una consulta existente en el formulario.
         CaloriasCalculo cc = consulta.getCaloriasCalculo();
         if (cc != null) {
             formularioLayout.getPesoField().setText(String.valueOf(cc.getPeso()));
@@ -195,25 +200,23 @@ public class ConsultaFormularioView extends View {
             formularioLayout.getTxtTipoLiquidoConsumido().setText(ad.getTipoLiquidoConsumido());
             formularioLayout.getTxtCantidadLiquido().setText(String.valueOf(ad.getCantidadLiquidoConsumido()));
             formularioLayout.getTxtBarreraAlimenticia().setText(ad.getBarreraAlimenticia());
-            // CmbPreferenciaComida no se carga porque no hay getter
         }
     }
     
- // Archivo: ConsultaFormularioView.java
+
 
     @Override
     public void loadData(Object data) {
+        // Carga el modo de operación y el tag de la vista de retorno.
         if (data instanceof Map) {
             Map<?, ?> dataMap = (Map<?, ?>) data;
             
             String returnTag = (String) dataMap.get("returnViewTag");
             String modo = (String) dataMap.get("modo");
             
-            // 1. Establecer el Modo y el Tag de Retorno en el Layout
             formularioLayout.setModoActual(modo != null ? modo : Controladores.ConsultaController.MODO_AGREGAR);
             formularioLayout.setViewAnteriorTag(returnTag);
 
-            // 2. Determinar si estamos cargando una consulta o solo una clave de paciente
             if (dataMap.containsKey("consultaActual") && dataMap.get("consultaActual") instanceof Consulta) {
                 this.consultaActual = (Consulta) dataMap.get("consultaActual");
                 this.clavePacienteActual = this.consultaActual.getClavePaciente();
@@ -222,7 +225,6 @@ public class ConsultaFormularioView extends View {
                 this.consultaActual = null;
             }
         } else {
-            // Fallback si no se pasó un Map, asumimos modo AGREGAR y retorno a PACIENTES
             formularioLayout.setModoActual(Controladores.ConsultaController.MODO_AGREGAR);
             formularioLayout.setViewAnteriorTag(Core.MainViewLayout.PACIENTES_VIEW);
             this.consultaActual = null;
@@ -233,6 +235,7 @@ public class ConsultaFormularioView extends View {
     }
     
     public void mostrarResultadoCalculo(CaloriasCalculo resultado, Macronutrientes macResultados, String mensaje) {
+        // Muestra los resultados del cálculo en los campos de salida.
         if (resultado != null && macResultados != null) {
             formularioLayout.getTxtCaloriasTotales().setText(String.valueOf(resultado.getCalorias()));
             formularioLayout.getTxtProteinas().setText(String.valueOf(macResultados.getProteinas()));
@@ -257,6 +260,5 @@ public class ConsultaFormularioView extends View {
     public String getClavePacienteActual() {
         return clavePacienteActual;
     }
-}
-    
+}  
     

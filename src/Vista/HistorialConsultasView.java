@@ -9,7 +9,12 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
 import POJOs.Consulta;
-import POJOs.Paciente;
+
+
+/**
+ * Vista que muestra la lista de todas las consultas registradas para un paciente específico.
+ * Permite agregar, eliminar o editar consultas.
+ */
 
 public class HistorialConsultasView extends View {
     
@@ -31,21 +36,21 @@ public class HistorialConsultasView extends View {
         this.mainPanel = historialLayout.getPanel();
         
         historialLayout.getBtnAgregar().addActionListener(e -> 
-            ((HistorialController)myController).handleAgregarConsultaRequest(clavePacienteActual));
+            myController.handleAgregarConsulta(clavePacienteActual));
         
         historialLayout.getBtnEliminar().addActionListener(e -> {
             int selectedRow = historialLayout.getTableConsultas().getSelectedRow();
             if (selectedRow != -1) {
                 String claveConsulta = (String) historialLayout.getTableConsultas().getValueAt(selectedRow, 0);
-                ((HistorialController)myController).handleEliminarConsultaRequest(claveConsulta);
+                myController.handleEliminarConsulta(claveConsulta);
             }
         });
         
         historialLayout.getBtnPacientes().addActionListener(e ->
-            ((HistorialController)myController).handleVolverPacientesRequest());
+            ((HistorialController)myController).handleSalir());
             
         historialLayout.getBtnLogout().addActionListener(e ->
-            ((HistorialController)myController).handleLogoutRequest());
+            myController.handleLogout());
             
         historialLayout.getTableConsultas().addMouseListener(new MouseAdapter() {
             @Override
@@ -55,7 +60,7 @@ public class HistorialConsultasView extends View {
                     int row = target.getSelectedRow();
                     if (row != -1) {
                         String claveConsulta = (String) historialLayout.getTableConsultas().getValueAt(row, 0);
-                        ((HistorialController)myController).handleEditarConsultaRequest(claveConsulta);
+                        myController.handleEditarConsulta(claveConsulta);
                     }
                 }
             }
@@ -64,17 +69,16 @@ public class HistorialConsultasView extends View {
     
     @Override
     public void display() {
+        // Llama a cargar la tabla si hay un paciente activo.
         if (clavePacienteActual != null) {
             cargarHistorialConsultas();
         }
     }
     
- // Archivo: HistorialConsultasView.java
-
     @Override
     public void loadData(Object data) {
+        // Carga la clave del paciente cuando se accede a esta vista.
         if (data instanceof String) {
-            // Se recibe la clave del paciente (desde PacienteListView o desde el Formulario al guardar/salir)
             this.clavePacienteActual = (String) data;
         } 
         
@@ -84,6 +88,7 @@ public class HistorialConsultasView extends View {
 
     
     private void cargarHistorialConsultas() {
+        // Lógica para cargar los datos de la tabla.
         if (clavePacienteActual != null) {
             List<Consulta> consultas = null;
             try {

@@ -4,6 +4,11 @@ import javax.swing.JPanel;
 
 import Servicios.NutriNubeModelo;
 
+/**
+ * Clase abstracta base para todas las vistas (lógica) de la aplicación.
+ * Contiene referencias al Modelo y al Controlador y define el ciclo de vida de la vista (inicializar, crearController, display).
+ * Implementa la interfaz Observer para actualizar su contenido automáticamente.
+ */
 
 public abstract class View implements Observer {
     protected NutriNubeModelo myModel;

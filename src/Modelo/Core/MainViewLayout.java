@@ -8,6 +8,12 @@ import java.util.Map;
 import Servicios.NutriNubeModelo;
 import Vistas.*;
 
+/**
+ * Contenedor principal de la aplicación que gestiona la navegación entre vistas usando CardLayout.
+ * Es un Observer del Modelo y se encarga de la Inyección de Dependencias a las vistas y controladores.
+ * Define las constantes (TAGs) para todas las vistas.
+ */
+
 public class MainViewLayout implements Observer  {
     
     private JFrame ventanaPrincipal;

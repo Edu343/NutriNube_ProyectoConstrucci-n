@@ -10,6 +10,11 @@ import java.sql.SQLException;
 import java.util.List;
 import POJOs.Paciente;
 
+/**
+ * Vista de la lista principal que muestra todos los pacientes del nutriólogo.
+ * Permite buscar, agregar, eliminar y seleccionar un paciente para ver su historial.
+ */
+
 public class PacienteListView extends View {
     
     private PacienteListViewLayout pacienteLayout;
