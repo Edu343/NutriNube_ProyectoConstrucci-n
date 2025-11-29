@@ -1,19 +1,36 @@
 package DAO;
 
 import POJOs.Nutriologo;
+import Servicios.HashingServicio;
 import java.sql.*;
 
 /**
  * DAO encargado de gestionar operaciones CRUD para la entidad Nutriologo.
+ * Aquí se aplica el hashing directamente ANTES de insertar o actualizar.
  */
 public class NutriologoDAO extends DatabaseManager {
 
+    private final HashingServicio hashingServicio = new HashingServicio();
+
     /**
-     * Inserta un nutriólogo con contraseña hasheada.
+     * Inserta un nutriólogo, generando hash y salt antes de guardar.
      */
     @Override
     public void insertar(Object entidad) throws SQLException {
         Nutriologo nutriologo = (Nutriologo) entidad;
+
+        // ================================
+        // 1. Generar salt y hash PREVIO
+        // ================================
+        String salt = hashingServicio.generarSaltContrasena();
+        String hash = hashingServicio.generarHashContrasena(
+                nutriologo.getHashContrasena(),   // ← aquí tú guardaste la contraseña en texto plano
+                salt
+        );
+
+        // Sobrescribir con los valores finales que sí se guardan
+        nutriologo.setSaltContrasena(salt);
+        nutriologo.setHashContrasena(hash);
 
         String sql = """
             INSERT INTO nutriologo
@@ -28,19 +45,35 @@ public class NutriologoDAO extends DatabaseManager {
             statement.setString(2, nutriologo.getNombre());
             statement.setString(3, nutriologo.getApellido());
             statement.setString(4, nutriologo.getCorreo());
-            statement.setString(5, nutriologo.getHashContrasena());
-            statement.setString(6, nutriologo.getSaltContrasena());
+            statement.setString(5, nutriologo.getHashContrasena()); // hash final
+            statement.setString(6, nutriologo.getSaltContrasena()); // salt generado
 
             statement.executeUpdate();
         }
     }
 
     /**
-     * Actualiza un nutriólogo ya registrado.
+     * Actualiza un nutriólogo. Si se manda una contraseña nueva,
+     * se genera nuevo hash y nuevo salt.
      */
     @Override
     public void actualizar(Object entidad) throws SQLException {
         Nutriologo nutriologo = (Nutriologo) entidad;
+
+        // ================================
+        // 1. Si trae texto plano, lo hasheamos de nuevo
+        // ================================
+        if (nutriologo.getHashContrasena() != null && !nutriologo.getHashContrasena().isEmpty()) {
+
+            String nuevoSalt = hashingServicio.generarSaltContrasena();
+            String nuevoHash = hashingServicio.generarHashContrasena(
+                    nutriologo.getHashContrasena(), // ← contraseña en texto plano
+                    nuevoSalt
+            );
+
+            nutriologo.setSaltContrasena(nuevoSalt);
+            nutriologo.setHashContrasena(nuevoHash);
+        }
 
         String sql = """
             UPDATE nutriologo SET
@@ -52,12 +85,12 @@ public class NutriologoDAO extends DatabaseManager {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, nutriologo.getClaveNutriologo());
-            statement.setString(2, nutriologo.getNombre());
-            statement.setString(3, nutriologo.getApellido());
-            statement.setString(4, nutriologo.getCorreo());
+            statement.setString(1, nutriologo.getNombre());
+            statement.setString(2, nutriologo.getApellido());
+            statement.setString(3, nutriologo.getCorreo());
+            statement.setString(4, nutriologo.getSaltContrasena());
             statement.setString(5, nutriologo.getHashContrasena());
-            statement.setString(6, nutriologo.getSaltContrasena());
+            statement.setString(6, nutriologo.getClaveNutriologo());
 
             statement.executeUpdate();
         }
@@ -88,20 +121,19 @@ public class NutriologoDAO extends DatabaseManager {
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, clave);
-            ResultSet rs = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
 
-            if (!rs.next()) return null;
+            if (!resultSet.next()) return null;
 
             Nutriologo nutriologo = new Nutriologo();
-            nutriologo.setClaveNutriologo(rs.getString("clave"));
-            nutriologo.setNombre(rs.getString("nombre"));
-            nutriologo.setApellido(rs.getString("apellido"));
-            nutriologo.setCorreo(rs.getString("correo"));
-            nutriologo.setHashContrasena(rs.getString("hashContrasena"));
-            nutriologo.setSaltContrasena(rs.getString("saltContrasena"));
+            nutriologo.setClaveNutriologo(resultSet.getString("clave"));
+            nutriologo.setNombre(resultSet.getString("nombre"));
+            nutriologo.setApellido(resultSet.getString("apellido"));
+            nutriologo.setCorreo(resultSet.getString("correo"));
+            nutriologo.setHashContrasena(resultSet.getString("hashContrasena"));
+            nutriologo.setSaltContrasena(resultSet.getString("saltContrasena"));
 
             return nutriologo;
         }
     }
 }
-    
