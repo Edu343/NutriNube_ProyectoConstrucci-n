@@ -1,8 +1,10 @@
 package DAO;
 
 import POJOs.Nutriologo;
-import Servicios.HashingServicio;
+import POJOs.Paciente;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * DAO encargado de gestionar operaciones CRUD para la entidad Nutriologo.
@@ -121,7 +123,7 @@ public class NutriologoDAO extends DatabaseManager {
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, clave);
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet rs = statement.executeQuery();
 
             if (!resultSet.next()) return null;
 
@@ -136,4 +138,15 @@ public class NutriologoDAO extends DatabaseManager {
             return nutriologo;
         }
     }
+    
+
+    public ArrayList<Paciente> obtenerListaPacientes(String claveNutriologo) throws SQLException {
+        
+        
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        ArrayList<Paciente> pacientes = pacienteDAO.leerPorNutriologo(claveNutriologo);
+        
+        return pacientes;
+    }
 }
+    
