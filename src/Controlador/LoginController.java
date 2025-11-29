@@ -16,13 +16,10 @@ public class LoginController extends Controller {
     
     @Override
     public void handleLogin(String usuario, String contrasena) {
-        // Simulación básica de validación (El modelo debería manejar la validación real).
         if (usuario.isEmpty() || contrasena.isEmpty()) {
-            // Manejar error de campos vacíos si fuera necesario
             return;
         }
         
-        // Asumiendo login exitoso o manejado en el modelo:
         cambiarVista(MainViewLayout.PACIENTES_VIEW, null);
     }	
     
