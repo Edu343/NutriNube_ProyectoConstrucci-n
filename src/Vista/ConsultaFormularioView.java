@@ -1,11 +1,11 @@
-package Vistas;
+package Vista;
 
-import Core.View;
-import Controladores.ConsultaController;
-import POJOs.Consulta;
-import POJOs.CaloriasCalculo;
-import POJOs.AnamnesisData;
-import POJOs.Macronutrientes;
+import Modelo.Core.View;
+import Controlador.ConsultaController;
+import Modelo.POJOs.Consulta;
+import Modelo.POJOs.CaloriasCalculo;
+import Modelo.POJOs.AnamnesisData;
+import Modelo.POJOs.Macronutrientes;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ public class ConsultaFormularioView extends View {
 
     @Override
     protected void crearController() {
-        myController = new Controladores.ConsultaController(tag); 
+        myController = new Controlador.ConsultaController(tag); 
     }
 
     @Override
@@ -154,7 +154,7 @@ public class ConsultaFormularioView extends View {
         // Muestra el formulario según el modo (AGREGAR o EDITAR).
         String modo = formularioLayout.getModoActual();
         
-        if (Controladores.ConsultaController.MODO_EDITAR.equals(modo) && consultaActual != null) {
+        if (Controlador.ConsultaController.MODO_EDITAR.equals(modo) && consultaActual != null) {
             loadConsultaToForm(consultaActual);
         } else {
             formularioLayout.clearAllFields();
@@ -214,7 +214,7 @@ public class ConsultaFormularioView extends View {
             String returnTag = (String) dataMap.get("returnViewTag");
             String modo = (String) dataMap.get("modo");
             
-            formularioLayout.setModoActual(modo != null ? modo : Controladores.ConsultaController.MODO_AGREGAR);
+            formularioLayout.setModoActual(modo != null ? modo : Controlador.ConsultaController.MODO_AGREGAR);
             formularioLayout.setViewAnteriorTag(returnTag);
 
             if (dataMap.containsKey("consultaActual") && dataMap.get("consultaActual") instanceof Consulta) {
@@ -225,8 +225,8 @@ public class ConsultaFormularioView extends View {
                 this.consultaActual = null;
             }
         } else {
-            formularioLayout.setModoActual(Controladores.ConsultaController.MODO_AGREGAR);
-            formularioLayout.setViewAnteriorTag(Core.MainViewLayout.PACIENTES_VIEW);
+            formularioLayout.setModoActual(Controlador.ConsultaController.MODO_AGREGAR);
+            formularioLayout.setViewAnteriorTag(Modelo.Core.MainViewLayout.PACIENTES_VIEW);
             this.consultaActual = null;
             this.clavePacienteActual = null;
         }

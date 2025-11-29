@@ -1,8 +1,8 @@
-package Controladores;
+package Controlador;
 
-import Core.Controller;
-import Core.MainViewLayout;
-import POJOs.Paciente;
+import Modelo.Core.Controller;
+import Modelo.Core.MainViewLayout;
+import Modelo.POJOs.Paciente;
 import java.util.HashMap;
 import java.util.Map;
 

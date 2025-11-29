@@ -1,4 +1,4 @@
-package POJOs;
+package Modelo.POJOs;
 
 
 /**
@@ -11,8 +11,13 @@ public class MetaNutricional {
     private double lipidosObjetivo;
     private double proteinasObjetivo;
 
-    public MetaNutricional() {
+    public MetaNutricional(double carbohidratosObjetivo, double lipidosObjetivo, double proteinasObjetivo) {
+        this.carbohidratosObjetivo = carbohidratosObjetivo;
+        this.lipidosObjetivo = lipidosObjetivo;
+        this.proteinasObjetivo = proteinasObjetivo;
     }
+
+    
 
     public double getCarbohidratosObjetivo() {
         return carbohidratosObjetivo;

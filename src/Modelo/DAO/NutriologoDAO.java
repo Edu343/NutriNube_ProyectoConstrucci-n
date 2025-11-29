@@ -1,8 +1,9 @@
-package DAO;
+package Modelo.DAO;
 
-import POJOs.Nutriologo;
-import POJOs.Paciente;
 
+import Modelo.POJOs.Nutriologo;
+import Modelo.POJOs.Paciente;
+import Modelo.Servicios.HashingServicio;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class NutriologoDAO extends DatabaseManager {
         nutriologo.setHashContrasena(hash);
 
         String sql = """
+            INSERT INTO nutriologo
             INSERT INTO nutriologo
             (clave, nombre, apellido, correo, hashContrasena, saltContrasena)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -78,6 +80,7 @@ public class NutriologoDAO extends DatabaseManager {
         }
 
         String sql = """
+            UPDATE nutriologo SET
             UPDATE nutriologo SET
                 nombre = ?, apellido = ?, correo = ?,
                 saltContrasena = ?, hashContrasena = ?
@@ -123,7 +126,7 @@ public class NutriologoDAO extends DatabaseManager {
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, clave);
-            ResultSet rs = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
 
             if (!resultSet.next()) return null;
 
@@ -141,7 +144,6 @@ public class NutriologoDAO extends DatabaseManager {
     
 
     public ArrayList<Paciente> obtenerListaPacientes(String claveNutriologo) throws SQLException {
-        
         
         PacienteDAO pacienteDAO = new PacienteDAO();
         ArrayList<Paciente> pacientes = pacienteDAO.leerPorNutriologo(claveNutriologo);

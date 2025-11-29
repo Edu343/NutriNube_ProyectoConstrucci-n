@@ -1,8 +1,9 @@
-package Core;
+package Modelo.Core;
 
-import POJOs.CaloriasCalculo;
-import POJOs.Consulta;
-import Servicios.NutriNubeModelo;
+import Modelo.POJOs.CaloriasCalculo;
+import Modelo.POJOs.Consulta;
+import Modelo.POJOs.Paciente;
+import Modelo.Servicios.NutriNubeModelo;
 
 /**
  * Clase base abstracta para todos los controladores del sistema.
@@ -43,13 +44,16 @@ public abstract class Controller implements Observer {
     	
     }
     	
-    public void handleAnadirPaciente() {
+    public void handleAnadirPaciente(Paciente paciente) {
     	
     }
-    public void handleEliminarPaciente() {
+    public void handleEliminarPaciente(String clavePaciente) {
     	
     }
-    public void handleBuscarPaciente() {
+    public void handleActualizarPaciente(Paciente paciente) {
+        
+    }
+    public void handleBuscarPaciente(String nombre) {
     	
     }
     public void handlePacienteSeleccionado(String clavePaciente) {
@@ -58,16 +62,16 @@ public abstract class Controller implements Observer {
     public void handleLogout() {
     	
     }
-    public void handleAgregarConsulta() {
+    public void handleAgregarConsulta(String clavePaciente) {
     	
     }
-    public void handleEliminarConsulta() {
+    public void handleEliminarConsulta(String claveConsulta) {
     	
     }
     public void handleEditarConsulta(String id) {
     	
     }
-    public void handleCalcularCalorias(CaloriasCalculo calculoData) {
+    public void handleCalcularCalorias(CaloriasCalculo calculoData, Paciente clavePaciente) {
     	
     }
     public void handleGuardarConsulta(Consulta consultaAGuardar) {
