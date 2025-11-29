@@ -7,7 +7,7 @@ package POJOs;
 public class Paciente extends Persona {
 
     private String clavePaciente;
-    private boolean sexo;
+    private int sexo;
     private int telefono;
     private String claveNutriologo;
     private String fechaNacimiento;
@@ -21,10 +21,10 @@ public class Paciente extends Persona {
         return clavePaciente;
     }
 
-    public boolean getSexo() {
+    public int getSexo() {
         return sexo;
     }
-
+    
     public int getTelefono() {
         return telefono;
     }
@@ -45,7 +45,7 @@ public class Paciente extends Persona {
         this.clavePaciente = clavePaciente;
     }
 
-    public void setSexo(boolean sexo) {
+    public void setSexo(int sexo) {
         this.sexo = sexo;
     }
 

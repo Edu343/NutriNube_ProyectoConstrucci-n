@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * DAO responsable de manejar operaciones CRUD para la entidad Consulta.
@@ -30,10 +31,10 @@ public class ConsultaDAO extends DatabaseManager {
               preferenciaComida, horarioSueno, nivelEstres,
               habitosAlimenticios, tipoLiquidos, cantidadLiquidos,
               dificultades,
-              sexo, peso, nivelActividadFisica, calorias, razonConsulta,
+              peso, nivelActividadFisica, calorias, razonConsulta,
               carbohidratos, proteinas, lipidos
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
         try (Connection connection = getConnection();
@@ -62,16 +63,15 @@ public class ConsultaDAO extends DatabaseManager {
             statement.setString(17, consulta.getAnamnesisData().getBarreraAlimenticia());
 
             // ---- Datos cálculo ----
-            statement.setInt(18, consulta.getCaloriasCalculo().getSexo());
-            statement.setDouble(19, consulta.getCaloriasCalculo().getPeso());
-            statement.setInt(20, consulta.getCaloriasCalculo().getNivelActividadFisica());
-            statement.setDouble(21, consulta.getCaloriasCalculo().getCalorias());
-            statement.setInt(22, consulta.getCaloriasCalculo().getRazonConsulta());
+            statement.setDouble(18, consulta.getCaloriasCalculo().getPeso());
+            statement.setInt(19, consulta.getCaloriasCalculo().getNivelActividadFisica());
+            statement.setDouble(20, consulta.getCaloriasCalculo().getCalorias());
+            statement.setInt(21, consulta.getCaloriasCalculo().getRazonConsulta());
 
             // ---- Macronutrientes ----
-            statement.setDouble(23, consulta.getMacronutrientes().getCarbohidratos());
-            statement.setDouble(24, consulta.getMacronutrientes().getProteinas());
-            statement.setDouble(25, consulta.getMacronutrientes().getLipidos());
+            statement.setDouble(22, consulta.getMacronutrientes().getCarbohidratos());
+            statement.setDouble(23, consulta.getMacronutrientes().getProteinas());
+            statement.setDouble(24, consulta.getMacronutrientes().getLipidos());
 
             statement.executeUpdate();
         }
@@ -93,7 +93,7 @@ public class ConsultaDAO extends DatabaseManager {
               condicionesMedicas=?, medicacion=?, historialCirugias=?, alergias=?,
               preferenciaComida=?, horarioSueno=?, nivelEstres=?,
               habitosAlimenticios=?, tipoLiquidos=?, cantidadLiquidos=?, dificultades=?,
-              sexo=?, peso=?, nivelActividadFisica=?, calorias=?, razonConsulta=?,
+              peso=?, nivelActividadFisica=?, calorias=?, razonConsulta=?,
               carbohidratos=?, proteinas=?, lipidos=?
             WHERE claveConsulta=?
         """;
@@ -101,6 +101,7 @@ public class ConsultaDAO extends DatabaseManager {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
+            // ---- Claves y datos generales ----
             statement.setString(1, consulta.getClavePaciente());
             statement.setString(2, consulta.getClaveNutriologo());
             statement.setString(3, consulta.getFechaVisita());
@@ -108,6 +109,7 @@ public class ConsultaDAO extends DatabaseManager {
             statement.setInt(4, consulta.getEdad());
             statement.setDouble(5, consulta.getAltura());
 
+            // ---- Datos de Anamnesis ----
             statement.setString(6, consulta.getAnamnesisData().getCondicionesMedicas());
             statement.setString(7, consulta.getAnamnesisData().getMedicacion());
             statement.setString(8, consulta.getAnamnesisData().getHistorialCirugias());
@@ -120,17 +122,18 @@ public class ConsultaDAO extends DatabaseManager {
             statement.setDouble(15, consulta.getAnamnesisData().getCantidadLiquidoConsumido());
             statement.setString(16, consulta.getAnamnesisData().getBarreraAlimenticia());
 
-            statement.setInt(18, consulta.getCaloriasCalculo().getSexo());
-            statement.setDouble(19, consulta.getCaloriasCalculo().getPeso());
-            statement.setInt(20, consulta.getCaloriasCalculo().getNivelActividadFisica());
-            statement.setDouble(21, consulta.getCaloriasCalculo().getCalorias());
-            statement.setInt(22, consulta.getCaloriasCalculo().getRazonConsulta());
+            // ---- Datos cálculo ----
+            statement.setDouble(17, consulta.getCaloriasCalculo().getPeso());
+            statement.setInt(18, consulta.getCaloriasCalculo().getNivelActividadFisica());
+            statement.setDouble(19, consulta.getCaloriasCalculo().getCalorias());
+            statement.setInt(20, consulta.getCaloriasCalculo().getRazonConsulta());
 
-            statement.setDouble(22, consulta.getMacronutrientes().getCarbohidratos());
-            statement.setDouble(23, consulta.getMacronutrientes().getProteinas());
-            statement.setDouble(24, consulta.getMacronutrientes().getLipidos());
-
-            statement.setInt(25, Integer.parseInt(consulta.getClaveConsulta()));
+            // ---- Macronutrientes ----
+            statement.setDouble(21, consulta.getMacronutrientes().getCarbohidratos());
+            statement.setDouble(22, consulta.getMacronutrientes().getProteinas());
+            statement.setDouble(23, consulta.getMacronutrientes().getLipidos());
+            
+            statement.setInt(24, Integer.parseInt( consulta.getClaveConsulta() ));
 
             statement.executeUpdate();
         }
@@ -144,10 +147,10 @@ public class ConsultaDAO extends DatabaseManager {
         String sql = "DELETE FROM consulta WHERE claveConsulta = ?";
 
         try (Connection connection = getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, claveConsulta);
-            stmt.executeUpdate();
+            statement.setString(1, claveConsulta);
+            statement.executeUpdate();
         }
     }
 
@@ -163,55 +166,80 @@ public class ConsultaDAO extends DatabaseManager {
         String sql = "SELECT * FROM consulta WHERE claveConsulta = ?";
 
         try (Connection connection = getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, claveConsulta);
-            ResultSet rs = stmt.executeQuery();
+            statement.setString(1, claveConsulta);
+            ResultSet resultSet = statement.executeQuery();
 
-            if (!rs.next()) {
+            if (!resultSet.next()) {
                 return null;
             }
 
             Consulta consulta = new Consulta();
             consulta.setClaveConsulta(claveConsulta);
-            consulta.setClavePaciente(rs.getString("clavePaciente"));
-            consulta.setClaveNutriologo(rs.getString("claveNutriologo"));
-            consulta.setFechaVisita(rs.getString("fecha"));
-            consulta.setEdad(rs.getInt("edad"));
-            consulta.setAltura(rs.getDouble("altura"));
+            consulta.setClavePaciente(resultSet.getString("clavePaciente"));
+            consulta.setClaveNutriologo(resultSet.getString("claveNutriologo"));
+            consulta.setFechaVisita(resultSet.getString("fecha"));
+            consulta.setEdad(resultSet.getInt("edad"));
+            consulta.setAltura(resultSet.getDouble("altura"));
 
             // ---- Calorías ----
             CaloriasCalculo calorias = new CaloriasCalculo();
-            calorias.setSexo(rs.getInt("sexo"));
-            calorias.setPeso(rs.getDouble("peso"));
-            calorias.setCalorias(rs.getDouble("calorias"));
-            calorias.setNivelActividadFisica(rs.getInt("nivelActividadFisica"));
-            calorias.setRazonConsulta(rs.getInt("razonConsulta"));
+            calorias.setPeso(resultSet.getDouble("peso"));
+            calorias.setCalorias(resultSet.getDouble("calorias"));
+            calorias.setNivelActividadFisica(resultSet.getInt("nivelActividadFisica"));
+            calorias.setRazonConsulta(resultSet.getInt("razonConsulta"));
             consulta.setTotalCalorias(calorias);
 
             // ---- Macronutrientes ----
             Macronutrientes macros = new Macronutrientes();
-            macros.setCarbohidratos(rs.getDouble("carbohidratos"));
-            macros.setProteinas(rs.getDouble("proteinas"));
-            macros.setLipidos(rs.getDouble("lipidos"));
+            macros.setCarbohidratos(resultSet.getDouble("carbohidratos"));
+            macros.setProteinas(resultSet.getDouble("proteinas"));
+            macros.setLipidos(resultSet.getDouble("lipidos"));
             consulta.setMacronutrientes(macros);
 
             // ---- Anamnesis ----
             AnamnesisData anamnesis = new AnamnesisData();
-            anamnesis.setCondicionesMedicas(rs.getString("condicionesMedicas"));
-            anamnesis.setMedicacion(rs.getString("medicacion"));
-            anamnesis.setHistorialCirugias(rs.getString("historialCirugias"));
-            anamnesis.setAlergias(rs.getString("alergias"));
-            anamnesis.setPreferenciaComida(rs.getString("preferenciaComida"));
-            anamnesis.setHorarioSueno(rs.getString("horarioSueno"));
-            anamnesis.setNivelEstres(rs.getInt("nivelEstres"));
-            anamnesis.setHabitoAlimenticio(rs.getString("habitosAlimenticios"));
-            anamnesis.setTipoLiquidoConsumido(rs.getString("tipoLiquidos"));
-            anamnesis.setCantidadLiquidoConsumido(rs.getDouble("cantidadLiquidos"));
-            anamnesis.setBarreraAlimenticia(rs.getString("dificultades"));
+            anamnesis.setCondicionesMedicas(resultSet.getString("condicionesMedicas"));
+            anamnesis.setMedicacion(resultSet.getString("medicacion"));
+            anamnesis.setHistorialCirugias(resultSet.getString("historialCirugias"));
+            anamnesis.setAlergias(resultSet.getString("alergias"));
+            anamnesis.setPreferenciaComida(resultSet.getString("preferenciaComida"));
+            anamnesis.setHorarioSueno(resultSet.getString("horarioSueno"));
+            anamnesis.setNivelEstres(resultSet.getInt("nivelEstres"));
+            anamnesis.setHabitoAlimenticio(resultSet.getString("habitosAlimenticios"));
+            anamnesis.setTipoLiquidoConsumido(resultSet.getString("tipoLiquidos"));
+            anamnesis.setCantidadLiquidoConsumido(resultSet.getDouble("cantidadLiquidos"));
+            anamnesis.setBarreraAlimenticia(resultSet.getString("dificultades"));
             consulta.setAnamnesisData(anamnesis);
 
             return consulta;
         }
     }
+    
+    public ArrayList<Consulta> leerPorPaciente(String clavePaciente) throws SQLException {
+
+        ArrayList<Consulta> lista = new ArrayList<>();
+
+        String sql = "SELECT claveConsulta FROM consulta WHERE clavePaciente = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, clavePaciente);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String claveConsulta = resultSet.getString("claveConsulta");
+
+                // Reutilizamos tu método existente que reconstruye la consulta
+                Consulta consulta = leerPorClave(claveConsulta);
+
+                lista.add(consulta);
+            }
+        }
+
+        return lista;
+    }
+
 }
