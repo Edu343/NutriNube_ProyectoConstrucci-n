@@ -79,7 +79,7 @@ public class PacienteListView extends View {
         if (myModel.getNutriologoActual() != null) {
             List<Paciente> pacientes = null;
             try {
-                pacientes = myModel.getPacienteDAO().leerPorNutriologo(myModel.getNutriologoActual().getClaveNutriologo());
+                pacientes = myModel.getNutriologoDAO().obtenerListaPacientes(myModel.getNutriologoActual().getClaveNutriologo());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
