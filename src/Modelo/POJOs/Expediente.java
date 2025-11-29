@@ -9,26 +9,40 @@ import java.util.List;
  */
 public class Expediente {
 
-    private String clavePaciente;
-    private List<Consulta> listaConsultas;
+    private Paciente paciente;                 // Datos generales del paciente
+    private ArrayList<Consulta> consultas;     // Historial completo de consultas
 
     public Expediente() {
-        this.listaConsultas = new ArrayList<>();
+        this.consultas = new ArrayList<>();
     }
 
-    public String getClavePaciente() {
-        return clavePaciente;
+    public Paciente getPaciente() {
+        return paciente;
     }
 
-    public List<Consulta> getListaConsultas() {
-        return listaConsultas;
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
-    public void setClavePaciente(String clavePaciente) {
-        this.clavePaciente = clavePaciente;
+    public ArrayList<Consulta> getConsultas() {
+        return consultas;
     }
 
+    public void setConsultas(ArrayList<Consulta> consultas) {
+        this.consultas = consultas;
+    }
+
+    /**
+     * Agrega una consulta al expediente.
+     */
     public void agregarConsulta(Consulta consulta) {
-        listaConsultas.add(consulta);
+        this.consultas.add(consulta);
+    }
+
+    /**
+     * Devuelve la cantidad total de consultas que tiene el paciente.
+     */
+    public int getTotalConsultas() {
+        return consultas.size();
     }
 }

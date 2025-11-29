@@ -1,23 +1,17 @@
 package POJOs;
 
-
 /**
  * Contiene los datos necesarios para calcular el total de calorías
  * y la razón de consulta asociada.
  */
 public class CaloriasCalculo {
 
-    private int sexo;
     private double peso;
     private int nivelActividadFisica;
     private double calorias;
     private int razonConsulta;
 
     public CaloriasCalculo() {
-    }
-
-    public int getSexo() {
-        return sexo;
     }
 
     public double getPeso() {
@@ -34,10 +28,6 @@ public class CaloriasCalculo {
 
     public double getCalorias() {
         return calorias;
-    }
-
-    public void setSexo(int sexo) {
-        this.sexo = sexo;
     }
     
     public void setPeso(double peso) {
