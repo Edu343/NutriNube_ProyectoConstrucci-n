@@ -137,5 +137,31 @@ public class PacienteDAO extends DatabaseManager {
 
         return expediente;
     }
+    
+    public ArrayList<Paciente> leerPorNutriologo(String claveNutriologo) throws SQLException {
 
+        ArrayList<Paciente> lista = new ArrayList<>();
+        // Modificamos la consulta SQL para filtrar por claveNutriologo
+        String sql = "SELECT clave FROM paciente WHERE claveNutriologo = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, claveNutriologo);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String clavePaciente = resultSet.getString("clave");
+                Paciente paciente = leerPorClave(clavePaciente);
+
+                if (paciente != null) {
+                    lista.add(paciente);
+                }
+            }
+        }
+
+        return lista;
+    }
+
+}
 }
