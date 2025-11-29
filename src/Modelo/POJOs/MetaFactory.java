@@ -1,4 +1,4 @@
-package Servicios;
+package POJOs;
 
 
 
@@ -24,3 +24,4 @@ public class MetaFactory {
         }
     }
 }
+
