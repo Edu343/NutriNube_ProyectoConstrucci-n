@@ -7,9 +7,9 @@ public class MacronutrientesServicio {
 
     public Macronutrientes dividirCalorias(double caloriasTotales, MetaNutricional meta) {
 
-        double caloriasCho = caloriasTotales * meta.getCho();
-        double caloriasLip = caloriasTotales * meta.getLip();
-        double caloriasProt = caloriasTotales * meta.getProt();
+        double caloriasCho = caloriasTotales * meta.getCarbohidratos();
+        double caloriasLip = caloriasTotales * meta.getLipidos();
+        double caloriasProt = caloriasTotales * meta.getProteinas();
 
         //Convertir calorías a gramos
         double gramosCho = caloriasCho / 4.0;   // carbohidratos → 4 kcal/g
@@ -18,10 +18,11 @@ public class MacronutrientesServicio {
 
 
         Macronutrientes macros = new Macronutrientes();
-        macros.setCarbohidratos(gramosCho);
-        macros.setProteinas(gramosProt);
-        macros.setLipidos(gramosLip);
+        macros.setCarbohidratosObjetivo(gramosCho);
+        macros.setProteinasObjetivo(gramosProt);
+        macros.setLipidosObjetivo(gramosLip);
 
         return macros;
     }
 }
+
