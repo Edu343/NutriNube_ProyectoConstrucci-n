@@ -1,6 +1,6 @@
-package Vistas;
+package Vista;
 
-import Core.View;
+import Modelo.Core.View;
 
 
 /**
@@ -18,7 +18,7 @@ public class LoginView extends View {
 
     @Override
     protected void crearController() {
-        myController = new Controladores.LoginController(tag);
+        myController = new Controlador.LoginController(tag);
     }
 
     @Override

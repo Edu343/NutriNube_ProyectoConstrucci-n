@@ -1,4 +1,4 @@
-package POJOs;
+package Modelo.POJOs;
 
 /**
  * Contiene los datos necesarios para calcular el total de calorías

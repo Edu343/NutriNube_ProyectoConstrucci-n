@@ -1,6 +1,7 @@
-package Servicios;
+package Modelo.Servicios;
 
-import POJOs.MetaNutricional;
+import Modelo.POJOs.MetaNutricional;
+
 
 public class MetaFactory {
 

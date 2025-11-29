@@ -1,16 +1,16 @@
-package Vistas;
+package Vista;
 
-import Core.View;
+import Modelo.Core.View;
 
 
-import Controladores.PacienteListController;
+import Controlador.PacienteListController;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
-import POJOs.Paciente;
+import Modelo.POJOs.Paciente;
 
 /**
  * Vista de la lista principal que muestra todos los pacientes del nutriólogo.

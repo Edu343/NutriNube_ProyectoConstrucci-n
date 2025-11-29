@@ -1,8 +1,8 @@
-package DAO;
+package Modelo.DAO;
 
-import POJOs.Consulta;
-import POJOs.Expediente;
-import POJOs.Paciente;
+import Modelo.POJOs.Consulta;
+import Modelo.POJOs.Expediente;
+import Modelo.POJOs.Paciente;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -163,5 +163,4 @@ public class PacienteDAO extends DatabaseManager {
         return lista;
     }
 
-}
 }

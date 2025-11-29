@@ -1,4 +1,4 @@
-package POJOs;
+package Modelo.POJOs;
 
 /**
  * Representa a un nutriólogo registrado en el sistema.

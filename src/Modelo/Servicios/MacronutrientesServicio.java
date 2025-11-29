@@ -1,7 +1,8 @@
-package Servicios;
+package Modelo.Servicios;
 
-import POJOs.Macronutrientes;
-import POJOs.MetaNutricional;
+import Modelo.POJOs.Macronutrientes;
+import Modelo.POJOs.MetaNutricional;
+
 
 public class MacronutrientesServicio {
 

@@ -1,15 +1,15 @@
-package Vistas;
+package Vista;
 
-import Core.View;
-import Controladores.HistorialController;
+import Modelo.Core.View;
+import Controlador.HistorialController;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
-import POJOs.Consulta;
-import POJOs.Expediente;
+import Modelo.POJOs.Consulta;
+import Modelo.POJOs.Expediente;
 
 
 /**

@@ -1,9 +1,9 @@
-package DAO;
+package Modelo.DAO;
 
-import POJOs.Nutriologo;
-import POJOs.Paciente;
 
-import Servicios.HashingServicio;
+import Modelo.POJOs.Nutriologo;
+import Modelo.POJOs.Paciente;
+import Modelo.Servicios.HashingServicio;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -107,7 +107,6 @@ public class NutriologoDAO extends DatabaseManager {
     @Override
     public void eliminar(String clave) throws SQLException {
         String sql = "DELETE FROM nutriologo WHERE clave = ?";
-        String sql = "DELETE FROM nutriologo WHERE clave = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -122,14 +121,12 @@ public class NutriologoDAO extends DatabaseManager {
      */
     public Nutriologo leerPorClave(String clave) throws SQLException {
         String sql = "SELECT * FROM nutriologo WHERE clave = ?";
-        String sql = "SELECT * FROM nutriologo WHERE clave = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, clave);
-            ResultSet rs = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
 
             if (!resultSet.next()) return null;
 
@@ -147,7 +144,6 @@ public class NutriologoDAO extends DatabaseManager {
     
 
     public ArrayList<Paciente> obtenerListaPacientes(String claveNutriologo) throws SQLException {
-        
         
         PacienteDAO pacienteDAO = new PacienteDAO();
         ArrayList<Paciente> pacientes = pacienteDAO.leerPorNutriologo(claveNutriologo);

@@ -1,4 +1,4 @@
-package POJOs;
+package Modelo.POJOs;
 
 /**
  * Clase base que representa a una persona dentro del sistema.

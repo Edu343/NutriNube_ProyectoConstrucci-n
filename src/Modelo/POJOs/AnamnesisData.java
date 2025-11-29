@@ -1,4 +1,4 @@
-package POJOs;
+package Modelo.POJOs;
 
 
 /**

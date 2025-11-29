@@ -1,4 +1,4 @@
-package Core;
+package Modelo.Core;
 
 /**
  * Interfaz fundamental del patrón Observer.
