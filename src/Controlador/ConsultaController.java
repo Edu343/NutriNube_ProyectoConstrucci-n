@@ -1,9 +1,9 @@
-package Controladores;
+package Controlador;
 
-import Core.Controller;
-import Core.MainViewLayout;
-import POJOs.*;
-import Vistas.ConsultaFormularioView;
+import Modelo.Core.Controller;
+import Modelo.Core.MainViewLayout;
+import Modelo.POJOs.*;
+import Vista.ConsultaFormularioView;
 
 /**
  * Controlador para manejar la lógica de negocio asociada al formulario de una consulta nutricional.

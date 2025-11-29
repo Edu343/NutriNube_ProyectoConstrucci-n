@@ -1,8 +1,8 @@
-package Servicios;
+package Modelo.Servicios;
 
-import POJOs.CaloriasCalculo;
+import Modelo.POJOs.CaloriasCalculo;
 
-import POJOs.Paciente;
+import Modelo.POJOs.Paciente;
 
 	
 

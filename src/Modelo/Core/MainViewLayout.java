@@ -1,12 +1,12 @@
-package Core;
+package Modelo.Core;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
 import java.util.HashMap;
 import java.util.Map;
-import Servicios.NutriNubeModelo;
-import Vistas.*;
+import Modelo.Servicios.NutriNubeModelo;
+import Vista.*;
 
 /**
  * Contenedor principal de la aplicación que gestiona la navegación entre vistas usando CardLayout.

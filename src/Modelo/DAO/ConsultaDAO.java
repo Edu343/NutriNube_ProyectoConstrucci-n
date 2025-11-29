@@ -1,6 +1,6 @@
-package DAO;
+package Modelo.DAO;
 
-import POJOs.*;
+import Modelo.POJOs.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,11 +1,12 @@
-package Servicios;
+package Modelo.Servicios;
 
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
-import Core.Observer;
-import DAO.*;
-import POJOs.*;
+import Modelo.Core.Observer;
+import Modelo.DAO.*;
+import Modelo.POJOs.*;
+import Modelo.Servicios.*;
 
 public class NutriNubeModelo {
     private Set<Observer> observers;

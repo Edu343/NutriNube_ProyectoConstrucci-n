@@ -1,4 +1,4 @@
-package POJOs;
+package Modelo.POJOs;
 
 import java.util.ArrayList;
 import java.util.List;

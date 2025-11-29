@@ -1,9 +1,9 @@
-package Servicios;
+package Modelo.Servicios;
 
 
-import POJOs.Nutriologo;
-import POJOs.Paciente;
-import POJOs.Consulta;
+import Modelo.POJOs.Nutriologo;
+import Modelo.POJOs.Paciente;
+import Modelo.POJOs.Consulta;
 
 /**
  * Servicio encargado de validar reglas de negocio para las

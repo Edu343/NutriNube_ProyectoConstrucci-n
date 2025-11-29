@@ -1,7 +1,7 @@
-package Controladores;
+package Controlador;
 
-import Core.Controller;
-import Core.MainViewLayout;
+import Modelo.Core.Controller;
+import Modelo.Core.MainViewLayout;
 
 /**
  * Controlador para manejar la lógica de inicio de sesión de la aplicación.

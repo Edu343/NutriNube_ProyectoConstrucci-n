@@ -1,8 +1,8 @@
-package Core;
+package Modelo.Core;
 
 import javax.swing.JPanel;
 
-import Servicios.NutriNubeModelo;
+import Modelo.Servicios.NutriNubeModelo;
 
 /**
  * Clase abstracta base para todas las vistas (lógica) de la aplicación.

@@ -1,4 +1,4 @@
-package Vistas;
+package Vista;
 
 import javax.swing.*;
 import java.awt.*;
