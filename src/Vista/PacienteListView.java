@@ -1,6 +1,8 @@
 package Vistas;
 
 import Core.View;
+
+
 import Controladores.PacienteListController;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -30,17 +32,18 @@ public class PacienteListView extends View {
     
     @Override
     protected void crearViewLayout() {
+    	
         pacienteLayout = new PacienteListViewLayout();
         this.mainPanel = pacienteLayout.getPanel();
         
         pacienteLayout.getBtnAgregar().addActionListener(e -> 
-            ((PacienteListController)myController).handleAnadirPacienteRequest());
+            myController.handleAnadirPaciente(null));
         
         pacienteLayout.getBtnEliminar().addActionListener(e -> {
             int selectedRow = pacienteLayout.getTablePacientes().getSelectedRow();
             if (selectedRow != -1) {
                 String clavePaciente = (String) pacienteLayout.getTablePacientes().getValueAt(selectedRow, 0);
-                ((PacienteListController)myController).handleEliminarPacienteRequest(clavePaciente);
+                myController.handleEliminarPaciente(clavePaciente);
             }
         });
         
@@ -52,7 +55,7 @@ public class PacienteListView extends View {
                     int row = target.getSelectedRow();
                     if (row != -1) {
                         String clavePaciente = (String) pacienteLayout.getTablePacientes().getValueAt(row, 0);
-                        ((PacienteListController)myController).handlePacienteSeleccionado(clavePaciente);
+                        myController.handlePacienteSeleccionado(clavePaciente);
                     }
                 }
             }
@@ -60,11 +63,11 @@ public class PacienteListView extends View {
         
         pacienteLayout.getTxtBuscar().addActionListener(e -> {
             String criterio = pacienteLayout.getTxtBuscar().getText();
-            ((PacienteListController)myController).handleBuscarPacienteRequest(criterio);
+            myController.handleBuscarPaciente(criterio);
         });
         
         pacienteLayout.getBtnLogout().addActionListener(e -> 
-            ((PacienteListController)myController).handleLogoutRequest());
+            myController.handleLogout());
     }
     
     @Override
@@ -76,7 +79,7 @@ public class PacienteListView extends View {
         if (myModel.getNutriologoActual() != null) {
             List<Paciente> pacientes = null;
             try {
-                pacientes = myModel.getPacienteDAO().readAllByNutriologo(myModel.getNutriologoActual().getClaveNutriologo());
+                pacientes = myModel.getPacienteDAO().leerPorNutriologo(myModel.getNutriologoActual().getClaveNutriologo());
             } catch (SQLException e) {
                 e.printStackTrace();
             }

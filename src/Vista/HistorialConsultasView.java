@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
 import POJOs.Consulta;
+import POJOs.Expediente;
 
 
 /**
@@ -90,9 +91,11 @@ public class HistorialConsultasView extends View {
     private void cargarHistorialConsultas() {
         // Lógica para cargar los datos de la tabla.
         if (clavePacienteActual != null) {
+        	Expediente expediente = null;
             List<Consulta> consultas = null;
             try {
-                consultas = myModel.getConsultaDAO().recuperarConsultas(clavePacienteActual);
+            	expediente = myModel.getPacienteDAO().obtenerExpedienteCompleto(clavePacienteActual);
+                consultas = expediente.getConsultas();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
