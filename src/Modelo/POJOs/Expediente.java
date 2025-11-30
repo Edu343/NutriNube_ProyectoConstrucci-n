@@ -1,7 +1,7 @@
 package Modelo.POJOs;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Representa el conjunto de consultas pertenecientes a un paciente.

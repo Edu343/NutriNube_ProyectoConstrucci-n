@@ -1,7 +1,6 @@
 package Modelo.Core;
 
-import Modelo.POJOs.CaloriasCalculo;
-import Modelo.POJOs.Consulta;
+
 import Modelo.POJOs.Paciente;
 import Modelo.Servicios.NutriNubeModelo;
 
@@ -68,18 +67,29 @@ public abstract class Controller implements Observer {
     public void handleEliminarConsulta(String claveConsulta) {
     	
     }
-    public void handleEditarConsulta(String id) {
+    public void handleEditarConsulta(String claveConsulta) {
     	
     }
-    public void handleCalcularCalorias(CaloriasCalculo calculoData, Paciente clavePaciente) {
+ 
+    public void handleCalcularCalorias(String clavePaciente, double peso, int nivelActividadFisica, int razonConsulta, 
+                                       int sexo, double altura, String fechaNacimiento) {
+        
+    }
+    
+    public void handleGuardarConsulta(String clavePaciente, String claveConsulta, String nombre, String apellido,
+            String correo, int sexo, String telefono, String fechaNacimiento, double altura,
+            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
+            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
+            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
+            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
+            double proteinas, double lipidos, String modo) {
+        
+    }
+    public void handleSalir() {
     	
     }
-    public void handleGuardarConsulta(Consulta consultaAGuardar) {
-    	
-    }
-    public void handleSalir() {}
+    
 
     @Override
-    public void update() {
-    }
+    public abstract void update();
 }

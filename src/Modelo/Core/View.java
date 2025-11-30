@@ -23,7 +23,6 @@ public abstract class View implements Observer {
     public void inicializar(NutriNubeModelo model, MainViewLayout layout) {
         myModel = model;
         crearController();
-        // 🚨 MODIFICADO: Pasamos el layout al inicializar el controlador
         myController.initialize(myModel, this, layout); 
         crearViewLayout();
         myModel.attach(this);
@@ -39,12 +38,14 @@ public abstract class View implements Observer {
     public void update() {
         display();
     }
-    
-    public void loadData(Object data) {
-    }
+
     
     public JPanel getViewLayout() {
-        return mainPanel; // Método para que MainViewLayout lo agregue al CardLayout
+        return mainPanel; 
+    }
+
+
+    public void cargarDatos(Object data) {
     }
 
 }	

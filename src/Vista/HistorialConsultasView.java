@@ -77,7 +77,7 @@ public class HistorialConsultasView extends View {
     }
     
     @Override
-    public void loadData(Object data) {
+    public void cargarDatos(Object data) {
         // Carga la clave del paciente cuando se accede a esta vista.
         if (data instanceof String) {
             this.clavePacienteActual = (String) data;

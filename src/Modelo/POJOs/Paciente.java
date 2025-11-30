@@ -8,7 +8,7 @@ public class Paciente extends Persona {
 
     private String clavePaciente;
     private int sexo;
-    private int telefono;
+    private String telefono;
     private String claveNutriologo;
     private String fechaNacimiento;
     private double altura;
@@ -25,7 +25,7 @@ public class Paciente extends Persona {
         return sexo;
     }
     
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
@@ -49,7 +49,7 @@ public class Paciente extends Persona {
         this.sexo = sexo;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 

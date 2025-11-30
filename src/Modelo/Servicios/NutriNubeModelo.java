@@ -6,9 +6,13 @@ import java.util.Set;
 import Modelo.Core.Observer;
 import Modelo.DAO.*;
 import Modelo.POJOs.*;
-import Modelo.Servicios.*;
+import java.time.LocalDate;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class NutriNubeModelo {
+
+    
     private Set<Observer> observers;
     private NutriologoDAO nutriologoDAO;
     private PacienteDAO pacienteDAO;

@@ -2,11 +2,12 @@ package Modelo.Core;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import Modelo.Servicios.NutriNubeModelo;
+import Vista.*;
 import java.awt.CardLayout;
 import java.util.HashMap;
 import java.util.Map;
-import Modelo.Servicios.NutriNubeModelo;
-import Vista.*;
+
 
 /**
  * Contenedor principal de la aplicación que gestiona la navegación entre vistas usando CardLayout.
@@ -14,7 +15,7 @@ import Vista.*;
  * Define las constantes (TAGs) para todas las vistas.
  */
 
-public class MainViewLayout implements Observer  {
+public class MainViewLayout  {
     
     private JFrame ventanaPrincipal;
     private JPanel panelTarjetas;
@@ -35,35 +36,34 @@ public class MainViewLayout implements Observer  {
    
     private void inicializar(NutriNubeModelo modelo) {
         this.miModelo = modelo;
-        this.miModelo.attach(this);
         crearVistasLogicas(); 
         crearDisenoVista();
     }
     
     private void crearVistasLogicas() {
-        // 🚨 MODIFICADO: Ahora pasamos 'this' (la instancia de MainViewLayout) a la inicialización
 
         LoginView loginView = new LoginView(LOGIN_VIEW);
-        loginView.inicializar(miModelo, this); // <-- Inyección
+        loginView.inicializar(miModelo, this); 
         vistasLogicas.put(LOGIN_VIEW, loginView);
         
         PacienteListView pacienteListView = new PacienteListView(PACIENTES_VIEW);
-        pacienteListView.inicializar(miModelo, this); // <-- Inyección
+        pacienteListView.inicializar(miModelo, this); 
         vistasLogicas.put(PACIENTES_VIEW, pacienteListView);
         
         
         HistorialConsultasView historialView = new HistorialConsultasView(HISTORIAL_VIEW);
-        historialView.inicializar(miModelo, this); // <-- Inyección
+        historialView.inicializar(miModelo, this);
         vistasLogicas.put(HISTORIAL_VIEW, historialView);
         
         ConsultaFormularioView consultaFormView = new ConsultaFormularioView(CONSULTA_FORM_VIEW);
-        consultaFormView.inicializar(miModelo, this); // <-- Inyección
+        consultaFormView.inicializar(miModelo, this); 
         vistasLogicas.put(CONSULTA_FORM_VIEW, consultaFormView);
     }
 
 
   
     private void crearDisenoVista() {
+
         ventanaPrincipal = new JFrame("NutriNube - Sistema de Gestión Nutricional");
         ventanaPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ventanaPrincipal.setSize(1000, 700);
@@ -91,13 +91,10 @@ public class MainViewLayout implements Observer  {
         
         View vistaDestino = vistasLogicas.get(vistaNombre);
         if (vistaDestino != null) {
-            vistaDestino.loadData(data);
+            vistaDestino.cargarDatos(data);
             vistaDestino.update();
         }
     }
 
 
-	@Override
-	public void update() {
-	}
 }
