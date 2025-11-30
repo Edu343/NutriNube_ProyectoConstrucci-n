@@ -37,7 +37,6 @@ public class NutriologoDAO extends DatabaseManager {
 
         String sql = """
             INSERT INTO nutriologo
-            INSERT INTO nutriologo
             (clave, nombre, apellido, correo, hashContrasena, saltContrasena)
             VALUES (?, ?, ?, ?, ?, ?)
         """;
@@ -80,7 +79,6 @@ public class NutriologoDAO extends DatabaseManager {
         }
 
         String sql = """
-            UPDATE nutriologo SET
             UPDATE nutriologo SET
                 nombre = ?, apellido = ?, correo = ?,
                 saltContrasena = ?, hashContrasena = ?

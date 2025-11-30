@@ -1,16 +1,15 @@
 package Vista;
 
 import Modelo.Core.View;
-
+import Controlador.LoginController;
 
 /**
  * Vista para la interfaz de inicio de sesión.
  * Gestiona la captura de credenciales y la interacción con el LoginController.
  */
-
 public class LoginView extends View {
-    
-    private LoginViewLayout loginLayout; 
+
+    private LoginViewLayout loginLayout;
 
     public LoginView(String tag) {
         super(tag);
@@ -18,7 +17,7 @@ public class LoginView extends View {
 
     @Override
     protected void crearController() {
-        myController = new Controlador.LoginController(tag);
+        myController = new LoginController(tag);
     }
 
     @Override
@@ -26,23 +25,22 @@ public class LoginView extends View {
         // Inicializa el Layout de la vista y asigna el panel principal.
         this.loginLayout = new LoginViewLayout();
         this.mainPanel = loginLayout.getPanel();
-        
+
+        // Botón "Acceder" lanza acción de login del controller
         loginLayout.getBtnAcceder().addActionListener(e -> {
-            // Recolecta usuario y contraseña y llama al controlador.
             String user = loginLayout.getTxtUsuario();
-            String pass = loginLayout.getTxtContrasena(); 
-            
-            myController.handleLogin(user, pass); 
+            String pass = loginLayout.getTxtContrasena();
+            myController.handleLogin(user, pass);
         });
     }
 
     @Override
     public void display() {
-        // Lógica de visualización.
+        // Lógica de visualización si aplica
     }
-    
+
     public void mostrarError(String mensaje) {
-        // Muestra un mensaje de error al usuario.
-        System.out.println("ERROR LOGIN: " + mensaje);
+        // Muestra un mensaje de error al usuario (la vista puede usar un JOptionPane)
+        javax.swing.JOptionPane.showMessageDialog(null, mensaje, "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
     }
 }
