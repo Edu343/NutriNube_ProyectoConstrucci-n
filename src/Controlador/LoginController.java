@@ -2,29 +2,106 @@ package Controlador;
 
 import Modelo.Core.Controller;
 import Modelo.Core.MainViewLayout;
+import Modelo.Servicios.NutriNubeModelo;
+import Modelo.Servicios.NutriNubeModelo.LoginEstado;
+import Modelo.POJOs.Nutriologo;
+import Vista.LoginView;
+import javax.swing.JOptionPane;
 
 /**
- * Controlador para manejar la lógica de inicio de sesión de la aplicación.
- * Procesa credenciales y gestiona la navegación al dashboard de pacientes.
+ * Controller dedicado al flujo de login.
+ * - Pide al modelo comprobar existencia/estado
+ * - Si no existe, ofrece crear nuevo nutriólogo (diálogo)
+ * - Si existe y contraseña es correcta, navega a la vista de pacientes
+ * - Si existe pero contraseña incorrecta, muestra aviso (no cambio de contraseña)
  */
-
 public class LoginController extends Controller {
-    
+
     public LoginController(String tag) {
         super(tag);
     }
-    
+
     @Override
     public void handleLogin(String usuario, String contrasena) {
-        if (usuario.isEmpty() || contrasena.isEmpty()) {
+        if (usuario == null || usuario.trim().isEmpty() || contrasena == null) {
+            // puedes informar a la vista con mostrarError si lo deseas
+            if (myView instanceof LoginView) {
+                ((LoginView) myView).mostrarError("Usuario o contraseña vacíos.");
+            }
             return;
         }
-        
-        cambiarVista(MainViewLayout.PACIENTES_VIEW, null);
-    }	
-    
-    
+
+        NutriNubeModelo modelo = (NutriNubeModelo) myModel;
+
+        // 1) comprobar estado (no existe / wrong / ok)
+        LoginEstado estado = modelo.obtenerEstadoLogin(usuario, contrasena);
+
+        switch (estado) {
+            case SUCCESS:
+                // login correcto -> cambiar a lista de pacientes
+                modelo.login(usuario, contrasena); // esto setea nutriologoActual y notifica
+                cambiarVista(MainViewLayout.PACIENTES_VIEW, null);
+                break;
+
+            case WRONG_PASSWORD:
+                // POR DISEÑO: no se permite cambiar contraseña desde aquí (según tu instrucción)
+                JOptionPane.showMessageDialog(null,
+                        "Contraseña incorrecta. Si la olvidaste, contacta al administrador.",
+                        "Contraseña incorrecta",
+                        JOptionPane.WARNING_MESSAGE);
+                break;
+
+            case NOT_FOUND:
+                // no existe: preguntar si desea dar de alta
+                int opcion = JOptionPane.showConfirmDialog(null,
+                        "No se encontraron las claves para '" + usuario + "'.\n¿Deseas registrar un nuevo nutriólogo con esa clave?",
+                        "Nutriólogo no encontrado",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (opcion == JOptionPane.YES_OPTION) {
+                    // Recolectar datos mínimos con cuadros de diálogo simples:
+                    String nombre = JOptionPane.showInputDialog(null, "Nombre:");
+                    if (nombre == null) return;
+                    String apellido = JOptionPane.showInputDialog(null, "Apellido:");
+                    if (apellido == null) return;
+                    String correo = JOptionPane.showInputDialog(null, "Correo:");
+                    if (correo == null) return;
+                    String password = JOptionPane.showInputDialog(null, "Contraseña (texto plano):");
+                    if (password == null) return;
+
+                    Nutriologo nuevo = new Nutriologo();
+                    nuevo.setClaveNutriologo(usuario);
+                    nuevo.setNombre(nombre);
+                    nuevo.setApellido(apellido);
+                    nuevo.setCorreo(correo);
+
+                    boolean creado = modelo.crearNutriologo(nuevo, password);
+                    if (creado) {
+                        JOptionPane.showMessageDialog(null,
+                                "Nutriólogo creado correctamente. Inicia sesión de nuevo.",
+                                "Creación exitosa",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                                "No se pudo crear el nutriólogo. Revisa el log.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                break;
+
+            case ERROR:
+            default:
+                JOptionPane.showMessageDialog(null,
+                        "Ocurrió un error verificando las credenciales. Revisa el log.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                break;
+        }
+    }
+
     @Override
     public void update() {
+        // recibir notificaciones del modelo si se requiere
     }
 }
