@@ -9,6 +9,8 @@ import Modelo.POJOs.*;
 import Modelo.Servicios.*;
 
 public class NutriNubeModelo {
+	
+    public enum LoginEstado { SUCCESS, WRONG_PASSWORD, NOT_FOUND, ERROR }
     private Set<Observer> observers;
     private NutriologoDAO nutriologoDAO;
     private PacienteDAO pacienteDAO;
@@ -45,20 +47,82 @@ public class NutriNubeModelo {
         }
     }
 
-    public boolean login(String claveNutriologo, String contrasena) {
+    /**
+     * Comprueba el estado del login sin alterar estado del modelo.
+     * Devuelve SUCCESS, WRONG_PASSWORD o NOT_FOUND (o ERROR en excepción).
+     */
+    public LoginEstado obtenerEstadoLogin(String claveNutriologo, String contrasena) {
         try {
             Nutriologo n = nutriologoDAO.leerPorClave(claveNutriologo);
-            if (n != null && HashingServicio.verificarContrasena(contrasena, n.getSaltContrasena(), n.getHashContrasena())) {
-                this.nutriologoActual = n;
+            if (n == null) return LoginEstado.NOT_FOUND;
+
+            // verificamos usando hashingServicio
+            boolean ok = HashingServicio.verificarContrasena(contrasena, n.getSaltContrasena(), n.getHashContrasena());
+            return ok ? LoginEstado.SUCCESS : LoginEstado.WRONG_PASSWORD;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return LoginEstado.ERROR;
+        }
+    }
+
+    /**
+     * Realiza el login: si existe y la contraseña coincide, guarda el nutriólogo
+     * en memoria del modelo y notifica observers.
+     *
+     * @return true si login exitoso
+     */
+    public boolean login(String claveNutriologo, String contrasena) {
+        LoginEstado estado = obtenerEstadoLogin(claveNutriologo, contrasena);
+
+        if (estado == LoginEstado.SUCCESS) {
+            try {
+                this.nutriologoActual = nutriologoDAO.leerPorClave(claveNutriologo);
                 this.pacienteSeleccionado = null;
                 this.consultaSeleccionada = null;
                 notifyObservers("LOGIN_SUCCESS");
                 return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Indica si existe el nutriólogo con la clave dada.
+     */
+    public boolean nutriologoExiste(String claveNutriologo) {
+        try {
+            return nutriologoDAO.leerPorClave(claveNutriologo) != null;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
+    }
+
+    /**
+     * Crea un nuevo nutriólogo. Nota: en tu DAO la inserción ya hace hashing si
+     * esa es la implementación que tienes; por eso aquí delegamos directamente.
+     *
+     * @param n Nutriologo (los campos básicos). Se espera que pasen contraseña en getHashContrasena()
+     *          si tu DAO está implementado para hashear ese campo; si no, deberíamos hashearlo aquí.
+     */
+    public boolean crearNutriologo(Nutriologo n, String contrasenaEnTextoPlano) {
+        try {
+            // según tu implementación previa, el DAO hash-ea antes de guardar.
+            // Para ser compatible con la versión que viste, metemos la contraseña plana
+            // en el campo hashContrasena para que el DAO haga el hasheo.
+            n.setHashContrasena(contrasenaEnTextoPlano);
+            nutriologoDAO.insertar(n);
+            notifyObservers("NUTRIOLOGO_CREATED");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void logout() {
