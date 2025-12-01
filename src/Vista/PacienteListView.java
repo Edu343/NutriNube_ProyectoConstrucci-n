@@ -5,6 +5,7 @@ import Modelo.Core.View;
 
 import Controlador.PacienteListController;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -40,21 +41,21 @@ public class PacienteListView extends View {
             myController.handleAnadirPaciente(null));
         
         pacienteLayout.getBtnEliminar().addActionListener(e -> {
-            int selectedRow = pacienteLayout.getTablePacientes().getSelectedRow();
+            int selectedRow = pacienteLayout.getTablaPacientes().getSelectedRow();
             if (selectedRow != -1) {
-                String clavePaciente = (String) pacienteLayout.getTablePacientes().getValueAt(selectedRow, 0);
+                String clavePaciente = (String) pacienteLayout.getTablaPacientes().getValueAt(selectedRow, 0);
                 myController.handleEliminarPaciente(clavePaciente);
             }
         });
         
-        pacienteLayout.getTablePacientes().addMouseListener(new MouseAdapter() {
+        pacienteLayout.getTablaPacientes().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     JTable target = (JTable)e.getSource();
                     int row = target.getSelectedRow();
                     if (row != -1) {
-                        String clavePaciente = (String) pacienteLayout.getTablePacientes().getValueAt(row, 0);
+                        String clavePaciente = (String) pacienteLayout.getTablaPacientes().getValueAt(row, 0);
                         myController.handlePacienteSeleccionado(clavePaciente);
                     }
                 }
@@ -72,6 +73,10 @@ public class PacienteListView extends View {
     
     @Override
     public void display() {
+        if (myModel.getNutriologoActual() != null) {
+            String nombreCompleto = myModel.getNutriologoActual().getNombre() + " " + myModel.getNutriologoActual().getApellido();
+            pacienteLayout.setNombreNutriologo(nombreCompleto);
+        }
         cargarTablaPacientes();
     }
     
@@ -84,21 +89,38 @@ public class PacienteListView extends View {
                 e.printStackTrace();
             }
             
-            DefaultTableModel model = (DefaultTableModel) pacienteLayout.getTablePacientes().getModel();
+            DefaultTableModel model = (DefaultTableModel) pacienteLayout.getTablaPacientes().getModel();
             model.setRowCount(0);
             
-            for (Paciente p : pacientes) {
-                Object[] row = {
-                    p.getClavePaciente(),
-                    p.getNombre() + " " + p.getApellido(),
-                    "N/A"
-                };
-                model.addRow(row);
+            if (pacientes != null) {
+                for (Paciente paciente : pacientes) {
+                    String ultimaFecha = "Sin historial";
+                    try {
+                        String fechaBD = myModel.getConsultaDAO().obtenerUltimaFechaPorPaciente(paciente.getClavePaciente());
+                        if (fechaBD != null && !fechaBD.equals("Sin historial")) {
+                            ultimaFecha = fechaBD;
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    Object[] row = {
+                        paciente.getClavePaciente(),
+                        paciente.getNombre() + " " + paciente.getApellido(),
+                        ultimaFecha
+                    };
+                    model.addRow(row);
+                }
             }
         }
+        
+        SwingUtilities.invokeLater(() -> {
+            
+            pacienteLayout.getTablaPacientes().revalidate();
+            pacienteLayout.getTablaPacientes().repaint();
+        });
     }
     
     public JTable getTblPacientes() {
-        return pacienteLayout.getTablePacientes();
+        return pacienteLayout.getTablaPacientes();
     }
 }

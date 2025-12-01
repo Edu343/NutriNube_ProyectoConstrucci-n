@@ -9,7 +9,6 @@ public class NutricionServicio {
 	public static final int SEXO_HOMBRE = 1;
     public static final int SEXO_MUJER = 0;
 
-    // MODIFICADO: Acepta sexo, altura, y fechaNacimiento como parámetros, no como objeto Paciente
     public double calcularCalorias(CaloriasCalculo datos, int sexo, double altura, String fechaNacimiento) {
         
         int edad = calcularEdad(fechaNacimiento);
@@ -41,17 +40,14 @@ public class NutricionServicio {
         if (fechaNacimiento == null || fechaNacimiento.isEmpty()) return 0;
         
         try {
-            // Asume formato YYYY-MM-DD del JDateChooser
             java.time.LocalDate fechaNac = java.time.LocalDate.parse(fechaNacimiento);
             java.time.LocalDate hoy = java.time.LocalDate.now();
             
-            // Calcula la diferencia de años
             int edad = java.time.Period.between(fechaNac, hoy).getYears();
             return edad;
             
         } catch (java.time.format.DateTimeParseException e) {
-            // Fallback si todavía se recibe solo el año (YYYY)
-            // Ya que se está usando el JDateChooser, este fallback debería ser raro
+            
             try {
                 int anioNacimiento = Integer.parseInt(fechaNacimiento);
                 int anioActual = java.time.LocalDate.now().getYear();
