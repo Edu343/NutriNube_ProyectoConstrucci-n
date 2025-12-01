@@ -17,6 +17,21 @@ public class Paciente extends Persona {
         super();
     }
 
+    public Paciente(String clavePaciente, String claveNutriologo, String nombre, String apellido, 
+                    String correo, int sexo, String telefono, String fechaNacimiento, double altura) {
+        super();
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.correo = correo;
+        
+        this.clavePaciente = clavePaciente;
+        this.claveNutriologo = claveNutriologo;
+        this.sexo = sexo;
+        this.telefono = telefono;
+        this.fechaNacimiento = fechaNacimiento;
+        this.altura = altura;
+    }
+
     public String getClavePaciente() {
         return clavePaciente;
     }
