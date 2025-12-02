@@ -9,9 +9,10 @@ import java.sql.SQLException;
  * Administra la conexión a la base de datos SQLite y define
  * métodos CRUD comunes que deben implementar las clases hijas.
  */
+
 public abstract class DatabaseManager {
 
-    private static final String DATABASE_URL = "jdbc:sqlite:NutriNube.db";
+    private static final String DATABASE_URL = "jdbc:sqlite:C:/Users/peter/eclipse-workspace/NutriNibe/src/NutriNube.db";
 
     /**
      * Proporciona la conexión activa hacia la base de datos.

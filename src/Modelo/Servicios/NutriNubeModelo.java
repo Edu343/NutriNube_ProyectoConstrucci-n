@@ -417,7 +417,7 @@ public class NutriNubeModelo {
     public Validaciones getValidacionServicio() {
         return validacionServicio;
     }
-
+    
     public MacronutrientesServicio getMacronutrientesServicio() {
         return macronutrientesServicio;
     }
@@ -468,5 +468,21 @@ public class NutriNubeModelo {
 
     public void setMacronutrientesServicio(MacronutrientesServicio macronutrientesServicio) {
         this.macronutrientesServicio = macronutrientesServicio;
+    }
+
+    public void setNutriologoActual(Nutriologo nutriologoActual) {
+        this.nutriologoActual = nutriologoActual;
+    }
+
+    public void setPacienteSeleccionado(Paciente pacienteSeleccionado) {
+        this.pacienteSeleccionado = pacienteSeleccionado;
+    }
+
+    public void setConsultaSeleccionada(Consulta consultaSeleccionada) {
+        this.consultaSeleccionada = consultaSeleccionada;
+    }
+    
+    public List<Consulta> obtenerConsultasPorPacienteYFecha(String clavePaciente, String fecha) throws SQLException {
+        return this.getConsultaDAO().leerPorPacienteYFecha(clavePaciente, fecha);
     }
 }

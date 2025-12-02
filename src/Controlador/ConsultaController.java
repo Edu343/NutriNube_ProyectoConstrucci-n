@@ -72,7 +72,7 @@ public class ConsultaController extends Controller {
 
             String returnViewTag = ((ConsultaFormularioView) myView).getViewAnteriorTag();
 
-            if (returnViewTag.equals(myModel.PACIENTES_VIEW_TAG)) {
+            if (returnViewTag.equals("PACIENTES")) {
                 cambiarVista(returnViewTag, null);
             } else {
                 String claveRetorno = clavePaciente;
