@@ -2,10 +2,13 @@ package Modelo.Servicios;
 
 import Modelo.POJOs.MetaNutricional;
 
+/**
+ * Factoría para obtener instancias de MetaNutricional
+ * basadas en opciones predefinidas.
+ */
 
 public class MetaFactory {
 
-    
     public static MetaNutricional obtenerMeta(int opcion) {
         switch (opcion) {
             case 1: // Disminuir grasa

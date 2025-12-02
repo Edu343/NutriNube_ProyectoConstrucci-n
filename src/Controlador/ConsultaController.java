@@ -5,6 +5,13 @@ import javax.swing.JOptionPane;
 import Modelo.Core.Controller;
 import Modelo.Core.MainViewLayout;
 
+/**
+ * Controlador para manejar la lógica del formulario de consulta.
+ * Gestiona la adición y edición de consultas, el cálculo de calorías y
+ * macronutrientes,
+ * y la navegación entre vistas.
+ */
+
 public class ConsultaController extends Controller {
 
     public static final String MODO_AGREGAR = "AGREGAR";

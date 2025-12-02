@@ -3,7 +3,12 @@ package Modelo.Servicios;
 import Modelo.POJOs.Macronutrientes;
 import Modelo.POJOs.MetaNutricional;
 
-
+/**
+ * Servicio responsable de calcular la distribución de macronutrientes
+ * (carbohidratos, proteínas y lípidos) en gramos a partir de las calorías
+ * totales
+ * y una configuración de meta nutricional.
+ */
 public class MacronutrientesServicio {
 
     public Macronutrientes dividirCalorias(double caloriasTotales, MetaNutricional meta) {
@@ -12,11 +17,10 @@ public class MacronutrientesServicio {
         double caloriasLip = caloriasTotales * meta.getLipidosObjetivo();
         double caloriasProt = caloriasTotales * meta.getProteinasObjetivo();
 
-        //Convertir calorías a gramos
-        double gramosCho = caloriasCho / 4.0;   // carbohidratos → 4 kcal/g
+        // Convertir calorías a gramos
+        double gramosCho = caloriasCho / 4.0; // carbohidratos → 4 kcal/g
         double gramosProt = caloriasProt / 4.0; // proteína → 4 kcal/g
-        double gramosLip = caloriasLip / 9.0;   // grasas → 9 kcal/g
-
+        double gramosLip = caloriasLip / 9.0; // grasas → 9 kcal/g
 
         Macronutrientes macros = new Macronutrientes();
         macros.setCarbohidratos(gramosCho);

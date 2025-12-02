@@ -4,8 +4,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+//vista de la lista de pacientes del nutriologo
 public class PacienteListViewLayout extends JPanel {
-    
+
     // Colores principales
     private static final Color HEADER_COLOR = new Color(44, 54, 73); // Azul oscuro
     private static final Color TEXT_COLOR = Color.BLACK;
@@ -19,12 +20,12 @@ public class PacienteListViewLayout extends JPanel {
     private JButton btnAgregar;
     private JButton btnEliminar;
     private JButton btnLogout;
-    
+
     // NUEVO: Etiqueta para el nombre del nutriólogo
     private JLabel lblSubtituloNutriologo;
 
     public PacienteListViewLayout() {
-        
+
         setSize(900, 600);
 
         setLayout(new BorderLayout());
@@ -77,7 +78,7 @@ public class PacienteListViewLayout extends JPanel {
         lblTitulo.setForeground(TEXT_COLOR);
         lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
         mainPanel.add(lblTitulo);
-        
+
         // NUEVO: Subtítulo para el Nutriólogo
         lblSubtituloNutriologo = new JLabel("Nutriólogo: ");
         lblSubtituloNutriologo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -88,7 +89,7 @@ public class PacienteListViewLayout extends JPanel {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 25))); // espacio debajo del título
 
         // Panel superior (buscador + botones)
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); 
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         topPanel.setBackground(BACKGROUND_COLOR);
         topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -102,9 +103,9 @@ public class PacienteListViewLayout extends JPanel {
         txtBuscar.setForeground(Color.GRAY);
         searchPanel.add(new JLabel(" 🔍 "), BorderLayout.WEST);
         searchPanel.add(txtBuscar, BorderLayout.CENTER);
-        
-        searchPanel.setPreferredSize(new Dimension(200, 30)); 
-        
+
+        searchPanel.setPreferredSize(new Dimension(200, 30));
+
         topPanel.add(searchPanel);
 
         // Botones a la derecha
@@ -116,7 +117,7 @@ public class PacienteListViewLayout extends JPanel {
 
         buttonPanel.add(btnAgregar);
         buttonPanel.add(btnEliminar);
-        
+
         topPanel.add(buttonPanel);
 
         mainPanel.add(topPanel);
@@ -131,7 +132,7 @@ public class PacienteListViewLayout extends JPanel {
                 return false;
             }
         };
-        
+
         // Agregamos las columnas para que la tabla se dibuje correctamente
         modelo.addColumn("Clave");
         modelo.addColumn("Nombre Completo");
@@ -145,14 +146,13 @@ public class PacienteListViewLayout extends JPanel {
         tablePacientes.setFillsViewportHeight(true);
         tablePacientes.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
 
-       
         tablePacientes.getTableHeader().setReorderingAllowed(false);
         tablePacientes.getTableHeader().setResizingAllowed(false);
 
         JScrollPane scrollTabla = new JScrollPane(tablePacientes);
         scrollTabla.setBorder(BorderFactory.createEmptyBorder());
         scrollTabla.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scrollTabla.setPreferredSize(new Dimension(800, 300)); 
+        scrollTabla.setPreferredSize(new Dimension(800, 300));
 
         mainPanel.add(scrollTabla);
 
@@ -213,7 +213,7 @@ public class PacienteListViewLayout extends JPanel {
     public JPanel getPanel() {
         return this;
     }
-    
+
     // NUEVO: Método para actualizar el nombre del nutriólogo desde la vista
     public void setNombreNutriologo(String nombre) {
         this.lblSubtituloNutriologo.setText("Nutriólogo: " + nombre);
