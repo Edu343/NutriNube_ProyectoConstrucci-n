@@ -2,18 +2,18 @@ package Modelo.Servicios;
 
 import Modelo.POJOs.CaloriasCalculo;
 
-import Modelo.POJOs.Paciente;
 
-	
 
 public class NutricionServicio {
 	
 	public static final int SEXO_HOMBRE = 1;
     public static final int SEXO_MUJER = 0;
 
-    public double calcularCalorias(CaloriasCalculo datos, Paciente paciente) {
-        double tmr = calcularTmr(datos.getPeso(), calcularEdad(paciente.getFechaNacimiento()), 
-                                 paciente.getAltura(), paciente.getSexo());
+    public double calcularCalorias(CaloriasCalculo datos, int sexo, double altura, String fechaNacimiento) {
+        
+        int edad = calcularEdad(fechaNacimiento);
+        
+        double tmr = calcularTmr(datos.getPeso(), edad, altura, sexo);
         
         double factorActividad = obtenerFactorActividad(datos.getNivelActividadFisica());
         double totalCalorias = tmr * factorActividad;
@@ -36,10 +36,26 @@ public class NutricionServicio {
         return tmrBase;
     }
     
-    private int calcularEdad(String fechaNacimiento) {
-        int anioNacimiento = Integer.parseInt(fechaNacimiento);
-        int anioActual = java.time.LocalDate.now().getYear();
-        return anioActual - anioNacimiento;
+    public int calcularEdad(String fechaNacimiento) {
+        if (fechaNacimiento == null || fechaNacimiento.isEmpty()) return 0;
+        
+        try {
+            java.time.LocalDate fechaNac = java.time.LocalDate.parse(fechaNacimiento);
+            java.time.LocalDate hoy = java.time.LocalDate.now();
+            
+            int edad = java.time.Period.between(fechaNac, hoy).getYears();
+            return edad;
+            
+        } catch (java.time.format.DateTimeParseException e) {
+            
+            try {
+                int anioNacimiento = Integer.parseInt(fechaNacimiento);
+                int anioActual = java.time.LocalDate.now().getYear();
+                return anioActual - anioNacimiento;
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
+        }
     }
     
     private double obtenerFactorActividad(int nivel) {
@@ -51,7 +67,6 @@ public class NutricionServicio {
             case 3: // Pesado
                 return 1.3;
             default:
-                // Se podría manejar con un valor por defecto o lanzar una excepción
                 return 1.0; 
         }
     }

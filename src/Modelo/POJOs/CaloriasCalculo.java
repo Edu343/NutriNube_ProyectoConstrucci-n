@@ -14,6 +14,13 @@ public class CaloriasCalculo {
     public CaloriasCalculo() {
     }
 
+    public CaloriasCalculo(double peso, int actividad, int razon, double calorias) {
+        this.peso = peso;
+        this.nivelActividadFisica = actividad;
+        this.razonConsulta = razon;
+        this.calorias = calorias;
+    }
+
     public double getPeso() {
         return peso;
     }

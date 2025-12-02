@@ -206,7 +206,7 @@ public class ConsultaFormularioView extends View {
 
 
     @Override
-    public void loadData(Object data) {
+    public void cargarDatos(Object data) {
         // Carga el modo de operación y el tag de la vista de retorno.
         if (data instanceof Map) {
             Map<?, ?> dataMap = (Map<?, ?>) data;

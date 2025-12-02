@@ -5,8 +5,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PacienteListViewLayout extends JPanel {
-
-	
+    
     // Colores principales
     private static final Color HEADER_COLOR = new Color(44, 54, 73); // Azul oscuro
     private static final Color TEXT_COLOR = Color.BLACK;
@@ -20,6 +19,9 @@ public class PacienteListViewLayout extends JPanel {
     private JButton btnAgregar;
     private JButton btnEliminar;
     private JButton btnLogout;
+    
+    // NUEVO: Etiqueta para el nombre del nutriólogo
+    private JLabel lblSubtituloNutriologo;
 
     public PacienteListViewLayout() {
         
@@ -36,16 +38,22 @@ public class PacienteListViewLayout extends JPanel {
         JLabel lblLogo = new JLabel();
         lblLogo.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
         ImageIcon iconLogo = new ImageIcon("NutriNube.png");
-        Image scaledLogo = iconLogo.getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
-        lblLogo.setIcon(new ImageIcon(scaledLogo));
+        // Verificación básica para evitar errores si no carga la imagen
+        if (iconLogo.getIconWidth() > 0) {
+            Image scaledLogo = iconLogo.getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
+            lblLogo.setIcon(new ImageIcon(scaledLogo));
+        } else {
+            lblLogo.setText("NutriNube");
+            lblLogo.setForeground(Color.WHITE);
+        }
         headerPanel.add(lblLogo, BorderLayout.WEST);
 
-        // Botón "Pacientes" con ícono de estetoscopio
+        // Centro (vacío o menú)
         JPanel centerMenu = new JPanel();
         centerMenu.setBackground(HEADER_COLOR);
         headerPanel.add(centerMenu, BorderLayout.CENTER);
 
-        // Botón Log Out (misma apariencia que btnPacientes)
+        // Botón Log Out
         btnLogout = new JButton("Log Out");
         btnLogout.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         btnLogout.setForeground(Color.WHITE);
@@ -69,6 +77,13 @@ public class PacienteListViewLayout extends JPanel {
         lblTitulo.setForeground(TEXT_COLOR);
         lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
         mainPanel.add(lblTitulo);
+        
+        // NUEVO: Subtítulo para el Nutriólogo
+        lblSubtituloNutriologo = new JLabel("Nutriólogo: ");
+        lblSubtituloNutriologo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblSubtituloNutriologo.setForeground(Color.GRAY);
+        lblSubtituloNutriologo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        mainPanel.add(lblSubtituloNutriologo);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 25))); // espacio debajo del título
 
@@ -108,24 +123,19 @@ public class PacienteListViewLayout extends JPanel {
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 30))); // más espacio antes de la tabla
 
-        // --- Tabla de pacientes ---
-        String[] columnas = { "Clave", "Nombre", "Última Visita" };
-        Object[][] datos = {
-                { "FIG-123", "Jorge Vazquez", "Dec 5" },
-                { "FIG-122", "Angel Del Rio", "Dec 5" },
-                { "FIG-120", "Manuel Matos", "Dec 5" },
-                { "FIG-119", "Mauricio Moreno", "Dec 5" },
-                { "FIG-118", "Peter Parker", "Dec 5" }
-        };
-
-        // 🚨 MODIFICACIÓN CLAVE: Se crea un modelo de tabla anónimo que anula isCellEditable
-        DefaultTableModel modelo = new DefaultTableModel(datos, columnas) {
+        // NUEVO: Modelo de tabla con columnas definidas
+        DefaultTableModel modelo = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Esto hace que todas las celdas de la tabla NO sean editables.
                 return false;
             }
         };
+        
+        // Agregamos las columnas para que la tabla se dibuje correctamente
+        modelo.addColumn("Clave");
+        modelo.addColumn("Nombre Completo");
+        modelo.addColumn("Última Visita");
 
         tablePacientes = new JTable(modelo);
         tablePacientes.setRowHeight(28);
@@ -135,14 +145,14 @@ public class PacienteListViewLayout extends JPanel {
         tablePacientes.setFillsViewportHeight(true);
         tablePacientes.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
 
-        // 🔒 Fijar columnas
+       
         tablePacientes.getTableHeader().setReorderingAllowed(false);
         tablePacientes.getTableHeader().setResizingAllowed(false);
 
         JScrollPane scrollTabla = new JScrollPane(tablePacientes);
         scrollTabla.setBorder(BorderFactory.createEmptyBorder());
         scrollTabla.setAlignmentX(Component.LEFT_ALIGNMENT);
-        scrollTabla.setPreferredSize(new Dimension(800, 300)); // altura inicial estable
+        scrollTabla.setPreferredSize(new Dimension(800, 300)); 
 
         mainPanel.add(scrollTabla);
 
@@ -160,7 +170,7 @@ public class PacienteListViewLayout extends JPanel {
         return btn;
     }
 
-    public JTable getTablePacientes() {
+    public JTable getTablaPacientes() {
         return tablePacientes;
     }
 
@@ -202,5 +212,10 @@ public class PacienteListViewLayout extends JPanel {
 
     public JPanel getPanel() {
         return this;
+    }
+    
+    // NUEVO: Método para actualizar el nombre del nutriólogo desde la vista
+    public void setNombreNutriologo(String nombre) {
+        this.lblSubtituloNutriologo.setText("Nutriólogo: " + nombre);
     }
 }

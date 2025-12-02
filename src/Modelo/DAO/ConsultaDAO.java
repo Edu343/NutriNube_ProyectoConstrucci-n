@@ -41,7 +41,7 @@ public class ConsultaDAO extends DatabaseManager {
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             // ---- Claves y datos generales ----
-            statement.setInt(1, Integer.parseInt(consulta.getClaveConsulta()));
+            statement.setString(1,consulta.getClaveConsulta());
             statement.setString(2, consulta.getClavePaciente());
             statement.setString(3, consulta.getClaveNutriologo());
             statement.setString(4, consulta.getFechaVisita());
@@ -133,7 +133,7 @@ public class ConsultaDAO extends DatabaseManager {
             statement.setDouble(22, consulta.getMacronutrientes().getProteinas());
             statement.setDouble(23, consulta.getMacronutrientes().getLipidos());
             
-            statement.setInt(24, Integer.parseInt( consulta.getClaveConsulta() ));
+            statement.setString(24, consulta.getClaveConsulta());
 
             statement.executeUpdate();
         }
@@ -242,4 +242,80 @@ public class ConsultaDAO extends DatabaseManager {
         return lista;
     }
 
+    public String obtenerUltimaFechaPorPaciente(String clavePaciente) throws SQLException {
+        String fecha = "Sin historial";
+        
+        String sql = "SELECT fecha FROM consulta WHERE clavePaciente = ? ORDER BY fecha DESC LIMIT 1";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, clavePaciente);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                fecha = rs.getString("fecha");
+            }
+        }
+        return fecha;
+    }
+
+
+    public Consulta obtenerUltimaConsultaObjeto(String clavePaciente) throws SQLException {
+        // Ordenamos por fecha descendente y tomamos 1
+        String sql = "SELECT * FROM consulta WHERE clavePaciente = ? ORDER BY fecha DESC LIMIT 1";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, clavePaciente);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (!resultSet.next()) {
+                return null;
+            }
+            
+            // Reutilizamos la lógica de lectura que ya tienes en leerPorClave
+            // Nota: Para no duplicar código, lo ideal sería extraer esto a un método privado "mapResultSetToConsulta",
+            // pero para ser prácticos, copiamos la lógica de mapeo de 'leerPorClave' aquí:
+            
+            String claveConsulta = resultSet.getString("claveConsulta");
+            Consulta consulta = new Consulta();
+            consulta.setClaveConsulta(claveConsulta);
+            consulta.setClavePaciente(resultSet.getString("clavePaciente"));
+            consulta.setClaveNutriologo(resultSet.getString("claveNutriologo"));
+            consulta.setFechaVisita(resultSet.getString("fecha"));
+            consulta.setEdad(resultSet.getInt("edad"));
+            consulta.setAltura(resultSet.getDouble("altura"));
+
+            CaloriasCalculo calorias = new CaloriasCalculo();
+            calorias.setPeso(resultSet.getDouble("peso"));
+            calorias.setCalorias(resultSet.getDouble("calorias"));
+            calorias.setNivelActividadFisica(resultSet.getInt("nivelActividadFisica"));
+            calorias.setRazonConsulta(resultSet.getInt("razonConsulta"));
+            consulta.setTotalCalorias(calorias);
+
+            Macronutrientes macros = new Macronutrientes();
+            macros.setCarbohidratos(resultSet.getDouble("carbohidratos"));
+            macros.setProteinas(resultSet.getDouble("proteinas"));
+            macros.setLipidos(resultSet.getDouble("lipidos"));
+            consulta.setMacronutrientes(macros);
+
+            AnamnesisData anamnesis = new AnamnesisData();
+            anamnesis.setCondicionesMedicas(resultSet.getString("condicionesMedicas"));
+            anamnesis.setMedicacion(resultSet.getString("medicacion"));
+            anamnesis.setHistorialCirugias(resultSet.getString("historialCirugias"));
+            anamnesis.setAlergias(resultSet.getString("alergias"));
+            anamnesis.setPreferenciaComida(resultSet.getString("preferenciaComida"));
+            anamnesis.setHorarioSueno(resultSet.getString("horarioSueno"));
+            anamnesis.setNivelEstres(resultSet.getInt("nivelEstres"));
+            anamnesis.setHabitoAlimenticio(resultSet.getString("habitosAlimenticios"));
+            anamnesis.setTipoLiquidoConsumido(resultSet.getString("tipoLiquidos"));
+            anamnesis.setCantidadLiquidoConsumido(resultSet.getDouble("cantidadLiquidos"));
+            anamnesis.setBarreraAlimenticia(resultSet.getString("dificultades"));
+            consulta.setAnamnesisData(anamnesis);
+
+            return consulta;
+        }
+    }
 }

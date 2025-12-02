@@ -1,16 +1,22 @@
 package Modelo.Servicios;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import Modelo.Core.Observer;
 import Modelo.DAO.*;
 import Modelo.POJOs.*;
-import Modelo.Servicios.*;
+import java.time.LocalDate;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class NutriNubeModelo {
 	
     public enum LoginEstado { SUCCESS, WRONG_PASSWORD, NOT_FOUND, ERROR }
+
+    
     private Set<Observer> observers;
     private NutriologoDAO nutriologoDAO;
     private PacienteDAO pacienteDAO;
@@ -44,6 +50,12 @@ public class NutriNubeModelo {
         for (Observer observer : observers) {
                     observer.update();
             
+        }
+    }
+
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update();
         }
     }
 
@@ -189,6 +201,198 @@ public class NutriNubeModelo {
             this.consultaSeleccionada = null;
         }
     }
+
+    public Consulta obtenerConsultaSeleccionada(String claveConsulta) throws SQLException {
+        this.consultaSeleccionada = consultaDAO.leerPorClave(claveConsulta);
+        return this.consultaSeleccionada; 
+    }
+
+
+    public void calcularCaloriasYMacronutrientes(String clavePaciente, double peso, int nivelActividadFisica, int razonConsulta,
+                                                 int sexo, double altura, String fechaNacimiento) throws Exception {
+        
+        String fechaNac = fechaNacimiento;
+        int s = sexo;
+        double alt = altura;
+        
+        if (clavePaciente != null && !clavePaciente.isEmpty()) {
+            // Si el paciente EXISTE, usamos los datos demográficos almacenados
+            Paciente paciente = pacienteDAO.leerPorClave(clavePaciente);
+            if (paciente != null) {
+                fechaNac = paciente.getFechaNacimiento();
+                s = paciente.getSexo();
+                alt = paciente.getAltura();
+            } else {
+                 throw new Exception("Paciente no encontrado para el cálculo.");
+            }
+        }
+        
+        CaloriasCalculo calculoData = new CaloriasCalculo();
+        calculoData.setPeso(peso);
+        calculoData.setNivelActividadFisica(nivelActividadFisica);
+        calculoData.setRazonConsulta(razonConsulta);
+        
+        double caloriasTotales = nutricionServicio.calcularCalorias(calculoData, s, alt, fechaNac);
+        calculoData.setCalorias(caloriasTotales);
+        
+        MetaNutricional meta = MetaFactory.obtenerMeta(razonConsulta);
+        
+        Macronutrientes macros = macronutrientesServicio.dividirCalorias(caloriasTotales, meta);
+        
+        if (this.consultaSeleccionada == null) {
+            this.consultaSeleccionada = new Consulta();
+            this.consultaSeleccionada.setClavePaciente(clavePaciente); // Puede ser null, pero se establece al guardar
+            this.consultaSeleccionada.setClaveNutriologo(this.nutriologoActual.getClaveNutriologo());
+        }
+        this.consultaSeleccionada.setTotalCalorias(calculoData);
+        this.consultaSeleccionada.setMacronutrientes(macros);
+        
+        notifyObservers();
+    }
+
+    public void calcularCaloriasYMacronutrientes(String clavePaciente, double peso, int nivelActividadFisica, int razonConsulta) throws Exception {
+        Paciente paciente = pacienteDAO.leerPorClave(clavePaciente);
+        if (paciente == null) {
+            throw new Exception("Debe seleccionar un paciente y completar los campos demográficos.");
+        }
+        calcularCaloriasYMacronutrientes(clavePaciente, peso, nivelActividadFisica, razonConsulta, 
+                                         paciente.getSexo(), paciente.getAltura(), paciente.getFechaNacimiento());
+    }
+
+    public void guardarNuevoPacienteYConsulta(String claveNutriologo, String nombre, String apellido, String correo, int sexo, String telefono, String fechaNacimiento, double altura,
+            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
+            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
+            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
+            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
+            double proteinas, double lipidos) throws Exception {
+        
+        Paciente nuevoPaciente = crearPaciente(claveNutriologo, nombre, apellido, correo, sexo, telefono, fechaNacimiento, altura);
+        if (!validacionServicio.isValidPaciente(nuevoPaciente)) {
+            throw new Exception("Datos de paciente incompletos o inválidos.");
+        }
+        
+        Consulta nuevaConsulta = crearConsulta(null, nuevoPaciente.getClavePaciente(), claveNutriologo, condicionesMedicas, medicacion, historialCirugias, alergias,
+            preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia,
+            peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+        
+        if (!validacionServicio.isValidConsulta(nuevaConsulta)) {
+            throw new Exception("Datos de la primera consulta incompletos o inválidos.");
+        }
+        
+        pacienteDAO.insertar(nuevoPaciente);
+        consultaDAO.insertar(nuevaConsulta);
+
+        this.pacienteSeleccionado = null;
+        this.consultaSeleccionada = null;
+        notifyObservers();
+    }
+
+
+    public void guardarNuevaConsulta(String clavePaciente, String claveNutriologo, 
+            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
+            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
+            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
+            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
+            double proteinas, double lipidos) throws Exception {
+        
+        Consulta nuevaConsulta = crearConsulta(null, clavePaciente, claveNutriologo, condicionesMedicas, medicacion, historialCirugias, alergias,
+            preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia,
+            peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+        
+        consultaDAO.insertar(nuevaConsulta);
+        this.consultaSeleccionada = null;
+        notifyObservers();
+    }
+
+    public void actualizarConsulta(String claveConsulta, String clavePaciente, String claveNutriologo, 
+            String nombre, String apellido, String correo, int sexo, String telefono, String fechaNacimiento, double altura,
+            // ------------------------------------------
+            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
+            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
+            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
+            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
+            double proteinas, double lipidos) throws Exception {
+        
+        Paciente pacienteActualizado = new Paciente();
+        pacienteActualizado.setClavePaciente(clavePaciente);
+        pacienteActualizado.setClaveNutriologo(claveNutriologo);
+        pacienteActualizado.setNombre(nombre);
+        pacienteActualizado.setApellido(apellido);
+        pacienteActualizado.setCorreo(correo);
+        pacienteActualizado.setSexo(sexo);
+        pacienteActualizado.setTelefono(telefono); 
+        pacienteActualizado.setFechaNacimiento(fechaNacimiento);
+        pacienteActualizado.setAltura(altura);
+        
+        pacienteDAO.actualizar(pacienteActualizado);
+
+        Consulta consultaEditada = crearConsulta(claveConsulta, clavePaciente, claveNutriologo, condicionesMedicas, medicacion, historialCirugias, alergias,
+            preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia,
+            peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+        
+        consultaDAO.actualizar(consultaEditada);
+
+        this.consultaSeleccionada = null;
+        notifyObservers();
+    }
+    
+   
+    private Paciente crearPaciente(String claveNutriologo, String nombre, String apellido, String correo, int sexo, String telefono, String fechaNacimiento, double altura) {
+        String clavePaciente = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        
+        return new Paciente(clavePaciente, claveNutriologo, nombre, apellido, correo, sexo, telefono, fechaNacimiento, altura);
+    }
+    
+    private Consulta crearConsulta(String claveConsulta, String clavePaciente, String claveNutriologo, 
+            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
+            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
+            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
+            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
+            double proteinas, double lipidos) throws Exception {
+        
+        if (claveConsulta == null || claveConsulta.isEmpty()) {
+            claveConsulta = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        }
+        
+        String fechaVisita = LocalDate.now().toString();
+        double alturaFinal = 0.0; 
+        int edadCalculada = 0;    
+
+        if (clavePaciente != null) {
+            Paciente pacienteNuevo = pacienteDAO.leerPorClave(clavePaciente);
+            if(pacienteNuevo != null) {
+                alturaFinal = pacienteNuevo.getAltura();
+                edadCalculada = nutricionServicio.calcularEdad(pacienteNuevo.getFechaNacimiento());
+            }
+        }
+        
+        AnamnesisData anamnesis = new AnamnesisData(condicionesMedicas, medicacion, historialCirugias, alergias, 
+                                                    preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, 
+                                                    tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia);
+                                                    
+        CaloriasCalculo calculo = new CaloriasCalculo(peso, nivelActividadFisica, razonConsulta, calorias);
+        
+        Macronutrientes macros = new Macronutrientes(carbohidratos, proteinas, lipidos);
+        
+        return new Consulta(claveConsulta, clavePaciente, claveNutriologo, fechaVisita, 
+                            edadCalculada, alturaFinal, anamnesis, calculo, macros);
+    }
+   
+
+    public List<Paciente> buscarPacientes(String criterio) {
+        try {
+            List<Paciente> lista = nutriologoDAO.obtenerListaPacientes(nutriologoActual.getClaveNutriologo());
+            if (lista == null) lista = new ArrayList<>();
+            if (criterio == null || criterio.trim().isEmpty()) return lista;
+            final String crit = criterio.trim().toLowerCase();
+            return lista.stream().filter(p -> {
+                String nombre = p.getNombre() == null ? "" : p.getNombre().toLowerCase();
+                String apellido = p.getApellido() == null ? "" : p.getApellido().toLowerCase();
+                return nombre.contains(crit) || apellido.contains(crit);
+            }).collect(Collectors.toList());
+        } catch (SQLException e) { return new ArrayList<>(); }
+    }
+    
 
     public NutriologoDAO getNutriologoDAO() {
         return nutriologoDAO;
