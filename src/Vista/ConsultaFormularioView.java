@@ -91,7 +91,57 @@ public class ConsultaFormularioView extends View {
 
         formularioLayout.getBtnGuardar().addActionListener(e -> {
             try {
-                guardarDatos();
+                String clavePaciente = (pacienteActual != null) ? pacienteActual.getClavePaciente() : null;
+        String claveConsulta = (consultaActual != null) ? consultaActual.getClaveConsulta() : null;
+
+        String nombre = formularioLayout.getTxtNombreField().getText();
+        String apellido = formularioLayout.getTxtApellidoField().getText();
+        String correo = formularioLayout.getTxtCorreoField().getText();
+        int sexo = formularioLayout.getCmbSexo().getSelectedIndex();
+        String telefonoStr = formularioLayout.getTxtTelefonoField().getText();
+        String fechaNacimiento = obtenerFechaNacimientoStr();
+
+        double altura = 0.0;
+        if (clavePaciente == null) {
+            altura = Double.parseDouble(formularioLayout.getAlturaField().getText());
+        } else {
+            altura = pacienteActual.getAltura();
+        }
+
+        String condicionesMedicas = formularioLayout.getTxtCondicionesMedicasField().getText();
+        String medicacion = formularioLayout.getTxtMedicacionField().getText();
+        String historialCirugias = formularioLayout.getTxtHistorialCirugias().getText();
+        String alergias = formularioLayout.getTxtAlergiasField().getText();
+        String preferenciaComida = formularioLayout.getPreferenciaComidaField().getText();
+        String horarioSueno = formularioLayout.getTxtHorarioSueno().getText();
+        int nivelEstres = formularioLayout.getCmbNivelEstres().getSelectedIndex();
+        String habitosAlimenticios = formularioLayout.getTxtHabitoAlimenticio().getText();
+        String tipoLiquidosConsumidos = formularioLayout.getTxtTipoLiquidoConsumido().getText();
+        double cantidadLiquidoConsumido = 0.0;
+        try {
+            cantidadLiquidoConsumido = Double.parseDouble(formularioLayout.getTxtCantidadLiquido().getText());
+        } catch (NumberFormatException e1) {
+        }
+
+        String barreraAlimenticia = formularioLayout.getTxtBarreraAlimenticia().getText();
+
+        double peso = Double.parseDouble(formularioLayout.getPesoField().getText());
+        int nivelActividadFisica = formularioLayout.getCmbNivelActividad().getSelectedIndex() + 1;
+        int razonConsulta = formularioLayout.getCmbRazonConsulta().getSelectedIndex() + 1;
+
+        double calorias = parseDoubleSafe(formularioLayout.getTxtCaloriasTotales().getText());
+        double carbohidratos = parseDoubleSafe(formularioLayout.getTxtCarbohidratos().getText());
+        double proteinas = parseDoubleSafe(formularioLayout.getTxtProteinas().getText());
+        double lipidos = parseDoubleSafe(formularioLayout.getTxtLipidos().getText());
+
+        String modo = formularioLayout.getModoActual();
+
+        myController.handleGuardarConsulta(
+                clavePaciente, claveConsulta, nombre, apellido, correo, sexo, telefonoStr, fechaNacimiento, altura,
+                condicionesMedicas, medicacion, historialCirugias, alergias, preferenciaComida, horarioSueno,
+                nivelEstres,
+                habitosAlimenticios, tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia,
+                peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos, modo);
             } catch (Exception ex) {
                 mostrarError("Error al intentar guardar: " + ex.getMessage());
                 ex.printStackTrace();
@@ -217,57 +267,7 @@ public class ConsultaFormularioView extends View {
     }
 
     private void guardarDatos() {
-        String clavePaciente = (pacienteActual != null) ? pacienteActual.getClavePaciente() : null;
-        String claveConsulta = (consultaActual != null) ? consultaActual.getClaveConsulta() : null;
-
-        String nombre = formularioLayout.getTxtNombreField().getText();
-        String apellido = formularioLayout.getTxtApellidoField().getText();
-        String correo = formularioLayout.getTxtCorreoField().getText();
-        int sexo = formularioLayout.getCmbSexo().getSelectedIndex();
-        String telefonoStr = formularioLayout.getTxtTelefonoField().getText();
-        String fechaNacimiento = obtenerFechaNacimientoStr();
-
-        double altura = 0.0;
-        if (clavePaciente == null) {
-            altura = Double.parseDouble(formularioLayout.getAlturaField().getText());
-        } else {
-            altura = pacienteActual.getAltura();
-        }
-
-        String condicionesMedicas = formularioLayout.getTxtCondicionesMedicasField().getText();
-        String medicacion = formularioLayout.getTxtMedicacionField().getText();
-        String historialCirugias = formularioLayout.getTxtHistorialCirugias().getText();
-        String alergias = formularioLayout.getTxtAlergiasField().getText();
-        String preferenciaComida = formularioLayout.getPreferenciaComidaField().getText();
-        String horarioSueno = formularioLayout.getTxtHorarioSueno().getText();
-        int nivelEstres = formularioLayout.getCmbNivelEstres().getSelectedIndex();
-        String habitosAlimenticios = formularioLayout.getTxtHabitoAlimenticio().getText();
-        String tipoLiquidosConsumidos = formularioLayout.getTxtTipoLiquidoConsumido().getText();
-        double cantidadLiquidoConsumido = 0.0;
-        try {
-            cantidadLiquidoConsumido = Double.parseDouble(formularioLayout.getTxtCantidadLiquido().getText());
-        } catch (NumberFormatException e) {
-        }
-
-        String barreraAlimenticia = formularioLayout.getTxtBarreraAlimenticia().getText();
-
-        double peso = Double.parseDouble(formularioLayout.getPesoField().getText());
-        int nivelActividadFisica = formularioLayout.getCmbNivelActividad().getSelectedIndex() + 1;
-        int razonConsulta = formularioLayout.getCmbRazonConsulta().getSelectedIndex() + 1;
-
-        double calorias = parseDoubleSafe(formularioLayout.getTxtCaloriasTotales().getText());
-        double carbohidratos = parseDoubleSafe(formularioLayout.getTxtCarbohidratos().getText());
-        double proteinas = parseDoubleSafe(formularioLayout.getTxtProteinas().getText());
-        double lipidos = parseDoubleSafe(formularioLayout.getTxtLipidos().getText());
-
-        String modo = formularioLayout.getModoActual();
-
-        myController.handleGuardarConsulta(
-                clavePaciente, claveConsulta, nombre, apellido, correo, sexo, telefonoStr, fechaNacimiento, altura,
-                condicionesMedicas, medicacion, historialCirugias, alergias, preferenciaComida, horarioSueno,
-                nivelEstres,
-                habitosAlimenticios, tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia,
-                peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos, modo);
+        
     }
 
     private void cargarDatosConsultaEnFormulario(Consulta c) {

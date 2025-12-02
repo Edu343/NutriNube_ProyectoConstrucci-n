@@ -38,7 +38,7 @@ public class PacienteListView extends View {
         this.mainPanel = pacienteLayout.getPanel();
         
         pacienteLayout.getBtnAgregar().addActionListener(e -> 
-            myController.handleAnadirPaciente(null));
+            myController.handleAnadirPaciente());
         
         pacienteLayout.getBtnEliminar().addActionListener(e -> {
             int selectedRow = pacienteLayout.getTablaPacientes().getSelectedRow();
