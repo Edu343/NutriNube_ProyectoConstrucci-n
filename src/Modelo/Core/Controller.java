@@ -43,7 +43,7 @@ public abstract class Controller implements Observer {
     	
     }
     	
-    public void handleAnadirPaciente(Paciente paciente) {
+    public void handleAnadirPaciente() {
     	
     }
     public void handleEliminarPaciente(String clavePaciente) {

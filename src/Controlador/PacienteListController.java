@@ -1,56 +1,75 @@
 package Controlador;
 
+import javax.swing.table.DefaultTableModel;
+
 import Modelo.Core.Controller;
 import Modelo.Core.MainViewLayout;
 import Modelo.POJOs.Paciente;
-import java.util.HashMap;
-import java.util.Map;
+import Vista.PacienteListView;
 
-/**
- * Controlador para manejar la lógica de la lista principal de pacientes.
- * Gestiona la adición, eliminación y selección de pacientes, y el cierre de sesión.
- */
+import java.util.*;
 
 public class PacienteListController extends Controller {
-    
+
     public PacienteListController(String tag) {
         super(tag);
     }
-    
-    @Override
-    public void handleAnadirPaciente(Paciente paciente) {
-        
-        Map<String, Object> data = new HashMap<>();
-        data.put("modo", "AGREGAR"); 
-        data.put("returnViewTag", MainViewLayout.PACIENTES_VIEW); 
 
-        cambiarVista(MainViewLayout.CONSULTA_FORM_VIEW, data); 
+    @Override
+    public void handleAnadirPaciente() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("modo", "AGREGAR");
+        data.put("returnViewTag", MainViewLayout.PACIENTES_VIEW);
+        cambiarVista(MainViewLayout.CONSULTA_FORM_VIEW, data);
     }
-    
+
     @Override
     public void handleEliminarPaciente(String clavePaciente) {
-        
+        try {
+            myModel.eliminarPaciente(clavePaciente);
+        } catch (Exception e) {
+            System.err.println("Error eliminando paciente: " + e.getMessage());
+        }
     }
     
     @Override
-    public void handleBuscarPaciente(String nombre) {
+    public void handleBuscarPaciente(String criterio) {
+        List<Paciente> filtrados = myModel.buscarPacientes(criterio);
+
+        if (!(myView instanceof PacienteListView vista)) return;
+
+        DefaultTableModel model = (DefaultTableModel) vista.getTblPacientes().getModel();
+        model.setRowCount(0);
+
+        for (Paciente p : filtrados) {
+            String nombre = p.getNombre() == null ? "" : p.getNombre();
+            String apellido = p.getApellido() == null ? "" : p.getApellido();
+
+            model.addRow(new Object[]{
+                    p.getClavePaciente(),
+                    nombre + " " + apellido,
+                    "N/A"
+            });
+        }
     }
-    
+
     @Override
     public void handlePacienteSeleccionado(String clavePaciente) {
+        myModel.seleccionarPaciente(clavePaciente);
         cambiarVista(MainViewLayout.HISTORIAL_VIEW, clavePaciente);
     }
-    
+
     @Override
     public void handleLogout() {
+        myModel.logout();
         cambiarVista(MainViewLayout.LOGIN_VIEW, null);
     }
-    
+
     @Override
     public void handleActualizarPaciente(Paciente paciente) {
         cambiarVista(MainViewLayout.PACIENTES_VIEW, null);
     }
-    
+
     @Override
     public void handleSalir() {
         cambiarVista(MainViewLayout.PACIENTES_VIEW, null);
