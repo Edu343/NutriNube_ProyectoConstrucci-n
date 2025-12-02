@@ -12,6 +12,12 @@ import Controlador.ConsultaController;
 
 import javax.swing.JComponent;
 
+/**
+ * Vista para el formulario de consulta.
+ * Permite agregar o editar consultas, calcular calorías y macronutrientes,
+ * y navegar entre vistas.
+ */
+
 public class ConsultaFormularioView extends View {
 
     private ConsultaFormularioViewLayout formularioLayout;

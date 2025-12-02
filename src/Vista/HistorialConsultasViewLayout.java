@@ -3,6 +3,7 @@ package Vista;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+//vista que representa el historial de las consultas de cada paciente
 
 public class HistorialConsultasViewLayout extends JPanel {
 
@@ -18,12 +19,12 @@ public class HistorialConsultasViewLayout extends JPanel {
     private JButton btnEliminar;
     private JButton btnLogout;
     private JButton btnPacientes;
-    
+
     // NUEVO: Promovido a atributo para poder modificarlo
     private JLabel lblNombrePaciente;
 
     public HistorialConsultasViewLayout() {
-  
+
         setSize(900, 600);
 
         setLayout(new BorderLayout());
@@ -44,8 +45,8 @@ public class HistorialConsultasViewLayout extends JPanel {
             Image scaledLogo = iconLogo.getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
             lblLogo.setIcon(new ImageIcon(scaledLogo));
         } else {
-             lblLogo.setText("NutriNube");
-             lblLogo.setForeground(Color.WHITE);
+            lblLogo.setText("NutriNube");
+            lblLogo.setForeground(Color.WHITE);
         }
         headerPanel.add(lblLogo, BorderLayout.WEST);
 
@@ -143,14 +144,14 @@ public class HistorialConsultasViewLayout extends JPanel {
         topPanel.setBackground(BACKGROUND_COLOR);
         topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         // 🚨 CORRECCIÓN CLAVE 1: Limitar la altura MÁXIMA del topPanel
-        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30)); 
+        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         topPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 30));
 
         // Buscador pequeño con placeholder
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBackground(Color.WHITE);
         searchPanel.setBorder(BorderFactory.createLineBorder(new Color(210, 210, 210)));
-        searchPanel.setMaximumSize(new Dimension(200, 30)); 
+        searchPanel.setMaximumSize(new Dimension(200, 30));
         searchPanel.setPreferredSize(new Dimension(200, 30));
         txtBuscar = new JTextField(" Buscar fecha");
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -164,10 +165,9 @@ public class HistorialConsultasViewLayout extends JPanel {
         mainPanel.add(topPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(200, 30)));
 
-       
         // NUEVO: Modelo con columnas
         DefaultTableModel modelo = new DefaultTableModel() {
-             @Override
+            @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -274,11 +274,11 @@ public class HistorialConsultasViewLayout extends JPanel {
     public void setBtnPacientes(JButton btnPacientes) {
         this.btnPacientes = btnPacientes;
     }
-    
+
     public JPanel getPanel() {
         return this;
     }
-    
+
     // NUEVO: Método para cambiar el nombre dinámicamente
     public void setNombrePaciente(String nombre) {
         this.lblNombrePaciente.setText(nombre);

@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+// vista  del login de la aplicacion NutriNube
 
 public class LoginViewLayout extends JPanel {
 
@@ -20,7 +21,7 @@ public class LoginViewLayout extends JPanel {
         // Configuración del Layout Manager (GridBagLayout)
         this.setLayout(new GridBagLayout());
         this.setBackground(Color.WHITE);
-        
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -35,7 +36,7 @@ public class LoginViewLayout extends JPanel {
         // Logo
         lblLogo = new JLabel();
         java.net.URL logoUrl = LoginViewLayout.class.getResource("nutrinubeLogo.jpg");
-        
+
         if (logoUrl == null) {
             logoUrl = LoginViewLayout.class.getResource("/NutrinubeVistas/nutrinubeLogo.jpg");
         }
@@ -50,7 +51,7 @@ public class LoginViewLayout extends JPanel {
                 double scale = (double) maxWidth / (double) w;
                 int newW = (int) (w * scale);
                 int newH = (int) (h * scale);
-                
+
                 BufferedImage buffered = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g2 = buffered.createGraphics();
                 g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -157,17 +158,17 @@ public class LoginViewLayout extends JPanel {
             }
         });
     }
-    
+
     // --- Getters ---
-    
+
     public JPanel getPanel() {
         return this;
     }
-    
+
     public String getTxtUser() {
         return txtUser.getText();
     }
-    
+
     public String getTxtUsuario() {
         return txtUser.getText();
     }
@@ -175,23 +176,23 @@ public class LoginViewLayout extends JPanel {
     public String getTxtPassword() {
         return new String(txtPassword.getPassword());
     }
-    
+
     public String getTxtContrasena() {
         return new String(txtPassword.getPassword());
     }
-    
+
     public JButton getBtnLogin() {
         return btnLogin;
     }
-    
+
     public JButton getBtnAcceder() {
         return btnLogin;
     }
-    
+
     public JTextField getTxtUserField() {
         return txtUser;
     }
-    
+
     public JPasswordField getTxtPasswordField() {
         return txtPassword;
     }
