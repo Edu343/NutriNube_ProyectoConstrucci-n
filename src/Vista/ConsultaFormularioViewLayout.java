@@ -3,6 +3,8 @@ package Vista;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.util.Date;
+// Simulación de importación de JDateChooser
 
 public class ConsultaFormularioViewLayout extends JPanel {
 
@@ -32,13 +34,18 @@ public class ConsultaFormularioViewLayout extends JPanel {
     private JTextField txtProteinas, txtCarbohidratos, txtLipidos, txtCaloriasTotales;
     private JButton btnGuardar, btnSalir;
 
-    // Campos de entrada expuestos para la View
-    private JTextField pesoField; 
-    private JTextField alturaField; 
+    private JTextField txtNombreField;
+    private JTextField txtApellidoField;
+    private Object fechaNacimientoChooser;
+    private JComboBox<String> cmbSexo;
+    private JTextField txtCorreoField;
+    private JTextField txtTelefonoField;
+    private JTextField pesoField;
+    private JTextField alturaField;
     private JTextField txtCondicionesMedicasField;
     private JTextField txtMedicacionField;
     private JTextField txtAlergiasField;
-    private JComboBox<String> cmbPreferenciaComida; 
+    private JTextField txtPreferenciaComidaField;
     private JTextField txtHorarioSueno;
     private JTextField txtHistorialCirugias;
     private JComboBox<String> cmbNivelEstres;
@@ -46,10 +53,9 @@ public class ConsultaFormularioViewLayout extends JPanel {
     private JTextField txtTipoLiquidoConsumido;
     private JTextField txtCantidadLiquido;
     private JTextField txtBarreraAlimenticia;
-    
-    private String viewAnteriorTag; 
-    private String modoActual;      
 
+    private String viewAnteriorTag;
+    private String modoActual = "";
 
     public ConsultaFormularioViewLayout() {
         initComponents();
@@ -123,9 +129,22 @@ public class ConsultaFormularioViewLayout extends JPanel {
         mainContentPanel.add(lblConsultaPaciente, gbcMain);
         gbcMain.insets = new Insets(10, 40, 10, 40);
 
-        // --- Secciones ---
+        // Inicializar el JDateChooser
+        try {
+            Class<?> dateChooserClass = Class.forName("com.toedter.calendar.JDateChooser");
+            fechaNacimientoChooser = dateChooserClass.getConstructor(Date.class).newInstance(new Date());
+            dateChooserClass.getMethod("setDateFormatString", String.class).invoke(fechaNacimientoChooser,
+                    "yyyy-MM-dd");
+        } catch (Exception e) {
+            // Fallback a JTextField si JCalendar no está disponible
+            JTextField fallback = createTextField();
+            fallback.setText("AAAA-MM-DD");
+            fechaNacimientoChooser = fallback;
+        }
+
         personalInfoPanel = createPersonalInfoPanel("Información Personal",
-                new String[] { "Nombre(s)", "Apellido", "Edad", "Sexo", "Altura", "Peso" });
+                new String[] { "Nombre(s)", "Apellido", "Fecha de Nacimiento", "Sexo", "Correo Electrónico", "Teléfono",
+                        "Altura (cm)", "Peso (kg)" });
         mainContentPanel.add(personalInfoPanel, gbcMain);
 
         medicalHistoryPanel = createMedicalHistoryPanel("Historial Médico",
@@ -156,7 +175,8 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbcGD.fill = GridBagConstraints.HORIZONTAL;
         gbcGD.weightx = 0.5;
 
-        nutritionalGoalsPanel = createNutritionalGoalsPanel("Metas Nutricionales", new String[] { "Razón de consulta" });
+        nutritionalGoalsPanel = createNutritionalGoalsPanel("Metas Nutricionales",
+                new String[] { "Razón de consulta" });
 
         dispositionPanel = createDispositionPanel("Disposición", new String[] { "Alguna barrera para seguir el plan" });
 
@@ -212,6 +232,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         resultsPanel.add(txtProteinas, gbcResults);
 
         gbcResults.gridx = 2;
+        gbcResults.gridy = 0;
         resultsPanel.add(createLabel("Lípidos (g):"), gbcResults);
         gbcResults.gridx = 3;
         resultsPanel.add(txtLipidos, gbcResults);
@@ -223,6 +244,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         resultsPanel.add(txtCarbohidratos, gbcResults);
 
         gbcResults.gridx = 2;
+        gbcResults.gridy = 1;
         resultsPanel.add(createLabel("Calorías Totales (kcal):"), gbcResults);
         gbcResults.gridx = 3;
         resultsPanel.add(txtCaloriasTotales, gbcResults);
@@ -248,7 +270,6 @@ public class ConsultaFormularioViewLayout extends JPanel {
         footerPanel.add(lblExpedienteFooter);
         this.add(footerPanel, BorderLayout.SOUTH);
 
-
         this.setMinimumSize(new Dimension(800, 700));
     }
 
@@ -271,26 +292,58 @@ public class ConsultaFormularioViewLayout extends JPanel {
 
         for (int i = 0; i < fieldNames.length; i++) {
             JLabel label = createLabel(fieldNames[i]);
-            JTextField textField = createTextField();
-            
-            // Asignación de campos de texto a variables de clase
-            if (title.equals("Información Personal")) {
-                if (fieldNames[i].equals("Peso")) pesoField = textField;
-                if (fieldNames[i].equals("Altura")) alturaField = textField;
-            } else if (title.equals("Historial Médico")) {
-                if (fieldNames[i].equals("Condiciones Médicas")) txtCondicionesMedicasField = textField;
-                if (fieldNames[i].equals("Medicación")) txtMedicacionField = textField;
-                if (fieldNames[i].equals("Historial de cirugías")) txtHistorialCirugias = textField;
-            } else if (title.equals("Historial Alimenticio")) {
-                if (fieldNames[i].equals("Alergias")) txtAlergiasField = textField;
-            } else if (title.equals("Estilo de Vida")) {
-                if (fieldNames[i].equals("Horario de sueño")) txtHorarioSueno = textField;
-                if (fieldNames[i].equals("Hábitos alimenticios")) txtHabitoAlimenticio = textField;
-            } else if (title.equals("Consumo de Líquidos")) {
-                if (fieldNames[i].equals("Tipos de líquidos consumidos")) txtTipoLiquidoConsumido = textField;
-                if (fieldNames[i].equals("Cantidad de líquidos consumidos")) txtCantidadLiquido = textField;
-            } else if (title.equals("Disposición")) {
-                if (fieldNames[i].equals("Alguna barrera para seguir el plan")) txtBarreraAlimenticia = textField;
+            Component inputComponent = null;
+
+            // Lógica para asignar el JDateChooser
+            if (title.equals("Información Personal") && fieldNames[i].equals("Fecha de Nacimiento")) {
+                inputComponent = (Component) fechaNacimientoChooser;
+                ((Component) inputComponent).setPreferredSize(new Dimension(250, 30));
+            } else if (title.equals("Información Personal") && fieldNames[i].equals("Sexo")) {
+                inputComponent = createComboBox(new String[] { "Mujer", "Hombre" });
+                cmbSexo = (JComboBox<String>) inputComponent;
+            } else {
+                // Caso por defecto: siempre crear un JTextField si no es un componente especial
+                inputComponent = createTextField();
+
+                if (title.equals("Información Personal")) {
+                    if (fieldNames[i].equals("Nombre(s)"))
+                        txtNombreField = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Apellido"))
+                        txtApellidoField = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Correo Electrónico"))
+                        txtCorreoField = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Teléfono"))
+                        txtTelefonoField = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Peso (kg)"))
+                        pesoField = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Altura (cm)"))
+                        alturaField = (JTextField) inputComponent;
+                } else if (title.equals("Historial Médico")) {
+                    if (fieldNames[i].equals("Condiciones Médicas"))
+                        txtCondicionesMedicasField = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Medicación"))
+                        txtMedicacionField = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Historial de cirugías"))
+                        txtHistorialCirugias = (JTextField) inputComponent;
+                } else if (title.equals("Historial Alimenticio")) {
+                    if (fieldNames[i].equals("Alergias"))
+                        txtAlergiasField = (JTextField) inputComponent;
+                } else if (title.equals("Estilo de Vida")) {
+                    if (fieldNames[i].equals("Horario de sueño"))
+                        txtHorarioSueno = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Niveles de estrés"))
+                        cmbNivelEstres = (JComboBox<String>) inputComponent;
+                    if (fieldNames[i].equals("Hábitos alimenticios"))
+                        txtHabitoAlimenticio = (JTextField) inputComponent;
+                } else if (title.equals("Consumo de Líquidos")) {
+                    if (fieldNames[i].equals("Tipos de líquidos consumidos"))
+                        txtTipoLiquidoConsumido = (JTextField) inputComponent;
+                    if (fieldNames[i].equals("Cantidad de líquidos consumidos"))
+                        txtCantidadLiquido = (JTextField) inputComponent;
+                } else if (title.equals("Disposición")) {
+                    if (fieldNames[i].equals("Alguna barrera para seguir el plan"))
+                        txtBarreraAlimenticia = (JTextField) inputComponent;
+                }
             }
 
             gbc.gridx = (i % 2) * 2;
@@ -302,7 +355,11 @@ public class ConsultaFormularioViewLayout extends JPanel {
             gbc.gridx = (i % 2) * 2 + 1;
             gbc.weightx = 1.0;
             gbc.anchor = GridBagConstraints.WEST;
-            fieldsPanel.add(textField, gbc);
+            // CORRECCIÓN: Se agrega la comprobación de null aquí, aunque la lógica superior
+            // ya minimiza el riesgo.
+            if (inputComponent != null) {
+                fieldsPanel.add(inputComponent, gbc);
+            }
         }
 
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
@@ -337,17 +394,27 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         txtAlergiasField = createTextField();
-        cmbPreferenciaComida = createComboBox(new String[] { "Omnívoro", "Vegetariano", "Vegano", "Sin gluten" });
-        
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        txtPreferenciaComidaField = createTextField();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[0]), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtAlergiasField, gbc);
 
-        gbc.gridx = 2; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[1]), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
-        fieldsPanel.add(cmbPreferenciaComida, gbc);
+        gbc.gridx = 3;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        fieldsPanel.add(txtPreferenciaComidaField, gbc);
 
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
@@ -370,11 +437,17 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        cmbNivelActividad = createComboBox(new String[] { "Sedentario", "Actividad Ligera", "Actividad Moderada", "Actividad Activa", "Actividad Muy Activa" });
-        
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        cmbNivelActividad = createComboBox(new String[] { "Sedentario", "Actividad Ligera", "Actividad Moderada",
+                "Actividad Activa", "Actividad Muy Activa" });
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[0]), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(cmbNivelActividad, gbc);
 
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
@@ -402,19 +475,34 @@ public class ConsultaFormularioViewLayout extends JPanel {
         cmbNivelEstres = createComboBox(new String[] { "Bajo", "Medio", "Alto" });
         txtHabitoAlimenticio = createTextField();
 
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[0]), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtHorarioSueno, gbc);
 
-        gbc.gridx = 2; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[1]), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 3;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(cmbNivelEstres, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[2]), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtHabitoAlimenticio, gbc);
 
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
@@ -441,14 +529,24 @@ public class ConsultaFormularioViewLayout extends JPanel {
         txtTipoLiquidoConsumido = createTextField();
         txtCantidadLiquido = createTextField();
 
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[0]), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtTipoLiquidoConsumido, gbc);
 
-        gbc.gridx = 2; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[1]), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 3;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtCantidadLiquido, gbc);
 
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
@@ -474,10 +572,15 @@ public class ConsultaFormularioViewLayout extends JPanel {
 
         cmbRazonConsulta = createComboBox(
                 new String[] { "Perder % de grasa", "Ganar masa muscular", "Recomposición Corporal", "Mejorar salud" });
-        
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[0]), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(cmbRazonConsulta, gbc);
 
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
@@ -503,9 +606,14 @@ public class ConsultaFormularioViewLayout extends JPanel {
 
         txtBarreraAlimenticia = createTextField();
 
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
         fieldsPanel.add(createLabel(fieldNames[0]), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtBarreraAlimenticia, gbc);
 
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
@@ -569,11 +677,12 @@ public class ConsultaFormularioViewLayout extends JPanel {
     }
 
     public void clearAllFields() {
-        // Se asume que todos los campos expuestos son JTextFields o JComboBoxes
         JTextField[] textFields = {
-            pesoField, alturaField, txtCondicionesMedicasField, txtMedicacionField, txtAlergiasField,
-            txtHorarioSueno, txtHistorialCirugias, txtHabitoAlimenticio, txtTipoLiquidoConsumido,
-            txtCantidadLiquido, txtBarreraAlimenticia, txtProteinas, txtCarbohidratos, txtLipidos, txtCaloriasTotales
+                txtNombreField, txtApellidoField, txtPreferenciaComidaField, txtCorreoField, txtTelefonoField,
+                pesoField, alturaField, txtCondicionesMedicasField, txtMedicacionField, txtAlergiasField,
+                txtHorarioSueno, txtHistorialCirugias, txtHabitoAlimenticio, txtTipoLiquidoConsumido,
+                txtCantidadLiquido, txtBarreraAlimenticia, txtProteinas, txtCarbohidratos, txtLipidos,
+                txtCaloriasTotales
         };
 
         for (JTextField field : textFields) {
@@ -581,22 +690,58 @@ public class ConsultaFormularioViewLayout extends JPanel {
                 field.setText("");
             }
         }
-        
+
         JComboBox<?>[] comboBoxes = {
-            cmbNivelActividad, cmbRazonConsulta, cmbPreferenciaComida, cmbNivelEstres
+                cmbSexo, cmbNivelActividad, cmbRazonConsulta, cmbNivelEstres
         };
-        
+
         for (JComboBox<?> cmb : comboBoxes) {
             if (cmb != null && cmb.getItemCount() > 0) {
                 cmb.setSelectedIndex(0);
             }
         }
+
+        if (fechaNacimientoChooser instanceof JComponent) {
+            try {
+                Class.forName("com.toedter.calendar.JDateChooser")
+                        .getMethod("setDate", Date.class)
+                        .invoke(fechaNacimientoChooser, (Date) null);
+            } catch (Exception e) {
+                if (fechaNacimientoChooser instanceof JTextField) {
+                    ((JTextField) fechaNacimientoChooser).setText("");
+                }
+            }
+        }
     }
-    
+
     public JPanel getPanel() {
         return this;
     }
-    
+
+    public JTextField getTxtNombreField() {
+        return txtNombreField;
+    }
+
+    public JTextField getTxtApellidoField() {
+        return txtApellidoField;
+    }
+
+    public Object getFechaNacimientoChooser() {
+        return fechaNacimientoChooser;
+    }
+
+    public JComboBox<String> getCmbSexo() {
+        return cmbSexo;
+    }
+
+    public JTextField getTxtCorreoField() {
+        return txtCorreoField;
+    }
+
+    public JTextField getTxtTelefonoField() {
+        return txtTelefonoField;
+    }
+
     public JTextField getPesoField() {
         return pesoField;
     }
@@ -617,8 +762,8 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return txtAlergiasField;
     }
 
-    public JComboBox<String> getCmbPreferenciaComida() {
-        return cmbPreferenciaComida;
+    public JTextField getPreferenciaComidaField() {
+        return txtPreferenciaComidaField;
     }
 
     public JTextField getTxtHorarioSueno() {
@@ -685,21 +830,44 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return cmbRazonConsulta;
     }
 
-	public String getViewAnteriorTag() {
-		return viewAnteriorTag;
-	}
+    public String getViewAnteriorTag() {
+        return viewAnteriorTag;
+    }
 
-	public void setViewAnteriorTag(String viewAnteriorTag) {
-		this.viewAnteriorTag = viewAnteriorTag;
-	}
+    public void setViewAnteriorTag(String viewAnteriorTag) {
+        this.viewAnteriorTag = viewAnteriorTag;
+    }
 
-	public String getModoActual() {
-		return modoActual;
-	}
+    public String getModoActual() {
+        return modoActual;
+    }
 
-	public void setModoActual(String modoActual) {
-		this.modoActual = modoActual;
-	}
-    
-    
+    public void setModoActual(String modoActual) {
+        this.modoActual = modoActual;
+    }
+
+    public JButton getBtnPatients() {
+        return btnPatients;
+    }
+
+    public void setBtnPatients(JButton btnPatients) {
+        this.btnPatients = btnPatients;
+    }
+
+    public JButton getBtnExpedients() {
+        return btnExpedients;
+    }
+
+    public void setBtnExpedients(JButton btnExpedients) {
+        this.btnExpedients = btnExpedients;
+    }
+
+    public JButton getBtnLogout() {
+        return btnLogout;
+    }
+
+    public void setBtnLogout(JButton btnLogout) {
+        this.btnLogout = btnLogout;
+    }
+
 }

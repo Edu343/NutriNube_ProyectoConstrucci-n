@@ -1,26 +1,22 @@
 package Vista;
 
 import Modelo.Core.View;
-import Controlador.ConsultaController;
-import Modelo.POJOs.Consulta;
-import Modelo.POJOs.CaloriasCalculo;
-import Modelo.POJOs.AnamnesisData;
-import Modelo.POJOs.Macronutrientes;
-import java.time.LocalDate;
+import Modelo.POJOs.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
-
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
-/**
- * Vista del formulario detallado para agregar o editar una consulta nutricional.
- * Recolecta datos de anamnesis, metas y resultados de cálculo.
- */
+import Controlador.ConsultaController;
+
+import javax.swing.JComponent;
 
 public class ConsultaFormularioView extends View {
-    
+
     private ConsultaFormularioViewLayout formularioLayout;
-    private Consulta consultaActual; 
-    private String clavePacienteActual; 
+    private Consulta consultaActual;
+    private Paciente pacienteActual;
 
     public ConsultaFormularioView(String tag) {
         super(tag);
@@ -28,237 +24,369 @@ public class ConsultaFormularioView extends View {
 
     @Override
     protected void crearController() {
-        myController = new Controlador.ConsultaController(tag); 
+        myController = new ConsultaController(tag);
     }
 
     @Override
     protected void crearViewLayout() {
         formularioLayout = new ConsultaFormularioViewLayout();
         this.mainPanel = formularioLayout.getPanel();
-        
+
+        formularioLayout.getBtnPatients().addActionListener(e -> {
+            myModel.setPacienteSeleccionado(null);
+            myModel.setConsultaSeleccionada(null);
+            myController.cambiarVista("PACIENTES", null);
+        });
+
+        formularioLayout.getBtnExpedients().addActionListener(e -> {
+            if (pacienteActual != null) {
+                ((ConsultaController) myController).cambiarVista("HISTORIAL", pacienteActual.getClavePaciente());
+            } else {
+                ((ConsultaController) myController).cambiarVista("PACIENTES", null);
+            }
+        });
+
+        formularioLayout.getBtnLogout().addActionListener(e -> {
+            myController.handleLogout();
+        });
+
+        formularioLayout.getBtnSalir().addActionListener(e -> myController.handleSalir());
+
         formularioLayout.getBtnCalcular().addActionListener(e -> {
             try {
-                CaloriasCalculo calculoData = collectCaloriasCalculoData();
-                myController.handleCalcularCalorias(calculoData, null);
+                double peso = Double.parseDouble(formularioLayout.getPesoField().getText());
+                int nivelActividad = formularioLayout.getCmbNivelActividad().getSelectedIndex() + 1;
+                int razonConsulta = formularioLayout.getCmbRazonConsulta().getSelectedIndex() + 1;
+
+                String clavePaciente = (pacienteActual != null) ? pacienteActual.getClavePaciente() : null;
+                int sexo = formularioLayout.getCmbSexo().getSelectedIndex();
+
+                double altura = 0.0;
+                if (pacienteActual != null) {
+                    altura = pacienteActual.getAltura();
+                } else {
+                    try {
+                        altura = Double.parseDouble(formularioLayout.getAlturaField().getText());
+                    } catch (NumberFormatException ex) {
+                    }
+                }
+
+                String fechaNacimiento = obtenerFechaNacimientoStr();
+
+                myController.handleCalcularCalorias(
+                        clavePaciente, peso, nivelActividad, razonConsulta, sexo, altura, fechaNacimiento);
+
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(formularioLayout.getPanel(), 
-                    "Verifique los campos numéricos (Peso, Altura, Cantidad de Líquido) o si faltan datos de selección.", 
-                    "Error de Formato", 
-                    JOptionPane.ERROR_MESSAGE);
+                mostrarError("Verifique que Peso y Altura sean números válidos.");
+            } catch (Exception ex) {
+                mostrarError("Error al calcular: " + ex.getMessage());
             }
         });
-        
+
         formularioLayout.getBtnGuardar().addActionListener(e -> {
             try {
-                Consulta consultaAGuardar = buildConsultaObject();
-                myController.handleGuardarConsulta(consultaAGuardar);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(formularioLayout.getPanel(), 
-                    "Error al guardar. Verifique entradas numéricas o faltantes.", 
-                    "Error de Guardado", 
-                    JOptionPane.ERROR_MESSAGE);
+                guardarDatos();
+            } catch (Exception ex) {
+                mostrarError("Error al intentar guardar: " + ex.getMessage());
+                ex.printStackTrace();
             }
         });
-        
-        
-        formularioLayout.getBtnSalir().addActionListener(e -> 
-            myController.handleSalir());
     }
 
-    public CaloriasCalculo collectCaloriasCalculoData() throws NumberFormatException {
-        // Recolección de datos para cálculo
-        CaloriasCalculo cc = new CaloriasCalculo();
-        
-        cc.setPeso(Double.parseDouble(formularioLayout.getPesoField().getText()));
-        
-        cc.setNivelActividadFisica(Integer.parseInt(formularioLayout.getCmbNivelActividad().getSelectedItem().toString()));
-        
-        int razonConsulta = formularioLayout.getCmbRazonConsulta().getSelectedIndex() + 1;
-        cc.setRazonConsulta(razonConsulta);
-        
-        String caloriasText = formularioLayout.getTxtCaloriasTotales().getText();
-        if (!caloriasText.isEmpty() && !caloriasText.equals("0.0")) {
-            cc.setCalorias(Double.parseDouble(caloriasText));
-        }
-        
-        return cc;
-    }
-    
-   
-    public AnamnesisData collectAnamnesisData() {
-        // Recolección de datos de anamnesis
-        AnamnesisData ad = new AnamnesisData();
-        
-        ad.setCondicionesMedicas(formularioLayout.getTxtCondicionesMedicasField().getText());
-        ad.setMedicacion(formularioLayout.getTxtMedicacionField().getText());
-        ad.setAlergias(formularioLayout.getTxtAlergiasField().getText());
-        
-        ad.setPreferenciaComida((String) formularioLayout.getCmbPreferenciaComida().getSelectedItem());
-        
-        ad.setHorarioSueno(formularioLayout.getTxtHorarioSueno().getText());
-        ad.setHistorialCirugias(formularioLayout.getTxtHistorialCirugias().getText());
-        
-        int nivelEstresIndex = formularioLayout.getCmbNivelEstres().getSelectedIndex();
-        ad.setNivelEstres(nivelEstresIndex + 1);
-        
-        ad.setHabitoAlimenticio(formularioLayout.getTxtHabitoAlimenticio().getText());
-        ad.setTipoLiquidoConsumido(formularioLayout.getTxtTipoLiquidoConsumido().getText());
-        
-        String cantidadLiquidoStr = formularioLayout.getTxtCantidadLiquido().getText();
-        if (!cantidadLiquidoStr.isEmpty()) {
-            ad.setCantidadLiquidoConsumido(Double.parseDouble(cantidadLiquidoStr));
-        }
-        
-        ad.setBarreraAlimenticia(formularioLayout.getTxtBarreraAlimenticia().getText());
-        
-        return ad;
-    }
-    
-    public Macronutrientes collectMacronutrientesData() throws NumberFormatException {
-        // Recolección de datos de macronutrientes
-        Macronutrientes mac = new Macronutrientes();
-        
-        String proteinasText = formularioLayout.getTxtProteinas().getText();
-        String carbohidratosText = formularioLayout.getTxtCarbohidratos().getText();
-        String lipidosText = formularioLayout.getTxtLipidos().getText();
-        
-        if (!proteinasText.isEmpty() && !proteinasText.equals("0.0")) {
-            mac.setProteinas(Double.parseDouble(proteinasText));
-        }
-        if (!carbohidratosText.isEmpty() && !carbohidratosText.equals("0.0")) {
-            mac.setCarbohidratos(Double.parseDouble(carbohidratosText));
-        }
-        if (!lipidosText.isEmpty() && !lipidosText.equals("0.0")) {
-            mac.setLipidos(Double.parseDouble(lipidosText));
-        }
-        
-        return mac;
-    }
-    
-    public Consulta buildConsultaObject() throws NumberFormatException {
-        // Construye el objeto Consulta a partir de los datos recolectados.
-        Consulta c = (consultaActual != null) ? consultaActual : new Consulta();
-        
-        c.setClavePaciente(clavePacienteActual);
-        c.setFechaVisita(LocalDate.now().toString()); 
-        
-        c.setTotalCalorias(collectCaloriasCalculoData());
-        c.setAnamnesisData(collectAnamnesisData());
-        c.setMacronutrientes(collectMacronutrientesData()); 
+    @Override
+    public void cargarDatos(Object data) {
+        this.pacienteActual = null;
+        this.consultaActual = null;
 
-        return c;
+        if (data instanceof Map) {
+            Map<String, Object> params = (Map<String, Object>) data;
+
+            String modo = (String) params.get("modo");
+            String returnViewTag = (String) params.get("returnViewTag");
+            formularioLayout.setModoActual(modo);
+            formularioLayout.setViewAnteriorTag(returnViewTag);
+
+            if (params.containsKey("clavePaciente")) {
+                String clavePaciente = (String) params.get("clavePaciente");
+                try {
+                    this.pacienteActual = myModel.getPacienteDAO().leerPorClave(clavePaciente);
+                    myModel.setPacienteSeleccionado(this.pacienteActual);
+                } catch (Exception e) {
+                    mostrarError("Error al cargar datos del paciente.");
+                }
+            } else {
+                myModel.setPacienteSeleccionado(null);
+            }
+
+            if (modo.equals(ConsultaController.MODO_EDITAR) && params.containsKey("claveConsulta")) {
+                String claveConsulta = (String) params.get("claveConsulta");
+                try {
+                    this.consultaActual = myModel.obtenerConsultaSeleccionada(claveConsulta);
+                    if (this.consultaActual != null) {
+                        this.pacienteActual = myModel.getPacienteDAO()
+                                .leerPorClave(this.consultaActual.getClavePaciente());
+                    }
+                } catch (Exception e) {
+                    mostrarError("Error al cargar datos de la consulta.");
+                }
+            } else {
+                myModel.setConsultaSeleccionada(null);
+            }
+        }
+
+        if (this.pacienteActual == null && myModel.getPacienteSeleccionado() != null) {
+            this.pacienteActual = myModel.getPacienteSeleccionado();
+        }
+
+        inicializarFormulario();
+    }
+
+    private void inicializarFormulario() {
+        String modo = formularioLayout.getModoActual();
+        if (modo == null)
+            return;
+
+        boolean isAddingNewPatient = (pacienteActual == null && modo.equals(ConsultaController.MODO_AGREGAR));
+
+        if (isAddingNewPatient) {
+            limpiarCamposPacienteYConsulta();
+        } else {
+            if (pacienteActual != null) {
+                // Pre-llenar datos fijos del paciente
+                formularioLayout.getTxtNombreField().setText(pacienteActual.getNombre());
+                formularioLayout.getTxtApellidoField().setText(pacienteActual.getApellido());
+                formularioLayout.getTxtCorreoField().setText(pacienteActual.getCorreo());
+                formularioLayout.getTxtTelefonoField().setText(String.valueOf(pacienteActual.getTelefono()));
+                formularioLayout.getCmbSexo().setSelectedIndex(pacienteActual.getSexo());
+                formularioLayout.getAlturaField().setText(String.valueOf(pacienteActual.getAltura()));
+
+                try {
+                    setFechaNacimientoEnChooser(pacienteActual.getFechaNacimiento());
+                } catch (Exception e) {
+                }
+
+                if (modo.equals(ConsultaController.MODO_EDITAR) && consultaActual != null) {
+                    cargarDatosConsultaEnFormulario(consultaActual);
+                } else {
+                    cargarDatosUltimaConsulta();
+                }
+            }
+        }
+    }
+
+    private void cargarDatosUltimaConsulta() {
+        limpiarCamposConsulta();
+
+        try {
+            Consulta ultimaConsulta = myModel.getConsultaDAO()
+                    .obtenerUltimaConsultaObjeto(pacienteActual.getClavePaciente());
+
+            if (ultimaConsulta != null) {
+                cargarDatosConsultaEnFormulario(ultimaConsulta);
+
+                formularioLayout.getPesoField().setText("");
+                formularioLayout.getTxtCantidadLiquido().setText("");
+                formularioLayout.getTxtTipoLiquidoConsumido().setText(""); // Opcional, a veces cambia
+
+                formularioLayout.getTxtCaloriasTotales().setText("");
+                formularioLayout.getTxtProteinas().setText("");
+                formularioLayout.getTxtCarbohidratos().setText("");
+                formularioLayout.getTxtLipidos().setText("");
+            }
+        } catch (Exception e) {
+            System.err.println("No hay historial previo o error cargándolo: " + e.getMessage());
+        }
     }
 
     @Override
     public void display() {
-        // Muestra el formulario según el modo (AGREGAR o EDITAR).
-        String modo = formularioLayout.getModoActual();
-        
-        if (Controlador.ConsultaController.MODO_EDITAR.equals(modo) && consultaActual != null) {
-            loadConsultaToForm(consultaActual);
-        } else {
-            formularioLayout.clearAllFields();
-        }
-        formularioLayout.getBtnGuardar().setEnabled(true);
-    }
-    
-    private void loadConsultaToForm(Consulta consulta) {
-        // Carga los datos de una consulta existente en el formulario.
-        CaloriasCalculo cc = consulta.getCaloriasCalculo();
-        if (cc != null) {
-            formularioLayout.getPesoField().setText(String.valueOf(cc.getPeso()));
-            
-            double factor = cc.getNivelActividadFisica();
-            int nafIndex = 0;
-            if (factor == 1.375) nafIndex = 1;
-            else if (factor == 1.55) nafIndex = 2;
-            else if (factor == 1.725) nafIndex = 3;
-            else if (factor == 1.9) nafIndex = 4;
-            formularioLayout.getCmbNivelActividad().setSelectedIndex(nafIndex);
-            
-            formularioLayout.getCmbRazonConsulta().setSelectedIndex(cc.getRazonConsulta() - 1);
-            
-            formularioLayout.getTxtCaloriasTotales().setText(String.valueOf(cc.getCalorias()));
-        }
-        
-        Macronutrientes macros = consulta.getMacronutrientes();
-        if (macros != null) {
-            formularioLayout.getTxtProteinas().setText(String.valueOf(macros.getProteinas()));
-            formularioLayout.getTxtCarbohidratos().setText(String.valueOf(macros.getCarbohidratos()));
-            formularioLayout.getTxtLipidos().setText(String.valueOf(macros.getLipidos()));
-        }
-        
-        AnamnesisData ad = consulta.getAnamnesisData();
-        if (ad != null) {
-            formularioLayout.getTxtCondicionesMedicasField().setText(ad.getCondicionesMedicas());
-            formularioLayout.getTxtMedicacionField().setText(ad.getMedicacion());
-            formularioLayout.getTxtAlergiasField().setText(ad.getAlergias());
-            formularioLayout.getTxtHorarioSueno().setText(ad.getHorarioSueno());
-            formularioLayout.getTxtHistorialCirugias().setText(ad.getHistorialCirugias());
-            formularioLayout.getCmbNivelEstres().setSelectedIndex(ad.getNivelEstres() - 1);
-            formularioLayout.getTxtHabitoAlimenticio().setText(ad.getHabitoAlimenticio());
-            formularioLayout.getTxtTipoLiquidoConsumido().setText(ad.getTipoLiquidoConsumido());
-            formularioLayout.getTxtCantidadLiquido().setText(String.valueOf(ad.getCantidadLiquidoConsumido()));
-            formularioLayout.getTxtBarreraAlimenticia().setText(ad.getBarreraAlimenticia());
-        }
-    }
-    
-
-
-    @Override
-    public void cargarDatos(Object data) {
-        // Carga el modo de operación y el tag de la vista de retorno.
-        if (data instanceof Map) {
-            Map<?, ?> dataMap = (Map<?, ?>) data;
-            
-            String returnTag = (String) dataMap.get("returnViewTag");
-            String modo = (String) dataMap.get("modo");
-            
-            formularioLayout.setModoActual(modo != null ? modo : Controlador.ConsultaController.MODO_AGREGAR);
-            formularioLayout.setViewAnteriorTag(returnTag);
-
-            if (dataMap.containsKey("consultaActual") && dataMap.get("consultaActual") instanceof Consulta) {
-                this.consultaActual = (Consulta) dataMap.get("consultaActual");
-                this.clavePacienteActual = this.consultaActual.getClavePaciente();
-            } else if (dataMap.containsKey("clavePacienteActual")) {
-                this.clavePacienteActual = (String) dataMap.get("clavePacienteActual");
-                this.consultaActual = null;
+        Consulta consultaModelo = myModel.getConsultaSeleccionada();
+        if (consultaModelo != null) {
+            CaloriasCalculo cc = consultaModelo.getCaloriasCalculo();
+            Macronutrientes macros = consultaModelo.getMacronutrientes();
+            if (cc != null && macros != null) {
+                mostrarResultadoCalculo(cc, macros);
             }
+        }
+    }
+
+    private void guardarDatos() {
+        String clavePaciente = (pacienteActual != null) ? pacienteActual.getClavePaciente() : null;
+        String claveConsulta = (consultaActual != null) ? consultaActual.getClaveConsulta() : null;
+
+        String nombre = formularioLayout.getTxtNombreField().getText();
+        String apellido = formularioLayout.getTxtApellidoField().getText();
+        String correo = formularioLayout.getTxtCorreoField().getText();
+        int sexo = formularioLayout.getCmbSexo().getSelectedIndex();
+        String telefonoStr = formularioLayout.getTxtTelefonoField().getText();
+        String fechaNacimiento = obtenerFechaNacimientoStr();
+
+        double altura = 0.0;
+        if (clavePaciente == null) {
+            altura = Double.parseDouble(formularioLayout.getAlturaField().getText());
         } else {
-            formularioLayout.setModoActual(Controlador.ConsultaController.MODO_AGREGAR);
-            formularioLayout.setViewAnteriorTag(Modelo.Core.MainViewLayout.PACIENTES_VIEW);
-            this.consultaActual = null;
-            this.clavePacienteActual = null;
+            altura = pacienteActual.getAltura();
         }
-        
-        display();
+
+        String condicionesMedicas = formularioLayout.getTxtCondicionesMedicasField().getText();
+        String medicacion = formularioLayout.getTxtMedicacionField().getText();
+        String historialCirugias = formularioLayout.getTxtHistorialCirugias().getText();
+        String alergias = formularioLayout.getTxtAlergiasField().getText();
+        String preferenciaComida = formularioLayout.getPreferenciaComidaField().getText();
+        String horarioSueno = formularioLayout.getTxtHorarioSueno().getText();
+        int nivelEstres = formularioLayout.getCmbNivelEstres().getSelectedIndex();
+        String habitosAlimenticios = formularioLayout.getTxtHabitoAlimenticio().getText();
+        String tipoLiquidosConsumidos = formularioLayout.getTxtTipoLiquidoConsumido().getText();
+        double cantidadLiquidoConsumido = 0.0;
+        try {
+            cantidadLiquidoConsumido = Double.parseDouble(formularioLayout.getTxtCantidadLiquido().getText());
+        } catch (NumberFormatException e) {
+        }
+
+        String barreraAlimenticia = formularioLayout.getTxtBarreraAlimenticia().getText();
+
+        double peso = Double.parseDouble(formularioLayout.getPesoField().getText());
+        int nivelActividadFisica = formularioLayout.getCmbNivelActividad().getSelectedIndex() + 1;
+        int razonConsulta = formularioLayout.getCmbRazonConsulta().getSelectedIndex() + 1;
+
+        double calorias = parseDoubleSafe(formularioLayout.getTxtCaloriasTotales().getText());
+        double carbohidratos = parseDoubleSafe(formularioLayout.getTxtCarbohidratos().getText());
+        double proteinas = parseDoubleSafe(formularioLayout.getTxtProteinas().getText());
+        double lipidos = parseDoubleSafe(formularioLayout.getTxtLipidos().getText());
+
+        String modo = formularioLayout.getModoActual();
+
+        myController.handleGuardarConsulta(
+                clavePaciente, claveConsulta, nombre, apellido, correo, sexo, telefonoStr, fechaNacimiento, altura,
+                condicionesMedicas, medicacion, historialCirugias, alergias, preferenciaComida, horarioSueno,
+                nivelEstres,
+                habitosAlimenticios, tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia,
+                peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos, modo);
     }
-    
-    public void mostrarResultadoCalculo(CaloriasCalculo resultado, Macronutrientes macResultados, String mensaje) {
-        // Muestra los resultados del cálculo en los campos de salida.
+
+    private void cargarDatosConsultaEnFormulario(Consulta c) {
+        if (c == null)
+            return;
+
+        AnamnesisData aData = c.getAnamnesisData();
+        CaloriasCalculo ccData = c.getCaloriasCalculo();
+        Macronutrientes macData = c.getMacronutrientes();
+
+        if (aData != null) {
+            formularioLayout.getTxtCondicionesMedicasField().setText(aData.getCondicionesMedicas());
+            formularioLayout.getTxtMedicacionField().setText(aData.getMedicacion());
+            formularioLayout.getTxtHistorialCirugias().setText(aData.getHistorialCirugias());
+            formularioLayout.getTxtAlergiasField().setText(aData.getAlergias());
+            formularioLayout.getPreferenciaComidaField().setText(aData.getPreferenciaComida());
+            formularioLayout.getTxtHorarioSueno().setText(aData.getHorarioSueno());
+            formularioLayout.getCmbNivelEstres().setSelectedIndex(aData.getNivelEstres());
+            formularioLayout.getTxtHabitoAlimenticio().setText(aData.getHabitoAlimenticio());
+            formularioLayout.getTxtTipoLiquidoConsumido().setText(aData.getTipoLiquidoConsumido());
+            formularioLayout.getTxtCantidadLiquido().setText(String.valueOf(aData.getCantidadLiquidoConsumido()));
+            formularioLayout.getTxtBarreraAlimenticia().setText(aData.getBarreraAlimenticia());
+        }
+
+        if (ccData != null) {
+            formularioLayout.getPesoField().setText(String.valueOf(ccData.getPeso()));
+            int indexActividad = ccData.getNivelActividadFisica() - 1;
+            int indexRazon = ccData.getRazonConsulta() - 1;
+            if (indexActividad >= 0)
+                formularioLayout.getCmbNivelActividad().setSelectedIndex(indexActividad);
+            if (indexRazon >= 0)
+                formularioLayout.getCmbRazonConsulta().setSelectedIndex(indexRazon);
+            formularioLayout.getTxtCaloriasTotales().setText(String.format("%.2f", ccData.getCalorias()));
+        }
+
+        if (macData != null) {
+            formularioLayout.getTxtProteinas().setText(String.format("%.2f", macData.getProteinas()));
+            formularioLayout.getTxtCarbohidratos().setText(String.format("%.2f", macData.getCarbohidratos()));
+            formularioLayout.getTxtLipidos().setText(String.format("%.2f", macData.getLipidos()));
+        }
+    }
+
+    private void limpiarCamposPacienteYConsulta() {
+        limpiarCamposConsulta();
+        formularioLayout.getTxtNombreField().setText("");
+        formularioLayout.getTxtApellidoField().setText("");
+        formularioLayout.getTxtCorreoField().setText("");
+        formularioLayout.getCmbSexo().setSelectedIndex(0);
+        formularioLayout.getTxtTelefonoField().setText("");
+        formularioLayout.clearAllFields();
+        formularioLayout.getAlturaField().setText("");
+    }
+
+    private void limpiarCamposConsulta() {
+        formularioLayout.getTxtCondicionesMedicasField().setText("");
+        formularioLayout.getTxtMedicacionField().setText("");
+        formularioLayout.getTxtHistorialCirugias().setText("");
+        formularioLayout.getTxtAlergiasField().setText("");
+        formularioLayout.getPreferenciaComidaField().setText("");
+        formularioLayout.getTxtHorarioSueno().setText("");
+        formularioLayout.getCmbNivelEstres().setSelectedIndex(0);
+        formularioLayout.getTxtHabitoAlimenticio().setText("");
+        formularioLayout.getTxtTipoLiquidoConsumido().setText("");
+        formularioLayout.getTxtCantidadLiquido().setText("");
+        formularioLayout.getTxtBarreraAlimenticia().setText("");
+        formularioLayout.getPesoField().setText("");
+        formularioLayout.getCmbNivelActividad().setSelectedIndex(0);
+        formularioLayout.getCmbRazonConsulta().setSelectedIndex(0);
+        formularioLayout.getTxtCaloriasTotales().setText("");
+        formularioLayout.getTxtProteinas().setText("");
+        formularioLayout.getTxtCarbohidratos().setText("");
+        formularioLayout.getTxtLipidos().setText("");
+    }
+
+    public void mostrarResultadoCalculo(CaloriasCalculo resultado, Macronutrientes macResultados) {
         if (resultado != null && macResultados != null) {
-            formularioLayout.getTxtCaloriasTotales().setText(String.valueOf(resultado.getCalorias()));
-            formularioLayout.getTxtProteinas().setText(String.valueOf(macResultados.getProteinas()));
-            formularioLayout.getTxtCarbohidratos().setText(String.valueOf(macResultados.getCarbohidratos()));
-            formularioLayout.getTxtLipidos().setText(String.valueOf(macResultados.getLipidos()));
-        }
-        
-        if (mensaje != null && !mensaje.isEmpty()) {
-            JOptionPane.showMessageDialog(formularioLayout.getPanel(), 
-                mensaje, 
-                "Cálculo Completo", 
-                JOptionPane.INFORMATION_MESSAGE);
+            formularioLayout.getTxtCaloriasTotales().setText(String.format("%.2f", resultado.getCalorias()));
+            formularioLayout.getTxtProteinas().setText(String.format("%.2f", macResultados.getProteinas()));
+            formularioLayout.getTxtCarbohidratos().setText(String.format("%.2f", macResultados.getCarbohidratos()));
+            formularioLayout.getTxtLipidos().setText(String.format("%.2f", macResultados.getLipidos()));
         }
     }
-    
- 
+
+    private String obtenerFechaNacimientoStr() {
+        Object chooser = formularioLayout.getFechaNacimientoChooser();
+        if (chooser instanceof JTextField) {
+            return ((JTextField) chooser).getText();
+        } else if (chooser != null) {
+            try {
+                Date fecha = (Date) chooser.getClass().getMethod("getDate").invoke(chooser);
+                if (fecha != null) {
+                    return new SimpleDateFormat("yyyy-MM-dd").format(fecha);
+                }
+            } catch (Exception e) {
+            }
+        }
+        return "";
+    }
+
+    private void setFechaNacimientoEnChooser(String fechaStr) {
+        try {
+            Object chooser = formularioLayout.getFechaNacimientoChooser();
+            Date fecha = new SimpleDateFormat("yyyy-MM-dd").parse(fechaStr);
+            chooser.getClass().getMethod("setDate", Date.class).invoke(chooser, fecha);
+        } catch (Exception e) {
+        }
+    }
+
+    private void mostrarError(String msg) {
+        JOptionPane.showMessageDialog(formularioLayout.getPanel(), msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private double parseDoubleSafe(String val) {
+        try {
+            return Double.parseDouble(val.replace(",", "."));
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
 
     public String getViewAnteriorTag() {
         return formularioLayout.getViewAnteriorTag();
     }
-    
+
     public String getClavePacienteActual() {
-        return clavePacienteActual;
+        return (pacienteActual != null) ? pacienteActual.getClavePaciente() : null;
     }
-}  
-    
+}
