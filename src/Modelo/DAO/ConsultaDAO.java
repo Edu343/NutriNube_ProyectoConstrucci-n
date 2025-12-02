@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DAO responsable de manejar operaciones CRUD para la entidad Consulta.
@@ -317,5 +318,27 @@ public class ConsultaDAO extends DatabaseManager {
 
             return consulta;
         }
+    }
+
+    public List<Consulta> leerPorPacienteYFecha(String clavePaciente, String fecha) throws SQLException {
+        List<Consulta> lista = new ArrayList<>();
+
+        String sql = "SELECT claveConsulta FROM consulta WHERE clavePaciente = ? AND fecha = ? ORDER BY fecha DESC";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, clavePaciente);
+            statement.setString(2, fecha);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    String claveConsulta = rs.getString("claveConsulta");
+                    Consulta c = leerPorClave(claveConsulta); // reutiliza tu mapeo
+                    if (c != null) lista.add(c);
+                }
+            }
+        }
+        return lista;
     }
 }

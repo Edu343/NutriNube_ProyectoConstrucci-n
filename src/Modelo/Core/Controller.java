@@ -31,7 +31,7 @@ public abstract class Controller implements Observer {
     }
     
 
-    protected void cambiarVista(String vistaNombre, Object data) {
+    public void cambiarVista(String vistaNombre, Object data) {
         if (mainLayout != null) {
             mainLayout.cambiarAVista(vistaNombre, data);
         }
