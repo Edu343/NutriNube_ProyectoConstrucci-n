@@ -24,6 +24,19 @@ public class Consulta {
     public Consulta() {
     }
 
+    public Consulta(String claveConsulta, String clavePaciente, String claveNutriologo, String fechaVisita, 
+                    int edad, double altura, AnamnesisData anamnesis, CaloriasCalculo calorias, Macronutrientes macros) {
+        this.claveConsulta = claveConsulta;
+        this.clavePaciente = clavePaciente;
+        this.claveNutriologo = claveNutriologo;
+        this.fechaVisita = fechaVisita;
+        this.edad = edad;
+        this.altura = altura;
+        this.anamnesisData = anamnesis;
+        this.caloriasCalculo = calorias;
+        this.macronutrientes = macros;
+    }
+
     public String getClaveConsulta() {
         return claveConsulta;
     }

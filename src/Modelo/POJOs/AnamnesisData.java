@@ -23,6 +23,22 @@ public class AnamnesisData {
     public AnamnesisData() {
     }
 
+    public AnamnesisData(String condiciones, String medicacion, String cirugias, String alergias, 
+            String comida, String sueno, int estres, String habitos, String liquidos, 
+            double cantLiquidos, String barreras) {
+			this.condicionesMedicas = condiciones;
+			this.medicacion = medicacion;
+			this.historialCirugias = cirugias;
+			this.alergias = alergias;
+			this.preferenciaComida = comida;
+			this.horarioSueno = sueno;
+			this.nivelEstres = estres;
+			this.habitosAlimenticios = habitos;
+			this.tipoLiquidosConsumidos = liquidos;
+			this.cantidadLiquidoConsumido = cantLiquidos;
+			this.barreraAlimenticia = barreras;
+    }
+
     public String getCondicionesMedicas() {
         return condicionesMedicas;
     }

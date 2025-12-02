@@ -18,6 +18,9 @@ public class HistorialConsultasViewLayout extends JPanel {
     private JButton btnEliminar;
     private JButton btnLogout;
     private JButton btnPacientes;
+    
+    // NUEVO: Promovido a atributo para poder modificarlo
+    private JLabel lblNombrePaciente;
 
     public HistorialConsultasViewLayout() {
   
@@ -37,8 +40,13 @@ public class HistorialConsultasViewLayout extends JPanel {
         JLabel lblLogo = new JLabel();
         lblLogo.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
         ImageIcon iconLogo = new ImageIcon("NutriNube.png");
-        Image scaledLogo = iconLogo.getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
-        lblLogo.setIcon(new ImageIcon(scaledLogo));
+        if (iconLogo.getIconWidth() > 0) {
+            Image scaledLogo = iconLogo.getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
+            lblLogo.setIcon(new ImageIcon(scaledLogo));
+        } else {
+             lblLogo.setText("NutriNube");
+             lblLogo.setForeground(Color.WHITE);
+        }
         headerPanel.add(lblLogo, BorderLayout.WEST);
 
         // Botón "Pacientes" con ícono de estetoscopio
@@ -115,11 +123,12 @@ public class HistorialConsultasViewLayout extends JPanel {
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         titlePanel.setBackground(BACKGROUND_COLOR);
 
-        JLabel lblTitulo = new JLabel("Historial de Consultas:");
+        JLabel lblTitulo = new JLabel("Historial de Consultas: ");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblTitulo.setForeground(TEXT_COLOR);
 
-        JLabel lblNombrePaciente = new JLabel("Eduardo Matos"); // placeholder dinámico
+        // NUEVO: Inicializamos la etiqueta del nombre
+        lblNombrePaciente = new JLabel("Cargando..."); // placeholder dinámico
         lblNombrePaciente.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblNombrePaciente.setForeground(TEXT_COLOR);
 
@@ -155,14 +164,19 @@ public class HistorialConsultasViewLayout extends JPanel {
         mainPanel.add(topPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(200, 30)));
 
-        // --- Tabla de historial ---
-        String[] columnas = { "Clave", "Fecha Visita", "Calorías" };
-        Object[][] datos = {
-                { "FIG-123", "Dec 30", "2000" },
-                { "FIG-123", "Dec 21", "2200" }
+       
+        // NUEVO: Modelo con columnas
+        DefaultTableModel modelo = new DefaultTableModel() {
+             @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
+        // Agregamos columnas
+        modelo.addColumn("Clave Consulta");
+        modelo.addColumn("Fecha");
+        modelo.addColumn("Calorías Calculadas");
 
-        DefaultTableModel modelo = new DefaultTableModel(datos, columnas);
         tableConsultas = new JTable(modelo);
         tableConsultas.setRowHeight(28);
         tableConsultas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -213,57 +227,60 @@ public class HistorialConsultasViewLayout extends JPanel {
         return btn;
     }
 
-	public JTable getTableConsultas() {
-		return tableConsultas;
-	}
+    public JTable getTablaConsultas() {
+        return tableConsultas;
+    }
 
-	public void setTableConsultas(JTable tableConsultas) {
-		this.tableConsultas = tableConsultas;
-	}
+    public void setTableConsultas(JTable tableConsultas) {
+        this.tableConsultas = tableConsultas;
+    }
 
-	public JTextField getTxtBuscar() {
-		return txtBuscar;
-	}
+    public JTextField getTxtBuscar() {
+        return txtBuscar;
+    }
 
-	public void setTxtBuscar(JTextField txtBuscar) {
-		this.txtBuscar = txtBuscar;
-	}
+    public void setTxtBuscar(JTextField txtBuscar) {
+        this.txtBuscar = txtBuscar;
+    }
 
-	public JButton getBtnAgregar() {
-		return btnAgregar;
-	}
+    public JButton getBtnAgregar() {
+        return btnAgregar;
+    }
 
-	public void setBtnAgregar(JButton btnAgregar) {
-		this.btnAgregar = btnAgregar;
-	}
+    public void setBtnAgregar(JButton btnAgregar) {
+        this.btnAgregar = btnAgregar;
+    }
 
-	public JButton getBtnEliminar() {
-		return btnEliminar;
-	}
+    public JButton getBtnEliminar() {
+        return btnEliminar;
+    }
 
-	public void setBtnEliminar(JButton btnEliminar) {
-		this.btnEliminar = btnEliminar;
-	}
+    public void setBtnEliminar(JButton btnEliminar) {
+        this.btnEliminar = btnEliminar;
+    }
 
-	public JButton getBtnLogout() {
-		return btnLogout;
-	}
+    public JButton getBtnLogout() {
+        return btnLogout;
+    }
 
-	public void setBtnLogout(JButton btnLogout) {
-		this.btnLogout = btnLogout;
-	}
+    public void setBtnLogout(JButton btnLogout) {
+        this.btnLogout = btnLogout;
+    }
 
-	public JButton getBtnPacientes() {
-		return btnPacientes;
-	}
+    public JButton getBtnPacientes() {
+        return btnPacientes;
+    }
 
-	public void setBtnPacientes(JButton btnPacientes) {
-		this.btnPacientes = btnPacientes;
-	}
-	
-	public JPanel getPanel() {
-		return this;
-	}
+    public void setBtnPacientes(JButton btnPacientes) {
+        this.btnPacientes = btnPacientes;
+    }
     
+    public JPanel getPanel() {
+        return this;
+    }
+    
+    // NUEVO: Método para cambiar el nombre dinámicamente
+    public void setNombrePaciente(String nombre) {
+        this.lblNombrePaciente.setText(nombre);
+    }
 }
-

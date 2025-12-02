@@ -36,7 +36,7 @@ public class PacienteDAO extends DatabaseManager {
             statement.setString(3, paciente.getApellido());
             statement.setString(4, paciente.getCorreo());
             statement.setInt(5, paciente.getSexo());
-            statement.setInt(6, paciente.getTelefono());
+            statement.setString(6, paciente.getTelefono());
             statement.setString(7, paciente.getClaveNutriologo());
             statement.setDouble(8, paciente.getAltura());
             statement.setString(9, paciente.getFechaNacimiento());
@@ -66,7 +66,7 @@ public class PacienteDAO extends DatabaseManager {
             statement.setString(2, paciente.getApellido());
             statement.setString(3, paciente.getCorreo());
             statement.setInt(4, paciente.getSexo());
-            statement.setInt(5, paciente.getTelefono());
+            statement.setString(5, paciente.getTelefono());
             statement.setString(6, paciente.getClaveNutriologo());
             statement.setDouble(7, paciente.getAltura());
             statement.setString(8, paciente.getFechaNacimiento());
@@ -112,7 +112,7 @@ public class PacienteDAO extends DatabaseManager {
             paciente.setApellido(resultSet.getString("apellido"));
             paciente.setCorreo(resultSet.getString("correo"));
             paciente.setSexo(resultSet.getInt("sexo"));
-            paciente.setTelefono(resultSet.getInt("telefono"));
+            paciente.setTelefono(resultSet.getString("telefono"));
             paciente.setClaveNutriologo(resultSet.getString("claveNutriologo"));
             paciente.setAltura(resultSet.getDouble("altura"));
             paciente.setFechaNacimiento(resultSet.getString("fechaNacimiento"));

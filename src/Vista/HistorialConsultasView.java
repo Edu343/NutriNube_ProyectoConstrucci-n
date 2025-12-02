@@ -3,6 +3,7 @@ package Vista;
 import Modelo.Core.View;
 import Controlador.HistorialController;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -40,9 +41,9 @@ public class HistorialConsultasView extends View {
             myController.handleAgregarConsulta(clavePacienteActual));
         
         historialLayout.getBtnEliminar().addActionListener(e -> {
-            int selectedRow = historialLayout.getTableConsultas().getSelectedRow();
+            int selectedRow = historialLayout.getTablaConsultas().getSelectedRow();
             if (selectedRow != -1) {
-                String claveConsulta = (String) historialLayout.getTableConsultas().getValueAt(selectedRow, 0);
+                String claveConsulta = (String) historialLayout.getTablaConsultas().getValueAt(selectedRow, 0);
                 myController.handleEliminarConsulta(claveConsulta);
             }
         });
@@ -53,14 +54,14 @@ public class HistorialConsultasView extends View {
         historialLayout.getBtnLogout().addActionListener(e ->
             myController.handleLogout());
             
-        historialLayout.getTableConsultas().addMouseListener(new MouseAdapter() {
+        historialLayout.getTablaConsultas().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     JTable target = (JTable)e.getSource();
                     int row = target.getSelectedRow();
                     if (row != -1) {
-                        String claveConsulta = (String) historialLayout.getTableConsultas().getValueAt(row, 0);
+                        String claveConsulta = (String) historialLayout.getTablaConsultas().getValueAt(row, 0);
                         myController.handleEditarConsulta(claveConsulta);
                     }
                 }
@@ -77,7 +78,7 @@ public class HistorialConsultasView extends View {
     }
     
     @Override
-    public void loadData(Object data) {
+    public void cargarDatos(Object data) {
         // Carga la clave del paciente cuando se accede a esta vista.
         if (data instanceof String) {
             this.clavePacienteActual = (String) data;
@@ -86,11 +87,9 @@ public class HistorialConsultasView extends View {
         display();
     }
 
-
-    
     private void cargarHistorialConsultas() {
         // Lógica para cargar los datos de la tabla.
-        if (clavePacienteActual != null) {
+        
         	Expediente expediente = null;
             List<Consulta> consultas = null;
             try {
@@ -100,17 +99,27 @@ public class HistorialConsultasView extends View {
                 e.printStackTrace();
             }
             
-            DefaultTableModel model = (DefaultTableModel) historialLayout.getTableConsultas().getModel();
+            DefaultTableModel model = (DefaultTableModel) historialLayout.getTablaConsultas().getModel();
             model.setRowCount(0);
             
-            for (Consulta c : consultas) {
-                Object[] row = {
-                    c.getClaveConsulta(),
-                    c.getFechaVisita(),
-                    c.getCaloriasCalculo() != null ? String.valueOf(c.getCaloriasCalculo().getCalorias()) : "0"
-                };
-                model.addRow(row);
+            if (consultas != null) {
+                for (Consulta consulta : consultas) {
+                    Object[] row = {
+                        consulta.getClaveConsulta(),
+                        consulta.getFechaVisita(),
+                        consulta.getCaloriasCalculo() != null ? String.valueOf(consulta.getCaloriasCalculo().getCalorias()) : "0"
+                    };
+                    model.addRow(row);
+                }
             }
-        }
+        
+
+        SwingUtilities.invokeLater(() -> {
+            
+        	historialLayout.getTablaConsultas().revalidate();
+            historialLayout.getTablaConsultas().repaint();
+        });
     }
+
 }
+
