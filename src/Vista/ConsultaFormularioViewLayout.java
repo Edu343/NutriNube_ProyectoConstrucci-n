@@ -5,6 +5,16 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.util.Date;
 // Simulación de importación de JDateChooser
+/*
+ * Vista que representa el formulario de consulta.
+ * Panel Swing (JPanel) que construye la interfaz para capturar datos
+ * personales, historial médico, hábitos alimenticios, actividad física,
+ * consumo de líquidos, metas nutricionales y resultados (macronutrientes).
+ *
+ 
+ * Mantener este comentario actualizado cuando se agreguen nuevos campos,
+ * validaciones o comportamiento interactivo.
+ */
 
 public class ConsultaFormularioViewLayout extends JPanel {
 
