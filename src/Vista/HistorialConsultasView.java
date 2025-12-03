@@ -77,9 +77,7 @@ public class HistorialConsultasView extends View {
             myController.handleAgregarConsulta(clavePacienteActual)
         );
         
-        // -----------------------------
-        //   BOTÓN ELIMINAR (FIX LLAVE)
-        // -----------------------------
+        
         historialLayout.getBtnEliminar().addActionListener(e -> {
             int selectedRow = historialLayout.getTablaConsultas().getSelectedRow();
             
