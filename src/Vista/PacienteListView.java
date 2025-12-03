@@ -1,22 +1,17 @@
 package Vista;
 
 import Modelo.Core.View;
+import Modelo.POJOs.Paciente;
 
-
-import Controlador.PacienteListController;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import Controlador.PacienteListController;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
-import Modelo.POJOs.Paciente;
-
-/**
- * Vista de la lista principal que muestra todos los pacientes del nutriólogo.
- * Permite buscar, agregar, eliminar y seleccionar un paciente para ver su historial.
- */
 
 public class PacienteListView extends View {
     
@@ -31,26 +26,49 @@ public class PacienteListView extends View {
         myController = new PacienteListController(tag);
     }
     
-    /**
-     * Inicializa el layout gráfico y registra todos los listeners
-     * de eventos para botones, tabla y campo de búsqueda.
-     */    
     @Override
     protected void crearViewLayout() {
-    	
         pacienteLayout = new PacienteListViewLayout();
         this.mainPanel = pacienteLayout.getPanel();
         
+        // Botón Agregar
         pacienteLayout.getBtnAgregar().addActionListener(e -> 
-            myController.handleAnadirPaciente());
+            myController.handleAnadirPaciente(null)
+        );
+        
         
         pacienteLayout.getBtnEliminar().addActionListener(e -> {
+            
             int selectedRow = pacienteLayout.getTablaPacientes().getSelectedRow();
+            
             if (selectedRow != -1) {
-                String clavePaciente = (String) pacienteLayout.getTablaPacientes().getValueAt(selectedRow, 0);
-                myController.handleEliminarPaciente(clavePaciente);
+                
+                String nombrePaciente = (String) pacienteLayout.getTablaPacientes()
+                        .getValueAt(selectedRow, 1);
+                
+                int respuesta = JOptionPane.showConfirmDialog(
+                    mainPanel,
+                    "¿Seguro que quieres eliminar al paciente " + nombrePaciente + "?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+                );
+
+                if (respuesta == JOptionPane.YES_OPTION) {
+                    String clavePaciente = (String) pacienteLayout.getTablaPacientes()
+                            .getValueAt(selectedRow, 0);
+
+                    myController.handleEliminarPaciente(clavePaciente);
+                    cargarTablaPacientes();
+                }
+                
+            } else {
+                JOptionPane.showMessageDialog(mainPanel, 
+                        "Por favor selecciona un paciente de la lista.");
             }
-        });
+        }); 
+
+        
         
         pacienteLayout.getTablaPacientes().addMouseListener(new MouseAdapter() {
             @Override
@@ -59,72 +77,72 @@ public class PacienteListView extends View {
                     JTable target = (JTable)e.getSource();
                     int row = target.getSelectedRow();
                     if (row != -1) {
-                        String clavePaciente = (String) pacienteLayout.getTablaPacientes().getValueAt(row, 0);
+                        String clavePaciente = (String) pacienteLayout.getTablaPacientes()
+                                .getValueAt(row, 0);
                         myController.handlePacienteSeleccionado(clavePaciente);
                     }
                 }
             }
         });
         
+        
         pacienteLayout.getTxtBuscar().addActionListener(e -> {
             String criterio = pacienteLayout.getTxtBuscar().getText();
             myController.handleBuscarPaciente(criterio);
         });
         
+        
         pacienteLayout.getBtnLogout().addActionListener(e -> 
-            myController.handleLogout());
+            myController.handleLogout()
+        );
     }
     
     @Override
     public void display() {
         if (myModel.getNutriologoActual() != null) {
-            String nombreCompleto = myModel.getNutriologoActual().getNombre() + " " + myModel.getNutriologoActual().getApellido();
+            String nombreCompleto = myModel.getNutriologoActual().getNombre()
+                    + " " + myModel.getNutriologoActual().getApellido();
             pacienteLayout.setNombreNutriologo(nombreCompleto);
         }
         cargarTablaPacientes();
     }
     
-    /**
-     * Carga la lista completa de pacientes desde el modelo y
-     * reconstruye la tabla visible en el layout.
-     * 
-     * También obtiene la última fecha de consulta de cada paciente.
-     */    
     private void cargarTablaPacientes() {
         if (myModel.getNutriologoActual() != null) {
             List<Paciente> pacientes = null;
             try {
-                pacientes = myModel.getNutriologoDAO().obtenerListaPacientes(myModel.getNutriologoActual().getClaveNutriologo());
+                pacientes = myModel.getNutriologoDAO()
+                        .obtenerListaPacientes(myModel.getNutriologoActual()
+                        .getClaveNutriologo());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             
-            DefaultTableModel model = (DefaultTableModel) pacienteLayout.getTablaPacientes().getModel();
+            DefaultTableModel model = 
+                    (DefaultTableModel) pacienteLayout.getTablaPacientes().getModel();
             model.setRowCount(0);
             
             if (pacientes != null) {
                 for (Paciente paciente : pacientes) {
                     String ultimaFecha = "Sin historial";
                     try {
-                        String fechaBD = myModel.getConsultaDAO().obtenerUltimaFechaPorPaciente(paciente.getClavePaciente());
+                        String fechaBD = myModel.getConsultaDAO()
+                                .obtenerUltimaFechaPorPaciente(paciente.getClavePaciente());
                         if (fechaBD != null && !fechaBD.equals("Sin historial")) {
                             ultimaFecha = fechaBD;
                         }
-                    } catch (Exception e) {
-                    }
-
-                    Object[] row = {
+                    } catch (Exception e) {}
+                    
+                    model.addRow(new Object[] {
                         paciente.getClavePaciente(),
                         paciente.getNombre() + " " + paciente.getApellido(),
                         ultimaFecha
-                    };
-                    model.addRow(row);
+                    });
                 }
             }
         }
         
         SwingUtilities.invokeLater(() -> {
-            
             pacienteLayout.getTablaPacientes().revalidate();
             pacienteLayout.getTablaPacientes().repaint();
         });
