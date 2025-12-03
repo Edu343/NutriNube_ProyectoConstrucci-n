@@ -19,7 +19,7 @@ public class NutricionServicioTest {
     // --- Constantes Base (Asumiendo que el año actual es 2025 para cálculo) ---
     
     private static final String ANIO_NACIMIENTO_30 = "1995"; // Edad = 30
-    private static final String ANIO_NACIMIENTO_25 = "2000"; // Edad = 25
+    
     
     // Constantes de sexo para coincidir con la lógica del servicio
     private static final int SEXO_HOMBRE = 1;

@@ -17,6 +17,9 @@ public class MetaNutricional {
         this.proteinasObjetivo = proteinasObjetivo;
     }
 
+    public MetaNutricional() {
+    }
+
     
 
     public double getCarbohidratosObjetivo() {
