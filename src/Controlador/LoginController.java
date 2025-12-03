@@ -33,18 +33,15 @@ public class LoginController extends Controller {
 
         NutriNubeModelo modelo = (NutriNubeModelo) myModel;
 
-        // 1) comprobar estado (no existe / wrong / ok)
         LoginEstado estado = modelo.obtenerEstadoLogin(usuario, contrasena);
 
         switch (estado) {
             case SUCCESS:
-                // login correcto -> cambiar a lista de pacientes
-                modelo.login(usuario, contrasena); // esto setea nutriologoActual y notifica
+                modelo.login(usuario, contrasena);
                 cambiarVista(MainViewLayout.PACIENTES_VIEW, null);
                 break;
 
             case WRONG_PASSWORD:
-                // POR DISEÑO: no se permite cambiar contraseña desde aquí (según tu instrucción)
                 JOptionPane.showMessageDialog(null,
                         "Contraseña incorrecta. Si la olvidaste, contacta al administrador.",
                         "Contraseña incorrecta",
@@ -52,14 +49,12 @@ public class LoginController extends Controller {
                 break;
 
             case NOT_FOUND:
-                // no existe: preguntar si desea dar de alta
                 int opcion = JOptionPane.showConfirmDialog(null,
                         "No se encontraron las claves para '" + usuario + "'.\n¿Deseas registrar un nuevo nutriólogo con esa clave?",
                         "Nutriólogo no encontrado",
                         JOptionPane.YES_NO_OPTION);
 
                 if (opcion == JOptionPane.YES_OPTION) {
-                    // Recolectar datos mínimos con cuadros de diálogo simples:
                     String nombre = JOptionPane.showInputDialog(null, "Nombre:");
                     if (nombre == null) return;
                     String apellido = JOptionPane.showInputDialog(null, "Apellido:");

@@ -6,12 +6,10 @@ import Modelo.Core.Controller;
 import Modelo.Core.MainViewLayout;
 
 /**
- * Controlador para manejar la lógica del formulario de consulta.
- * Gestiona la adición y edición de consultas, el cálculo de calorías y
- * macronutrientes,
- * y la navegación entre vistas.
+ * Controlador responsable del formulario de consulta.
+ * Coordina la creación, edición y guardado de consultas,
+ * así como navegación y cálculo de calorías según los datos ingresados.
  */
-
 public class ConsultaController extends Controller {
 
     public static final String MODO_AGREGAR = "AGREGAR";
@@ -46,11 +44,13 @@ public class ConsultaController extends Controller {
             String claveNutriologo = myModel.getNutriologoActual().getClaveNutriologo();
 
             if (modo.equals(MODO_AGREGAR)) {
+                
+                boolean claveValida = clavePaciente == null || clavePaciente.isEmpty();
+                boolean nombreValido = nombre != null && !nombre.isEmpty();
 
-                boolean isNewPatient = (clavePaciente == null || clavePaciente.isEmpty())
-                        && (nombre != null && !nombre.isEmpty());
+                boolean esNuevoPaciente = claveValida && nombreValido;
 
-                if (isNewPatient) {
+                if (esNuevoPaciente) {
                     myModel.guardarNuevoPacienteYConsulta(claveNutriologo, nombre, apellido, correo, sexo, telefono,
                             fechaNacimiento, altura,
                             condicionesMedicas, medicacion, historialCirugias, alergias, preferenciaComida,

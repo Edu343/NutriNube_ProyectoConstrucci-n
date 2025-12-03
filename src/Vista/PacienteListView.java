@@ -31,6 +31,10 @@ public class PacienteListView extends View {
         myController = new PacienteListController(tag);
     }
     
+    /**
+     * Inicializa el layout gráfico y registra todos los listeners
+     * de eventos para botones, tabla y campo de búsqueda.
+     */    
     @Override
     protected void crearViewLayout() {
     	
@@ -80,6 +84,12 @@ public class PacienteListView extends View {
         cargarTablaPacientes();
     }
     
+    /**
+     * Carga la lista completa de pacientes desde el modelo y
+     * reconstruye la tabla visible en el layout.
+     * 
+     * También obtiene la última fecha de consulta de cada paciente.
+     */    
     private void cargarTablaPacientes() {
         if (myModel.getNutriologoActual() != null) {
             List<Paciente> pacientes = null;

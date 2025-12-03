@@ -2,7 +2,6 @@ package Vista;
 
 import Modelo.Core.View;
 
-
 import Controlador.HistorialController;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -14,9 +13,15 @@ import java.util.List;
 import Modelo.POJOs.Consulta;
 import Modelo.POJOs.Expediente;
 
+/**
+ * Vista encargada de mostrar el historial de consultas de un paciente.
+ * Gestiona la interacción con la tabla, búsquedas por fecha, selección
+ * de consulta, eliminación y navegación hacia otras vistas.
+ */
 public class HistorialConsultasView extends View {
     
     private HistorialConsultasViewLayout historialLayout;
+
     private String clavePacienteActual;
     
     public HistorialConsultasView(String tag) {
@@ -28,19 +33,25 @@ public class HistorialConsultasView extends View {
         myController = new HistorialController(tag);
     }
     
+    /**
+     * Construye y configura todos los componentes gráficos del layout.
+     * Incluye listeners de búsqueda, doble clic, navegación y acciones principales.
+     */
     @Override
     protected void crearViewLayout() {
         historialLayout = new HistorialConsultasViewLayout();
         this.mainPanel = historialLayout.getPanel();
         
+        // Escucha de filtrado por fecha desde el campo de búsqueda del layout.
         historialLayout.addPropertyChangeListener("filtrarFecha", evt -> {
             String fecha = (String) evt.getNewValue();
 
             if (fecha == null || fecha.isEmpty()) {
-                cargarHistorialConsultas(); // recarga todo
+                cargarHistorialConsultas();
                 return;
             }
 
+            // Solicitar al controlador la lista filtrada por fecha
             List<Consulta> filtradas =
                 ((HistorialController) myController)
                 .buscarConsultasPorFecha(clavePacienteActual, fecha);
@@ -48,42 +59,45 @@ public class HistorialConsultasView extends View {
             actualizarTablaConsultas(filtradas);
         });
 
-        
-     historialLayout.getTxtBuscar().addKeyListener(new java.awt.event.KeyAdapter() {
-         @Override
-         public void keyReleased(java.awt.event.KeyEvent e) {
-             String texto = historialLayout.getTxtBuscar().getText().trim();
-             // ignorar placeholder
-             if (texto.equals("") || texto.equals("Buscar fecha") || texto.equals(" Buscar fecha")) {
-                 // recargar todas las consultas
-                 cargarHistorialConsultas();
-                 return;
-             }
+        // Listener del campo de texto para búsqueda en tiempo real.
+        historialLayout.getTxtBuscar().addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String texto = historialLayout.getTxtBuscar().getText().trim();
 
-             // validar formato YYYY-MM-DD
-             if (!texto.matches("\\d{4}-\\d{2}-\\d{2}")) {
-                 // formato inválido: no filtrar (o podrías mostrar error)
-                 return;
-             }
+                if (texto.equals("") || texto.equals("Buscar fecha") || texto.equals(" Buscar fecha")) {
+                    cargarHistorialConsultas();
+                    return;
+                }
 
-             // pedir al controller los resultados filtrados
-             List<Consulta> filtradas = ((HistorialController) myController).buscarConsultasPorFecha(clavePacienteActual, texto);
-             actualizarTablaConsultas(filtradas);
-         }
-     });
+                // Validar formato YYYY-MM-DD
+                if (!texto.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                    return;
+                }
 
-        
+                List<Consulta> filtradas =
+                    ((HistorialController) myController)
+                    .buscarConsultasPorFecha(clavePacienteActual, texto);
+
+                actualizarTablaConsultas(filtradas);
+            }
+        });
+
+        // Botón para agregar una nueva consulta
         historialLayout.getBtnAgregar().addActionListener(e -> 
             myController.handleAgregarConsulta(clavePacienteActual));
         
+        // Botón para eliminar la consulta seleccionada
         historialLayout.getBtnEliminar().addActionListener(e -> {
             int selectedRow = historialLayout.getTablaConsultas().getSelectedRow();
             if (selectedRow != -1) {
-                String claveConsulta = (String) historialLayout.getTablaConsultas().getValueAt(selectedRow, 0);
+                String claveConsulta =
+                    (String) historialLayout.getTablaConsultas().getValueAt(selectedRow, 0);
                 myController.handleEliminarConsulta(claveConsulta);
             }
         });
         
+        // Regresar a la vista de pacientes
         historialLayout.getBtnPacientes().addActionListener(e ->
             ((HistorialController)myController).handleSalir());
             
@@ -97,15 +111,13 @@ public class HistorialConsultasView extends View {
                     JTable target = (JTable)e.getSource();
                     int row = target.getSelectedRow();
                     if (row != -1) {
-                        String claveConsulta = (String) historialLayout.getTablaConsultas().getValueAt(row, 0);
+                        String claveConsulta =
+                            (String) historialLayout.getTablaConsultas().getValueAt(row, 0);
                         myController.handleEditarConsulta(claveConsulta);
                     }
                 }
             }
         });
-        
-        
-        
     }
     
     @Override
@@ -115,6 +127,10 @@ public class HistorialConsultasView extends View {
         }
     }
     
+    /**
+     * Recibe la clave del paciente y prepara la vista para mostrar su historial.
+     * @param data clave única del paciente seleccionada desde otra vista.
+     */
     @Override
     public void cargarDatos(Object data) {
         if (data instanceof String) {
@@ -123,12 +139,18 @@ public class HistorialConsultasView extends View {
         display();
     }
     
+    /**
+     * Actualiza la tabla con una lista de consultas ya filtradas.
+     * @param consultas lista de consultas a mostrar.
+     */
     public void actualizarTablaConsultas(List<Consulta> consultas) {
-        DefaultTableModel model = (DefaultTableModel) historialLayout.getTablaConsultas().getModel();
+        DefaultTableModel model =
+            (DefaultTableModel) historialLayout.getTablaConsultas().getModel();
+
         model.setRowCount(0);
 
         if (consultas == null || consultas.isEmpty()) {
-            // nada que mostrar (o podrías recargar todas)
+            // Vaciar tabla cuando no hay resultados
             SwingUtilities.invokeLater(() -> {
                 historialLayout.getTablaConsultas().revalidate();
                 historialLayout.getTablaConsultas().repaint();
@@ -140,7 +162,9 @@ public class HistorialConsultasView extends View {
             Object[] row = {
                 c.getClaveConsulta(),
                 c.getFechaVisita(),
-                c.getCaloriasCalculo() != null ? String.valueOf(c.getCaloriasCalculo().getCalorias()) : "0"
+                c.getCaloriasCalculo() != null
+                    ? String.valueOf(c.getCaloriasCalculo().getCalorias())
+                    : "0"
             };
             model.addRow(row);
         }
@@ -151,41 +175,52 @@ public class HistorialConsultasView extends View {
         });
     }
 
-    
+    /**
+     * Carga el expediente completo del paciente desde el modelo
+     * y reconstruye la tabla del historial de consultas.
+     * Maneja fallas de acceso a la base de datos.
+     */
     private void cargarHistorialConsultas() {
         
-        	Expediente expediente = null;
-            List<Consulta> consultas = null;
-            try {
-            	expediente = myModel.getPacienteDAO().obtenerExpedienteCompleto(clavePacienteActual);
-                consultas = expediente.getConsultas();
-                
-                if (expediente.getPaciente() != null) {
-                    String nombrePac = expediente.getPaciente().getNombre() + " " + expediente.getPaciente().getApellido();
-                    historialLayout.setNombrePaciente(nombrePac);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        Expediente expediente = null;
+        List<Consulta> consultas = null;
+
+        try {
+            expediente = myModel.getPacienteDAO().obtenerExpedienteCompleto(clavePacienteActual);
+            consultas = expediente.getConsultas();
             
-            DefaultTableModel model = (DefaultTableModel) historialLayout.getTablaConsultas().getModel();
-            model.setRowCount(0);
-            
-            if (consultas != null) {
-                for (Consulta consulta : consultas) {
-                    Object[] row = {
-                        consulta.getClaveConsulta(),
-                        consulta.getFechaVisita(),
-                        consulta.getCaloriasCalculo() != null ? String.valueOf(consulta.getCaloriasCalculo().getCalorias()) : "0"
-                    };
-                    model.addRow(row);
-                }
+            if (expediente.getPaciente() != null) {
+                String nombre =
+                    expediente.getPaciente().getNombre() + " " +
+                    expediente.getPaciente().getApellido();
+                historialLayout.setNombrePaciente(nombre);
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         
+        DefaultTableModel model =
+            (DefaultTableModel) historialLayout.getTablaConsultas().getModel();
+
+        model.setRowCount(0);
         
+        // Cargar resultados en la tabla si existen
+        if (consultas != null) {
+            for (Consulta consulta : consultas) {
+                Object[] row = {
+                    consulta.getClaveConsulta(),
+                    consulta.getFechaVisita(),
+                    consulta.getCaloriasCalculo() != null
+                        ? String.valueOf(consulta.getCaloriasCalculo().getCalorias())
+                        : "0"
+                };
+                model.addRow(row);
+            }
+        }
+
         SwingUtilities.invokeLater(() -> {
-            
-        	historialLayout.getTablaConsultas().revalidate();
+            historialLayout.getTablaConsultas().revalidate();
             historialLayout.getTablaConsultas().repaint();
         });
     }
