@@ -9,8 +9,6 @@ import Modelo.Servicios.NutriNubeModelo;
  * Implementa la interfaz Observer y maneja la comunicación entre el Modelo y la Vista.
  * Centraliza la Inyección de Dependencia para la navegación (cambiarVista).
  */
-
-
 public abstract class Controller implements Observer {
     protected NutriNubeModelo myModel;
     protected View myView;
@@ -31,7 +29,7 @@ public abstract class Controller implements Observer {
     }
     
 
-    protected void cambiarVista(String vistaNombre, Object data) {
+    public void cambiarVista(String vistaNombre, Object data) {
         if (mainLayout != null) {
             mainLayout.cambiarAVista(vistaNombre, data);
         }
@@ -43,7 +41,7 @@ public abstract class Controller implements Observer {
     	
     }
     	
-    public void handleAnadirPaciente(Paciente paciente) {
+    public void handleAnadirPaciente() {
     	
     }
     public void handleEliminarPaciente(String clavePaciente) {

@@ -6,18 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * DAO responsable de manejar operaciones CRUD para la entidad Consulta.
- * Reconstruye todos los objetos anidados y utiliza el orden de parámetros
- * validado por el equipo.
+ * DAO encargado de las operaciones de persistencia para la entidad Consulta.
+ * Implementa todas las operaciones CRUD y reconstruye objetos anidados
+ * a partir de los resultados de la base de datos.
  */
 public class ConsultaDAO extends DatabaseManager {
 
     /**
-     * Inserta una nueva consulta utilizando los 25 campos definidos.
-     *
-     * @param entidad Objeto Consulta a insertar.
+     * Inserta una nueva consulta con todos los campos requeridos.
      */
     @Override
     public void insertar(Object entidad) throws SQLException {
@@ -78,9 +77,7 @@ public class ConsultaDAO extends DatabaseManager {
     }
 
     /**
-     * Actualiza una consulta existente.
-     *
-     * @param entidad Objeto Consulta con datos actualizados.
+     * Actualiza una consulta existente en la base de datos.
      */
     @Override
     public void actualizar(Object entidad) throws SQLException {
@@ -140,7 +137,7 @@ public class ConsultaDAO extends DatabaseManager {
     }
 
     /**
-     * Elimina una consulta por su clave principal.
+     * Elimina una consulta mediante su clave única.
      */
     @Override
     public void eliminar(String claveConsulta) throws SQLException {
@@ -155,11 +152,8 @@ public class ConsultaDAO extends DatabaseManager {
     }
 
     /**
-     * Recupera una consulta completa, reconstruyendo todos sus
-     * objetos anidados.
-     *
-     * @param claveConsulta Identificador único.
-     * @return Consulta o null si no existe.
+     * Recupera una consulta completa, incluyendo sus objetos anidados
+     * como calorías, anamnesis y macronutrientes.
      */
     public Consulta leerPorClave(String claveConsulta) throws SQLException {
 
@@ -217,6 +211,9 @@ public class ConsultaDAO extends DatabaseManager {
         }
     }
     
+    /**
+     * Obtiene todas las consultas pertenecientes a un paciente.
+     */
     public ArrayList<Consulta> leerPorPaciente(String clavePaciente) throws SQLException {
 
         ArrayList<Consulta> lista = new ArrayList<>();
@@ -242,6 +239,10 @@ public class ConsultaDAO extends DatabaseManager {
         return lista;
     }
 
+    /**
+     * Recupera la fecha más reciente de consulta registrada
+     * para un paciente.
+     */ 
     public String obtenerUltimaFechaPorPaciente(String clavePaciente) throws SQLException {
         String fecha = "Sin historial";
         
@@ -260,7 +261,10 @@ public class ConsultaDAO extends DatabaseManager {
         return fecha;
     }
 
-
+    /**
+     * Obtiene la última consulta registrada (más reciente por fecha)
+     * reconstruyendo todos sus objetos internos.
+     */
     public Consulta obtenerUltimaConsultaObjeto(String clavePaciente) throws SQLException {
         // Ordenamos por fecha descendente y tomamos 1
         String sql = "SELECT * FROM consulta WHERE clavePaciente = ? ORDER BY fecha DESC LIMIT 1";
@@ -274,10 +278,6 @@ public class ConsultaDAO extends DatabaseManager {
             if (!resultSet.next()) {
                 return null;
             }
-            
-            // Reutilizamos la lógica de lectura que ya tienes en leerPorClave
-            // Nota: Para no duplicar código, lo ideal sería extraer esto a un método privado "mapResultSetToConsulta",
-            // pero para ser prácticos, copiamos la lógica de mapeo de 'leerPorClave' aquí:
             
             String claveConsulta = resultSet.getString("claveConsulta");
             Consulta consulta = new Consulta();
@@ -317,5 +317,30 @@ public class ConsultaDAO extends DatabaseManager {
 
             return consulta;
         }
+    }
+
+    /**
+     * Recupera todas las consultas de un paciente filtrando por una fecha exacta.
+     */
+    public List<Consulta> leerPorPacienteYFecha(String clavePaciente, String fecha) throws SQLException {
+        List<Consulta> lista = new ArrayList<>();
+
+        String sql = "SELECT claveConsulta FROM consulta WHERE clavePaciente = ? AND fecha = ? ORDER BY fecha DESC";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, clavePaciente);
+            statement.setString(2, fecha);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    String claveConsulta = rs.getString("claveConsulta");
+                    Consulta c = leerPorClave(claveConsulta); // reutiliza tu mapeo
+                    if (c != null) lista.add(c);
+                }
+            }
+        }
+        return lista;
     }
 }

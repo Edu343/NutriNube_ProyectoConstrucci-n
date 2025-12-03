@@ -4,18 +4,15 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.util.Date;
-// Simulación de importación de JDateChooser
-/*
- * Vista que representa el formulario de consulta.
- * Panel Swing (JPanel) que construye la interfaz para capturar datos
- * personales, historial médico, hábitos alimenticios, actividad física,
- * consumo de líquidos, metas nutricionales y resultados (macronutrientes).
- *
- 
- * Mantener este comentario actualizado cuando se agreguen nuevos campos,
- * validaciones o comportamiento interactivo.
- */
 
+/**
+ * Componente gráfico principal para el formulario de consulta.
+ * Construye toda la interfaz utilizando Swing, organiza las secciones,
+ * define estilos visuales, crea campos interactivos
+ * y expone sus componentes para que la vista los utilice.
+ *
+ * Esta clase NO contiene lógica de negocio; únicamente diseña la UI.
+ */
 public class ConsultaFormularioViewLayout extends JPanel {
 
     private final Color PRIMARY_BG_COLOR = new Color(44, 50, 64);
@@ -71,6 +68,12 @@ public class ConsultaFormularioViewLayout extends JPanel {
         initComponents();
     }
 
+    /**
+     * Inicializa todos los paneles, campos, botones y estilos visuales.
+     * Ensambla el diseño completo utilizando múltiples secciones.
+     *
+     * Actualizar este método si se agregan nuevos elementos al formulario.
+     */
     private void initComponents() {
 
         this.setSize(1000, 900);
@@ -152,28 +155,28 @@ public class ConsultaFormularioViewLayout extends JPanel {
             fechaNacimientoChooser = fallback;
         }
 
-        personalInfoPanel = createPersonalInfoPanel("Información Personal",
+        personalInfoPanel = crearPanelInformacionPersonal("Información Personal",
                 new String[] { "Nombre(s)", "Apellido", "Fecha de Nacimiento", "Sexo", "Correo Electrónico", "Teléfono",
                         "Altura (cm)", "Peso (kg)" });
         mainContentPanel.add(personalInfoPanel, gbcMain);
 
-        medicalHistoryPanel = createMedicalHistoryPanel("Historial Médico",
+        medicalHistoryPanel = crearPanelHistorialMedico("Historial Médico",
                 new String[] { "Condiciones Médicas", "Historial de cirugías", "Medicación" });
         mainContentPanel.add(medicalHistoryPanel, gbcMain);
 
-        foodHistoryPanel = createFoodHistoryPanel("Historial Alimenticio",
+        foodHistoryPanel = crearPanelHistorialAlimenticio("Historial Alimenticio",
                 new String[] { "Alergias", "Preferencias de Comida" });
         mainContentPanel.add(foodHistoryPanel, gbcMain);
 
-        physicalActivityPanel = createPhysicalActivityPanel("Nivel de Actividad Física",
+        physicalActivityPanel = crearPanelNivelActividadFisica("Nivel de Actividad Física",
                 new String[] { "Nivel diario de actividad física" });
         mainContentPanel.add(physicalActivityPanel, gbcMain);
 
-        lifestylePanel = createLifestylePanel("Estilo de Vida",
+        lifestylePanel = crearPanelEstiloDeVida("Estilo de Vida",
                 new String[] { "Horario de sueño", "Niveles de estrés", "Hábitos alimenticios" });
         mainContentPanel.add(lifestylePanel, gbcMain);
 
-        liquidConsumptionPanel = createLiquidConsumptionPanel("Consumo de Líquidos",
+        liquidConsumptionPanel = crearPanelConsumoDeLiquidos("Consumo de Líquidos",
                 new String[] { "Tipos de líquidos consumidos", "Cantidad de líquidos consumidos" });
         mainContentPanel.add(liquidConsumptionPanel, gbcMain);
 
@@ -185,10 +188,10 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbcGD.fill = GridBagConstraints.HORIZONTAL;
         gbcGD.weightx = 0.5;
 
-        nutritionalGoalsPanel = createNutritionalGoalsPanel("Metas Nutricionales",
+        nutritionalGoalsPanel = crearPanelMetaNutricional("Metas Nutricionales",
                 new String[] { "Razón de consulta" });
 
-        dispositionPanel = createDispositionPanel("Disposición", new String[] { "Alguna barrera para seguir el plan" });
+        dispositionPanel = crearPanelDisposicion("Disposición", new String[] { "Alguna barrera para seguir el plan" });
 
         gbcGD.gridx = 0;
         gbcGD.gridy = 0;
@@ -282,7 +285,14 @@ public class ConsultaFormularioViewLayout extends JPanel {
 
         this.setMinimumSize(new Dimension(800, 700));
     }
-
+    
+    /**
+     * Crea un panel genérico con título y una lista de campos.
+     *
+     * @param title Título de la sección.
+     * @param fieldNames Nombres de cada campo incluido.
+     * @return Panel construido.
+     */
     private JPanel createSectionPanel(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
@@ -376,17 +386,26 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return sectionPanel;
     }
 
-    private JPanel createPersonalInfoPanel(String title, String[] fieldNames) {
+    /**
+     * Construye la sección específica del formulario: Información Personal.
+     */
+    private JPanel crearPanelInformacionPersonal(String title, String[] fieldNames) {
+        JPanel panel = createSectionPanel(title, fieldNames);
+        return panel;
+    }
+    
+    /**
+     * Construye la sección específica del formulario: Historial Medico.
+     */
+    private JPanel crearPanelHistorialMedico(String title, String[] fieldNames) {
         JPanel panel = createSectionPanel(title, fieldNames);
         return panel;
     }
 
-    private JPanel createMedicalHistoryPanel(String title, String[] fieldNames) {
-        JPanel panel = createSectionPanel(title, fieldNames);
-        return panel;
-    }
-
-    private JPanel createFoodHistoryPanel(String title, String[] fieldNames) {
+    /**
+     * Construye la sección específica del formulario: Historial Alimenticio.
+     */
+    private JPanel crearPanelHistorialAlimenticio(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -430,7 +449,10 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return sectionPanel;
     }
 
-    private JPanel createPhysicalActivityPanel(String title, String[] fieldNames) {
+    /**
+     * Construye la sección específica del formulario: Nivel de actividad fisica.
+     */
+    private JPanel crearPanelNivelActividadFisica(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -464,7 +486,10 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return sectionPanel;
     }
 
-    private JPanel createLifestylePanel(String title, String[] fieldNames) {
+    /**
+     * Construye la sección específica del formulario: Estilo de Vida
+     */
+    private JPanel crearPanelEstiloDeVida(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -518,8 +543,11 @@ public class ConsultaFormularioViewLayout extends JPanel {
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
-
-    private JPanel createLiquidConsumptionPanel(String title, String[] fieldNames) {
+    
+    /**
+     * Construye la sección específica del formulario: Consumo de Liquidos
+     */
+    private JPanel crearPanelConsumoDeLiquidos(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -562,8 +590,11 @@ public class ConsultaFormularioViewLayout extends JPanel {
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
-
-    private JPanel createNutritionalGoalsPanel(String title, String[] fieldNames) {
+    
+    /**
+     * Construye la sección específica del formulario: Meta Nutricional
+     */
+    private JPanel crearPanelMetaNutricional(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -597,7 +628,10 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return sectionPanel;
     }
 
-    private JPanel createDispositionPanel(String title, String[] fieldNames) {
+    /**
+     * Construye la sección específica del formulario: Disposicion
+     */
+    private JPanel crearPanelDisposicion(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
@@ -856,7 +890,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         this.modoActual = modoActual;
     }
 
-    public JButton getBtnPatients() {
+    public JButton getBtnPacientes() {
         return btnPatients;
     }
 
@@ -864,7 +898,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         this.btnPatients = btnPatients;
     }
 
-    public JButton getBtnExpedients() {
+    public JButton getBtnExpedientes() {
         return btnExpedients;
     }
 
