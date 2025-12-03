@@ -5,13 +5,11 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-  # Permite ejecutar manualmente desde GitHub Actions
   workflow_dispatch: 
 
 jobs:
   sonarqube:
     name: SonarQube Scan
-    
     runs-on: ubuntu-latest
 
     steps:
@@ -20,19 +18,17 @@ jobs:
         with:
           fetch-depth: 0 
       
-      
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           
-      
       - name: Compile Code
         run: |
           mkdir -p bin
-          # Comando para compilar el código en 'src' usando librerías de 'lib'
-          javac -cp "lib/*" -d bin src/**/*.java
+          find src -name "*.java" > sources.txt
+          javac -cp "lib/*" -d bin @sources.txt
           
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v2.1.1
