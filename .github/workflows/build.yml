@@ -39,33 +39,39 @@ jobs:
         run: |
           mkdir -p target
           
-          # Buscamos el lanzador (funciona con el sufijo M1)
+          # Buscamos los JARs con patrones flexibles para coincidir con tus archivos
           JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-*.jar" -print -quit)
-          # Buscamos el agente (funciona con el nombre org.jacoco.agent-0.8.14.jar)
           JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
-          # Buscamos el CLI (funciona con org.jacoco.cli-0.8.14.jar)
-          JACOCO_CLI=$(find lib -name "org.jacoco.cli-*.jar" -print -quit)
-
-          if [ -z "$JACOCO_AGENT" ] || [ -z "$JUNIT_LAUNCHER" ] || [ -z "$JACOCO_CLI" ]; then
-            echo "ERROR: Uno o más JARs de ejecución no fueron encontrados en lib/. Por favor, verifica los nombres de los archivos."
+          
+          # Verificación de existencia
+          if [ -z "$JACOCO_AGENT" ] || [ -z "$JUNIT_LAUNCHER" ]; then
+            echo "ERROR: Faltan JARs de ejecución (Launcher o Agente) en lib/."
             exit 1
           fi
 
-          java -jar "$JUNIT_LAUNCHER" \
-            --class-path bin:lib/* \
+          # Ejecución con sintaxis de JUnit 6 (usando 'execute')
+          # El classpath debe ir entre comillas para evitar expansión del shell
+          java -jar "$JUNIT_LAUNCHER" execute \
+            --class-path "bin:lib/*" \
             --scan-classpath \
-            --include-classname-pattern ".*Test" \
+            --include-classname ".*Test" \
             --disable-banner \
-            -Djacoco.destfile=target/jacoco.exec \
+            -Djava.net.preferIPv4Stack=true \
             -javaagent:"$JACOCO_AGENT"=destfile=target/jacoco.exec,includes=Modelo.*:Controlador.*:Vista.*:Servicios.*
           
       - name: Generate JaCoCo XML Report
         run: |
           mkdir -p target/site/jacoco
-          # El CLI ya está disponible ya que se encontró en el paso anterior.
+          
+          # Buscamos el CLI con patrón flexible
           JACOCO_CLI=$(find lib -name "org.jacoco.cli-*.jar" -print -quit)
 
-          # Convertir el binario jacoco.exec a jacoco.xml
+          if [ -z "$JACOCO_CLI" ]; then
+             echo "ERROR: Falta el JAR del CLI de JaCoCo en lib/."
+             exit 1
+          fi
+
+          # Generar el reporte XML
           java -jar "$JACOCO_CLI" report target/jacoco.exec \
             --classfiles bin \
             --sourcefiles src \
