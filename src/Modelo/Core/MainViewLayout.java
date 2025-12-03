@@ -10,11 +10,11 @@ import java.util.Map;
 
 
 /**
- * Contenedor principal de la aplicación que gestiona la navegación entre vistas usando CardLayout.
- * Es un Observer del Modelo y se encarga de la Inyección de Dependencias a las vistas y controladores.
- * Define las constantes (TAGs) para todas las vistas.
+ * Administrador principal de vistas de la aplicación.
+ * Controla la navegación entre pantallas mediante un CardLayout,
+ * inicializa vistas, asigna controladores y coordina su interacción
+ * con el modelo.
  */
-
 public class MainViewLayout  {
     
     private JFrame ventanaPrincipal;
@@ -33,13 +33,21 @@ public class MainViewLayout  {
         inicializar(modelo);
     }
 
-   
+    /**
+     * Configura el administrador construyendo las vistas y el diseño gráfico.
+     *
+     * @param modelo Modelo que será inyectado en cada vista.
+     */
     private void inicializar(NutriNubeModelo modelo) {
         this.miModelo = modelo;
         crearVistasLogicas(); 
         crearDisenoVista();
     }
     
+    /**
+     * Crea cada vista lógica de la aplicación, instancia su controlador,
+     * realiza la inyección de dependencias y registra las vistas por su TAG.
+     */
     private void crearVistasLogicas() {
 
         LoginView loginView = new LoginView(LOGIN_VIEW);
@@ -61,7 +69,10 @@ public class MainViewLayout  {
     }
 
 
-  
+    /**
+     * Construye la ventana principal, configura el CardLayout
+     * y registra cada vista dentro del contenedor gráfico.
+     */
     private void crearDisenoVista() {
 
         ventanaPrincipal = new JFrame("NutriNube - Sistema de Gestión Nutricional");
@@ -84,8 +95,13 @@ public class MainViewLayout  {
     }
 
    
-
-
+    /**
+     * Cambia la vista activa según su nombre lógico (TAG).
+     * Envía datos opcionales a la vista destino y fuerza la actualización.
+     *
+     * @param vistaNombre Identificador de la vista destino.
+     * @param data Información adicional para la vista.
+     */
     public void cambiarAVista(String vistaNombre, Object data) {
         gestorTarjetas.show(panelTarjetas, vistaNombre);
         

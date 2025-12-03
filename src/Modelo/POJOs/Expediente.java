@@ -9,8 +9,8 @@ import java.util.ArrayList;
  */
 public class Expediente {
 
-    private Paciente paciente;                 // Datos generales del paciente
-    private ArrayList<Consulta> consultas;     // Historial completo de consultas
+    private Paciente paciente;             
+    private ArrayList<Consulta> consultas;    
 
     public Expediente() {
         this.consultas = new ArrayList<>();

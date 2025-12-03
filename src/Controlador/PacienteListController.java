@@ -9,6 +9,10 @@ import Vista.PacienteListView;
 
 import java.util.*;
 
+/**
+ * Controlador encargado de la vista de listado de pacientes.
+ * Gestiona búsqueda, eliminación, selección y navegación entre vistas.
+ */
 public class PacienteListController extends Controller {
 
     public PacienteListController(String tag) {
@@ -41,12 +45,12 @@ public class PacienteListController extends Controller {
         DefaultTableModel model = (DefaultTableModel) vista.getTblPacientes().getModel();
         model.setRowCount(0);
 
-        for (Paciente p : filtrados) {
-            String nombre = p.getNombre() == null ? "" : p.getNombre();
-            String apellido = p.getApellido() == null ? "" : p.getApellido();
+        for (Paciente paciente : filtrados) {
+            String nombre = paciente.getNombre() == null ? "" : paciente.getNombre();
+            String apellido = paciente.getApellido() == null ? "" : paciente.getApellido();
 
             model.addRow(new Object[]{
-                    p.getClavePaciente(),
+                    paciente.getClavePaciente(),
                     nombre + " " + apellido,
                     "N/A"
             });
