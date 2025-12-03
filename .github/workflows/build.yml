@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p target
           
-          # Buscamos los JARs que tienes actualmente
+          # Buscamos los JARs. Ajustado para encontrar tus versiones especificas.
           JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-*.jar" -print -quit)
           JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
           
@@ -48,9 +48,12 @@ jobs:
             exit 1
           fi
 
-          # 🚨 CORRECCIÓN PARA JUNIT 6 (Tu JAR actual):
-          # Usamos 'execute' y la sintaxis nueva de opciones.
-          # Quitamos opciones que JUnit 6 ya no soporta o cambiaron de nombre.
+          # 🚨 CORRECCIÓN PARA JUNIT 6 (Basado en el error que mostraste):
+          # 1. Usamos 'execute' (requerido en v6)
+          # 2. Usamos '--scan-class-path' (con guion, cambio de v6)
+          # 3. Usamos '--class-path' explicito
+          # 4. Quitamos opciones no listadas en el help si causan conflicto, pero estas deberian ser seguras.
+          
           java -jar "$JUNIT_LAUNCHER" execute \
             --class-path "bin:lib/*" \
             --scan-class-path \
