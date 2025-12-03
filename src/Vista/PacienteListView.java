@@ -33,7 +33,7 @@ public class PacienteListView extends View {
         
         // Botón Agregar
         pacienteLayout.getBtnAgregar().addActionListener(e -> 
-            myController.handleAnadirPaciente(null)
+            myController.handleAnadirPaciente()
         );
         
         
