@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 public abstract class DatabaseManager {
 
-    private static final String DATABASE_URL = "jdbc:sqlite:src/NutriNube.db";
+    private static final String DATABASE_URL = "jdbc:sqlite:NutriNube.db";
 
     /**
      * Proporciona la conexión activa hacia la base de datos.
