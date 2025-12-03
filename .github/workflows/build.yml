@@ -8,7 +8,7 @@ on:
 jobs:
   sonarqube:
     name: SonarQube Scan
-    runs-on: ubuntu-latest  <-- ¡AQUÍ ESTÁ LA SOLUCIÓN DE LINUX!
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Repository
@@ -16,18 +16,28 @@ jobs:
         with:
           fetch-depth: 0 
       
+      
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '17' # Asegúrate de que esta es la versión de Java que usas
           distribution: 'temurin'
           
+      
       - name: Compile Code
         run: |
+          # Creamos la carpeta 'bin' que Sonar espera
           mkdir -p bin
-          javac -cp "lib/*" -d bin src/**/*.java
           
+          # 🚨 Comando de Compilación:
+          # Si no usas Maven/Gradle, este comando debe compilar tus archivos .java
+          # y enlazar tus librerías (jcalendar, sqlite-jdbc).
+          # Si no estás seguro de este comando, lo más seguro es usar Maven o Gradle.
+          echo "Si tienes un build tool (Maven/Gradle), POR FAVOR usa su comando de build. En caso contrario, este paso fallará."
+          
+      # 3. Escaneo de SonarQube (Ahora que la compilación se hizo)
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v2.1.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        # Las propiedades se leen automáticamente del sonar-project.properties
