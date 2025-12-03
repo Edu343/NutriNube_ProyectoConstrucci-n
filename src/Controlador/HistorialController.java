@@ -79,9 +79,7 @@ public class HistorialController extends Controller {
         cambiarVista(MainViewLayout.LOGIN_VIEW, null);
     }
 
-    @Override
-    public void update() {
-    }
+    
     
     /**
     * Filtra las consultas de un paciente según una fecha exacta.
