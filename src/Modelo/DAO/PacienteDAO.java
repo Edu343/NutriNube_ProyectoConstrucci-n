@@ -10,7 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * DAO encargado de manejar operaciones CRUD para la entidad Paciente.
+ * DAO responsable de manejar operaciones CRUD para la entidad Paciente
+ * y construir expedientes con historial de consultas.
  */
 public class PacienteDAO extends DatabaseManager {
 
@@ -120,6 +121,10 @@ public class PacienteDAO extends DatabaseManager {
         }
     }
     
+    /**
+     * Construye un expediente completo que incluye los datos del paciente
+     * y todas sus consultas asociadas.
+     */
     public Expediente obtenerExpedienteCompleto(String clavePaciente) throws SQLException {
 
         // 1. Obtener paciente
@@ -138,6 +143,9 @@ public class PacienteDAO extends DatabaseManager {
         return expediente;
     }
     
+    /**
+     * Obtiene todos los pacientes asignados a un nutriólogo específico.
+     */
     public ArrayList<Paciente> leerPorNutriologo(String claveNutriologo) throws SQLException {
 
         ArrayList<Paciente> lista = new ArrayList<>();

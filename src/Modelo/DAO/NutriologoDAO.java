@@ -63,11 +63,7 @@ public class NutriologoDAO extends DatabaseManager {
     public void actualizar(Object entidad) throws SQLException {
         Nutriologo nutriologo = (Nutriologo) entidad;
 
-        // ================================
-        // 1. Si trae texto plano, lo hasheamos de nuevo
-        // ================================
         if (nutriologo.getHashContrasena() != null && !nutriologo.getHashContrasena().isEmpty()) {
-
             String nuevoSalt = hashingServicio.generarSaltContrasena();
             String nuevoHash = hashingServicio.generarHashContrasena(
                     nutriologo.getHashContrasena(), // ← contraseña en texto plano
@@ -141,6 +137,9 @@ public class NutriologoDAO extends DatabaseManager {
     }
     
 
+    /**
+     * Recupera todos los pacientes asociados al nutriólogo especificado.
+     */
     public ArrayList<Paciente> obtenerListaPacientes(String claveNutriologo) throws SQLException {
         
         PacienteDAO pacienteDAO = new PacienteDAO();

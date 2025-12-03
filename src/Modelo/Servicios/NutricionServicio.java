@@ -12,7 +12,11 @@ public class NutricionServicio {
 
     public static final int SEXO_HOMBRE = 1;
     public static final int SEXO_MUJER = 0;
-
+    
+     /**
+     * Calcula el total de calorías diarias requeridas para un paciente
+     * considerando peso, edad, altura, sexo y nivel de actividad física.
+     */
     public double calcularCalorias(CaloriasCalculo datos, int sexo, double altura, String fechaNacimiento) {
 
         int edad = calcularEdad(fechaNacimiento);
@@ -25,6 +29,10 @@ public class NutricionServicio {
         return totalCalorias;
     }
 
+    /**
+     * Calcula la Tasa Metabólica en Reposo (TMR) utilizando
+     * la fórmula Mifflin-St Jeor.
+     */
     public double calcularTmr(double peso, int edad, double altura, int sexo) {
         double tmrBase = 0.0;
 
@@ -39,6 +47,11 @@ public class NutricionServicio {
         return tmrBase;
     }
 
+    /**
+     * Calcula la edad actual del paciente con base en su fecha de nacimiento.
+     * Si el formato no es válido, intenta interpretarlo como un año entero.
+     * Si ambos formatos fallan, devuelve 0.
+     */
     public int calcularEdad(String fechaNacimiento) {
         if (fechaNacimiento == null || fechaNacimiento.isEmpty())
             return 0;
@@ -62,6 +75,9 @@ public class NutricionServicio {
         }
     }
 
+    /**
+     * Devuelve el factor de actividad asociado al nivel registrado.
+     */
     private double obtenerFactorActividad(int nivel) {
         switch (nivel) {
             case 1: // Ligero
