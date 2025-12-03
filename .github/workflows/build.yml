@@ -40,23 +40,22 @@ jobs:
           mkdir -p target
           
           # Buscamos el lanzador de JUnit 5 (1.x)
-          # Acepta cualquier version 1.x (ej: 1.10.0)
           JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-1*.jar" -print -quit)
           
-          # Buscamos el agente de JaCoCo
-          JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
+          # Buscamos el agente runtime de JaCoCo (el que descargaste)
+          JACOCO_AGENT=$(find lib -name "*jacoco.agent-*-runtime.jar" -print -quit)
+          
+          # Fallback si no encuentra el runtime (solo por seguridad, pero deberias tener el runtime)
+          if [ -z "$JACOCO_AGENT" ]; then
+             JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
+          fi
           
           if [ -z "$JACOCO_AGENT" ] || [ -z "$JUNIT_LAUNCHER" ]; then
-            echo "ERROR: Faltan JARs. Se esperaba 'junit-platform-console-standalone-1*.jar' y el agente."
+            echo "ERROR: Faltan JARs. Se esperaba 'junit-platform-console-standalone-1*.jar' y '*runtime.jar'."
             exit 1
           fi
 
-          # 🚨 SINTAXIS CORRECTA PARA JUNIT 5 (1.10.0)
-          # - No se usa 'execute'
-          # - Se usa '-cp' o '--classpath'
-          # - Se usa '--scan-classpath' (sin guion intermedio en 'class-path' a veces, pero '--scan-classpath' es seguro)
-          # - '-javaagent' va SIEMPRE antes de '-jar'
-          
+          # Ejecución con sintaxis de JUnit 5 (1.x)
           java -javaagent:"$JACOCO_AGENT"=destfile=target/jacoco.exec,includes=Modelo.*:Controlador.*:Vista.*:Servicios.* \
             -Djava.net.preferIPv4Stack=true \
             -jar "$JUNIT_LAUNCHER" \
