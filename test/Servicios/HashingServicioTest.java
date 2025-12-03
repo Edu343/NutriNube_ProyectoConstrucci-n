@@ -15,7 +15,7 @@ public class HashingServicioTest {
     private final HashingServicio hashingServicio = new HashingServicio();
 
     @Test
-    @DisplayName("Generar salt: no debe ser null")
+    @DisplayName("Generar salt: no debe dar null")
     public void saltNoDebeSerNull() {
         assertNotNull(hashingServicio.generarSaltContrasena());
     }
