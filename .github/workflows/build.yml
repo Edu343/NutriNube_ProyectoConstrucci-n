@@ -39,8 +39,11 @@ jobs:
         run: |
           mkdir -p target
           
-          # Buscamos los JARs (Ahora buscamos la version 1.x para JUnit)
+          # Buscamos el lanzador de JUnit 5 (1.x)
+          # Acepta cualquier version 1.x (ej: 1.10.0)
           JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-1*.jar" -print -quit)
+          
+          # Buscamos el agente de JaCoCo
           JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
           
           if [ -z "$JACOCO_AGENT" ] || [ -z "$JUNIT_LAUNCHER" ]; then
@@ -48,15 +51,20 @@ jobs:
             exit 1
           fi
 
-          # Ejecución estándar para JUnit 5 (Console Launcher 1.x)
-          # Sintaxis clasica: java -jar launcher.jar -cp ... --scan-classpath
-          java -jar "$JUNIT_LAUNCHER" \
+          # 🚨 SINTAXIS CORRECTA PARA JUNIT 5 (1.10.0)
+          # - No se usa 'execute'
+          # - Se usa '-cp' o '--classpath'
+          # - Se usa '--scan-classpath' (sin guion intermedio en 'class-path' a veces, pero '--scan-classpath' es seguro)
+          # - '-javaagent' va SIEMPRE antes de '-jar'
+          
+          java -javaagent:"$JACOCO_AGENT"=destfile=target/jacoco.exec,includes=Modelo.*:Controlador.*:Vista.*:Servicios.* \
+            -Djava.net.preferIPv4Stack=true \
+            -jar "$JUNIT_LAUNCHER" \
             -cp "bin:lib/*" \
             --scan-classpath \
             --include-classname ".*Test" \
             --disable-banner \
-            --reports-dir=target/surefire-reports \
-            -javaagent:"$JACOCO_AGENT"=destfile=target/jacoco.exec,includes=Modelo.*:Controlador.*:Vista.*:Servicios.*
+            --reports-dir=target/surefire-reports
           
       - name: Generate JaCoCo XML Report
         run: |
