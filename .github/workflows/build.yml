@@ -39,31 +39,30 @@ jobs:
         run: |
           mkdir -p target
           
-          # Buscamos los JARs con patrones flexibles para coincidir con tus archivos
+          # Buscamos los JARs que tienes actualmente
           JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-*.jar" -print -quit)
           JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
           
-          # Verificación de existencia
           if [ -z "$JACOCO_AGENT" ] || [ -z "$JUNIT_LAUNCHER" ]; then
-            echo "ERROR: Faltan JARs de ejecución (Launcher o Agente) en lib/."
+            echo "ERROR: Faltan JARs de ejecución. Launcher=$JUNIT_LAUNCHER, Agent=$JACOCO_AGENT"
             exit 1
           fi
 
-          # Ejecución con sintaxis de JUnit 6 (usando 'execute')
-          # El classpath debe ir entre comillas para evitar expansión del shell
+          # 🚨 CORRECCIÓN PARA JUNIT 6 (Tu JAR actual):
+          # Usamos 'execute' y la sintaxis nueva de opciones.
+          # Quitamos opciones que JUnit 6 ya no soporta o cambiaron de nombre.
           java -jar "$JUNIT_LAUNCHER" execute \
             --class-path "bin:lib/*" \
-            --scan-classpath \
+            --scan-class-path \
             --include-classname ".*Test" \
             --disable-banner \
+            --reports-dir=target/surefire-reports \
             -Djava.net.preferIPv4Stack=true \
             -javaagent:"$JACOCO_AGENT"=destfile=target/jacoco.exec,includes=Modelo.*:Controlador.*:Vista.*:Servicios.*
           
       - name: Generate JaCoCo XML Report
         run: |
           mkdir -p target/site/jacoco
-          
-          # Buscamos el CLI con patrón flexible
           JACOCO_CLI=$(find lib -name "org.jacoco.cli-*.jar" -print -quit)
 
           if [ -z "$JACOCO_CLI" ]; then
