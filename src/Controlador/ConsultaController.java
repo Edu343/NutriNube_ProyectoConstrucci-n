@@ -108,7 +108,5 @@ public class ConsultaController extends Controller {
         cambiarVista(MainViewLayout.LOGIN_VIEW, null);
     }
 
-    @Override
-    public void update() {
-    }
+    
 }

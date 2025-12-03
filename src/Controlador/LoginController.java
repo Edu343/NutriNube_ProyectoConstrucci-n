@@ -95,8 +95,5 @@ public class LoginController extends Controller {
         }
     }
 
-    @Override
-    public void update() {
-        // recibir notificaciones del modelo si se requiere
-    }
+    
 }

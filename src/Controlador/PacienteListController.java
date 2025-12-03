@@ -79,7 +79,5 @@ public class PacienteListController extends Controller {
         cambiarVista(MainViewLayout.PACIENTES_VIEW, null);
     }
 
-    @Override
-    public void update() {
-    }
+    
 }
