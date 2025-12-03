@@ -39,28 +39,23 @@ jobs:
         run: |
           mkdir -p target
           
-          # Buscamos los JARs. Ajustado para encontrar tus versiones especificas.
-          JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-*.jar" -print -quit)
+          # Buscamos los JARs (Ahora buscamos la version 1.x para JUnit)
+          JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-1*.jar" -print -quit)
           JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
           
           if [ -z "$JACOCO_AGENT" ] || [ -z "$JUNIT_LAUNCHER" ]; then
-            echo "ERROR: Faltan JARs de ejecución. Launcher=$JUNIT_LAUNCHER, Agent=$JACOCO_AGENT"
+            echo "ERROR: Faltan JARs. Se esperaba 'junit-platform-console-standalone-1*.jar' y el agente."
             exit 1
           fi
 
-          # 🚨 CORRECCIÓN PARA JUNIT 6 (Basado en el error que mostraste):
-          # 1. Usamos 'execute' (requerido en v6)
-          # 2. Usamos '--scan-class-path' (con guion, cambio de v6)
-          # 3. Usamos '--class-path' explicito
-          # 4. Quitamos opciones no listadas en el help si causan conflicto, pero estas deberian ser seguras.
-          
-          java -jar "$JUNIT_LAUNCHER" execute \
-            --class-path "bin:lib/*" \
-            --scan-class-path \
+          # Ejecución estándar para JUnit 5 (Console Launcher 1.x)
+          # Sintaxis clasica: java -jar launcher.jar -cp ... --scan-classpath
+          java -jar "$JUNIT_LAUNCHER" \
+            -cp "bin:lib/*" \
+            --scan-classpath \
             --include-classname ".*Test" \
             --disable-banner \
             --reports-dir=target/surefire-reports \
-            -Djava.net.preferIPv4Stack=true \
             -javaagent:"$JACOCO_AGENT"=destfile=target/jacoco.exec,includes=Modelo.*:Controlador.*:Vista.*:Servicios.*
           
       - name: Generate JaCoCo XML Report
@@ -73,7 +68,6 @@ jobs:
              exit 1
           fi
 
-          # Generar el reporte XML
           java -jar "$JACOCO_CLI" report target/jacoco.exec \
             --classfiles bin \
             --sourcefiles src \
