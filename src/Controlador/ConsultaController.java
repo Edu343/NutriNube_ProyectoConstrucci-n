@@ -26,8 +26,12 @@ public class ConsultaController extends Controller {
             myModel.calcularCaloriasYMacronutrientes(
                     clavePaciente, peso, nivelActividadFisica, razonConsulta, sexo, altura, fechaNacimiento);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al calcular: " + e.getMessage(), "Error",
+            JOptionPane.showMessageDialog(null,
+                    "No se pudo realizar el cálculo nutricional.\n" +
+                    "Verifica que todos los campos estén completos y correctos.",
+                    "Error de cálculo",
                     JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
@@ -90,7 +94,10 @@ public class ConsultaController extends Controller {
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar la consulta: " + e.getMessage(), "Error",
+            JOptionPane.showMessageDialog(null,
+                    "No se pudo guardar la consulta.\n" +
+                    "Verifica que todos los campos obligatorios estén completos.",
+                    "Error al guardar",
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }

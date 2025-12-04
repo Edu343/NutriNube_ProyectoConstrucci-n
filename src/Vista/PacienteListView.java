@@ -46,15 +46,19 @@ public class PacienteListView extends View {
                 String nombrePaciente = (String) pacienteLayout.getTablaPacientes()
                         .getValueAt(selectedRow, 1);
                 
-                int respuesta = JOptionPane.showConfirmDialog(
+                Object[] opciones = {"Sí", "No"};
+                int respuesta = JOptionPane.showOptionDialog(
                     mainPanel,
                     "¿Seguro que quieres eliminar al paciente " + nombrePaciente + "?",
                     "Confirmar eliminación",
                     JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[1]
                 );
 
-                if (respuesta == JOptionPane.YES_OPTION) {
+                if (respuesta == 0) {
                     String clavePaciente = (String) pacienteLayout.getTablaPacientes()
                             .getValueAt(selectedRow, 0);
 
