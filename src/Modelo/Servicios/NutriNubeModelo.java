@@ -124,7 +124,7 @@ public class NutriNubeModelo {
                 limpiarSelecciones();
                 notifyObservers("LOGIN_SUCCESS");
                 return true;
-            } catch (SQLException _) {
+            } catch (SQLException e) {
                 return false;
             }
         }
@@ -141,7 +141,7 @@ public class NutriNubeModelo {
     public boolean nutriologoExiste(String claveNutriologo) {
         try {
             return nutriologoDAO.leerPorClave(claveNutriologo) != null;
-        } catch (SQLException _) {
+        } catch (SQLException e) {
             return false;
         }
     }
@@ -159,7 +159,7 @@ public class NutriNubeModelo {
             nutriologoDAO.insertar(nutriologo);
             notifyObservers("NUTRIOLOGO_CREATED");
             return true;
-        } catch (SQLException _) {
+        } catch (SQLException e) {
             return false;
         }
     }
@@ -184,7 +184,7 @@ public class NutriNubeModelo {
                 paciente.setClaveNutriologo(nutriologoActual.getClaveNutriologo());
                 pacienteDAO.insertar(paciente);
                 notifyObservers("PACIENTES");
-            } catch (SQLException _) {
+            } catch (SQLException e) {
             }
         }
     }
@@ -198,7 +198,7 @@ public class NutriNubeModelo {
         try {
             pacienteDAO.eliminar(clavePaciente);
             notifyObservers("PACIENTES");
-        } catch (SQLException _) {
+        } catch (SQLException e) {
         }
     }
 
