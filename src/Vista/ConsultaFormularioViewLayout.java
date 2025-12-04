@@ -181,7 +181,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         mainContentPanel.add(lifestylePanel, gbcMain);
 
         liquidConsumptionPanel = crearPanelConsumoDeLiquidos("Consumo de Líquidos",
-                new String[] { "Tipos de líquidos consumidos", "Cantidad de líquidos consumidos" });
+                new String[] { "Tipos de líquidos consumidos", "Cantidad de líquidos consumidos (L)" });
         mainContentPanel.add(liquidConsumptionPanel, gbcMain);
 
         JPanel goalsAndDispositionContainer = new JPanel(new GridBagLayout());
