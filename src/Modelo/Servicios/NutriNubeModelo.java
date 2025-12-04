@@ -226,16 +226,7 @@ public class NutriNubeModelo {
      *
      * @param c Consulta a guardar.
      */
-    public void guardarConsulta(Consulta c) {
-        if (validacionServicio.isValidConsulta(c)) {
-            try {
-                consultaDAO.insertar(c);
-                notifyObservers("HISTORIAL");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    
 
     /**
      * Elimina una consulta del historial mediante su clave.

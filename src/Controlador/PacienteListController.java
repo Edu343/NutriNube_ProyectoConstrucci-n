@@ -55,6 +55,11 @@ public class PacienteListController extends Controller {
                     "N/A"
             });
         }
+
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            vista.getTblPacientes().revalidate();
+            vista.getTblPacientes().repaint();
+        });
     }
 
     @Override
