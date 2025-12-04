@@ -83,12 +83,12 @@ public class LoginViewLayout extends JPanel {
         // Campo de Usuario (con placeholder)
         txtUser = new JTextField(20);
         txtUser.setFont(new Font("Arial", Font.PLAIN, 14));
-        addPlaceholder(txtUser, "nutriPadre");
+        addPlaceholder(txtUser, "Usuario");
 
         // Campo de Contraseña (con placeholder)
         txtPassword = new JPasswordField(20);
         txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        addPlaceholder(txtPassword, "Contraseña123");
+        addPlaceholder(txtPassword, "Contraseña");
 
         // Botón "Acceder"
         btnLogin = new JButton("Acceder");
@@ -157,6 +157,14 @@ public class LoginViewLayout extends JPanel {
                 }
             }
         });
+    }
+
+    public void limpiarCampos() {
+        txtUser.setText("Usuario");
+        txtUser.setForeground(Color.GRAY);
+        txtPassword.setText("Contraseña");
+        txtPassword.setForeground(Color.GRAY);
+        txtPassword.setEchoChar((char) 0);
     }
 
     // --- Getters ---

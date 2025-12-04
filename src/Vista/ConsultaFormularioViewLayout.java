@@ -285,11 +285,11 @@ public class ConsultaFormularioViewLayout extends JPanel {
 
         this.setMinimumSize(new Dimension(800, 700));
     }
-    
+
     /**
      * Crea un panel genérico con título y una lista de campos.
      *
-     * @param title Título de la sección.
+     * @param title      Título de la sección.
      * @param fieldNames Nombres de cada campo incluido.
      * @return Panel construido.
      */
@@ -375,8 +375,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
             gbc.gridx = (i % 2) * 2 + 1;
             gbc.weightx = 1.0;
             gbc.anchor = GridBagConstraints.WEST;
-            // CORRECCIÓN: Se agrega la comprobación de null aquí, aunque la lógica superior
-            // ya minimiza el riesgo.
+            
             if (inputComponent != null) {
                 fieldsPanel.add(inputComponent, gbc);
             }
@@ -393,7 +392,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         JPanel panel = createSectionPanel(title, fieldNames);
         return panel;
     }
-    
+
     /**
      * Construye la sección específica del formulario: Historial Medico.
      */
@@ -469,8 +468,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        cmbNivelActividad = createComboBox(new String[] { "Sedentario", "Actividad Ligera", "Actividad Moderada",
-                "Actividad Activa", "Actividad Muy Activa" });
+        cmbNivelActividad = createComboBox(new String[] { "Bajo", "Moderado", "Alto" });
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -543,7 +541,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
-    
+
     /**
      * Construye la sección específica del formulario: Consumo de Liquidos
      */
@@ -590,7 +588,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
-    
+
     /**
      * Construye la sección específica del formulario: Meta Nutricional
      */
@@ -894,7 +892,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return btnPatients;
     }
 
-    public void setBtnPatients(JButton btnPatients) {
+    public void setBtnPacientes(JButton btnPatients) {
         this.btnPatients = btnPatients;
     }
 
@@ -902,7 +900,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return btnExpedients;
     }
 
-    public void setBtnExpedients(JButton btnExpedients) {
+    public void setBtnExpedientes(JButton btnExpedients) {
         this.btnExpedients = btnExpedients;
     }
 

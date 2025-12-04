@@ -48,12 +48,12 @@ public class HistorialConsultasViewLayout extends JPanel {
         // Colocar logo a la izquierda del encabezado
         JLabel lblLogo = new JLabel();
         lblLogo.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
-        ImageIcon iconLogo = new ImageIcon("NutriNube.png");
+        
+        java.net.URL imgUrlLogo = getClass().getResource("NutriNube.png");
 
-        // Validación de carga de imagen para evitar errores si el archivo no existe
-        if (iconLogo.getIconWidth() > 0) {
-            Image scaledLogo = iconLogo.getImage()
-                .getScaledInstance(140, 100, Image.SCALE_SMOOTH);
+        if (imgUrlLogo != null) {
+            ImageIcon iconLogo = new ImageIcon(imgUrlLogo);
+            Image scaledLogo = iconLogo.getImage().getScaledInstance(100, 55, Image.SCALE_SMOOTH);
             lblLogo.setIcon(new ImageIcon(scaledLogo));
         } else {
             lblLogo.setText("NutriNube");
@@ -69,7 +69,7 @@ public class HistorialConsultasViewLayout extends JPanel {
         btnPacientes.setBackground(HEADER_COLOR);
         btnPacientes.setBorderPainted(false);
         btnPacientes.setFocusPainted(false);
-        btnPacientes.setBorder(BorderFactory.createEmptyBorder(14, 0, 0, 0));
+        btnPacientes.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         btnPacientes.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         JPanel centerMenu = new JPanel();
@@ -83,37 +83,27 @@ public class HistorialConsultasViewLayout extends JPanel {
         btnLogout.setBackground(HEADER_COLOR);
         btnLogout.setBorderPainted(false);
         btnLogout.setFocusPainted(false);
-        btnLogout.setBorder(BorderFactory.createEmptyBorder(19, 0, 0, 14));
+        btnLogout.setBorder(BorderFactory.createEmptyBorder(11, 0, 0, 14));
         btnLogout.setMargin(new Insets(0, 0, 0, 0));
         btnLogout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         // Intentar cargar icono del botón de logout
-        ImageIcon logoutIcon = null;
-        try {
-            java.net.URL iconUrl = getClass().getResource("/salir_logo.png");
-            if (iconUrl != null) {
-                logoutIcon = new ImageIcon(iconUrl);
-            } else {
-                logoutIcon = new ImageIcon("salir_logo.png");
-            }
-
-            // Si existe icono, se muestra sin área de botón visible
-            if (logoutIcon.getIconWidth() > 0) {
-                Image img = logoutIcon.getImage()
-                    .getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-                btnLogout.setIcon(new ImageIcon(img));
-                btnLogout.setToolTipText("Log Out");
-                btnLogout.setBorderPainted(false);
-                btnLogout.setContentAreaFilled(false);
-                btnLogout.setOpaque(false);
-            } else {
-                btnLogout.setText("Log Out");
-            }
-
-        } catch (Exception ex) {
+        java.net.URL logoutUrl = getClass().getResource("salir_logo.png");
+        
+        if (logoutUrl != null) {
+            ImageIcon logoutIcon = new ImageIcon(logoutUrl);
+            Image scaledLogout = logoutIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            btnLogout.setIcon(new ImageIcon(scaledLogout));
+            btnLogout.setText(null);
+            btnLogout.setToolTipText("Log Out");
+            btnLogout.setBorderPainted(false);
+            btnLogout.setContentAreaFilled(false);
+            btnLogout.setOpaque(false);
+        } else {
             // Fallback si ocurre cualquier error
             btnLogout.setText("Log Out");
         }
+        
 
         // Panel derecho del header para alinear botón a la orilla
         JPanel eastPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));

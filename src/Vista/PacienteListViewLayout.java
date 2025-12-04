@@ -46,10 +46,12 @@ public class PacienteListViewLayout extends JPanel {
         // Logo de la aplicación
         JLabel lblLogo = new JLabel();
         lblLogo.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
-        ImageIcon iconLogo = new ImageIcon("NutriNube.png");
+        
+        java.net.URL imgUrlLogo = getClass().getResource("NutriNube.png");
 
-        if (iconLogo.getIconWidth() > 0) {
-            Image scaledLogo = iconLogo.getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
+        if (imgUrlLogo != null) {
+            ImageIcon iconLogo = new ImageIcon(imgUrlLogo);
+            Image scaledLogo = iconLogo.getImage().getScaledInstance(80, 50, Image.SCALE_SMOOTH);
             lblLogo.setIcon(new ImageIcon(scaledLogo));
         } else {
             lblLogo.setText("NutriNube");
@@ -70,6 +72,16 @@ public class PacienteListViewLayout extends JPanel {
         btnLogout.setBorderPainted(false);
         btnLogout.setFocusPainted(false);
         btnLogout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+        java.net.URL logoutUrl = getClass().getResource("salir_logo.png");
+        if (logoutUrl != null) {
+            ImageIcon logoutIcon = new ImageIcon(logoutUrl);
+            Image scaledLogout = logoutIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            btnLogout.setIcon(new ImageIcon(scaledLogout));
+            btnLogout.setText(null);
+            btnLogout.setMargin(new Insets(0, 0, 0, 10));
+        }
+        
         headerPanel.add(btnLogout, BorderLayout.EAST);
 
         add(headerPanel, BorderLayout.NORTH);
@@ -110,6 +122,24 @@ public class PacienteListViewLayout extends JPanel {
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtBuscar.setBorder(null);
         txtBuscar.setForeground(Color.GRAY);
+
+        txtBuscar.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (txtBuscar.getText().equals(" Buscar paciente")) {
+                    txtBuscar.setText("");
+                    txtBuscar.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (txtBuscar.getText().isEmpty()) {
+                    txtBuscar.setForeground(Color.GRAY);
+                    txtBuscar.setText(" Buscar paciente");
+                }
+            }
+        });
 
         searchPanel.add(new JLabel(" 🔍 "), BorderLayout.WEST);
         searchPanel.add(txtBuscar, BorderLayout.CENTER);

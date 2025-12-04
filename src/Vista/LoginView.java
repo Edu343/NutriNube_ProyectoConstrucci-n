@@ -28,7 +28,7 @@ public class LoginView extends View {
 
         // Botón "Acceder" lanza acción de login del controller
         loginLayout.getBtnAcceder().addActionListener(e -> {
-            String user = loginLayout.getTxtUsuario();
+            String user = loginLayout.getTxtUsuario().trim();
             String pass = loginLayout.getTxtContrasena();
             myController.handleLogin(user, pass);
         });
@@ -36,11 +36,13 @@ public class LoginView extends View {
 
     @Override
     public void display() {
-        // Lógica de visualización si aplica
+        loginLayout.limpiarCampos();
     }
 
     public void mostrarError(String mensaje) {
         // Muestra un mensaje de error al usuario (la vista puede usar un JOptionPane)
         javax.swing.JOptionPane.showMessageDialog(null, mensaje, "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
     }
+
+    
 }
