@@ -42,8 +42,7 @@ public class HistorialConsultasView extends View {
             }
 
             List<Consulta> filtradas =
-                ((HistorialController) myController)
-                .buscarConsultasPorFecha(clavePacienteActual, fecha);
+                myController.buscarConsultasPorFecha(clavePacienteActual, fecha);
 
             actualizarTablaConsultas(filtradas);
         });
@@ -65,9 +64,8 @@ public class HistorialConsultasView extends View {
                     return;
                 }
 
-                List<Consulta> filtradas = 
-                    ((HistorialController) myController)
-                    .buscarConsultasPorFecha(clavePacienteActual, texto);
+                List<Consulta> filtradas =
+                    myController.buscarConsultasPorFecha(clavePacienteActual, texto);
 
                 actualizarTablaConsultas(filtradas);
             }
@@ -112,7 +110,7 @@ public class HistorialConsultasView extends View {
         }); // ← ← ← ESTA ES LA LLAVE QUE FALTABA
         
         historialLayout.getBtnPacientes().addActionListener(e ->
-            ((HistorialController)myController).handleSalir()
+            myController.handleSalir()
         );
             
         historialLayout.getBtnLogout().addActionListener(e ->
@@ -191,13 +189,17 @@ public class HistorialConsultasView extends View {
             expediente = myModel.getPacienteDAO()
                     .obtenerExpedienteCompleto(clavePacienteActual);
 
-            consultas = expediente.getConsultas();
-                
-            if (expediente.getPaciente() != null) {
-                String nombrePac = expediente.getPaciente().getNombre() 
-                    + " " 
-                    + expediente.getPaciente().getApellido();
-                historialLayout.setNombrePaciente(nombrePac);
+            if (expediente != null) {
+                consultas = expediente.getConsultas();
+
+                if (expediente.getPaciente() != null) {
+                    String nombre = expediente.getPaciente().getNombre();
+                    String apellido = expediente.getPaciente().getApellido();
+                    String nombrePac = (nombre != null ? nombre : "")
+                        + " "
+                        + (apellido != null ? apellido : "");
+                    historialLayout.setNombrePaciente(nombrePac.trim());
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

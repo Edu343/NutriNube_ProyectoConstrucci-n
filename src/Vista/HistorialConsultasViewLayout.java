@@ -84,21 +84,21 @@ public class HistorialConsultasViewLayout extends ViewLayout {
 
         // Panel principal que contiene buscador, tabla y botones inferiores
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(BACKGROUND_COLOR);
+        mainPanel.setBackground(FONDO_COLOR);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // Título con nombre del paciente
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        titlePanel.setBackground(BACKGROUND_COLOR);
+        titlePanel.setBackground(FONDO_COLOR);
 
         JLabel lblTitulo = new JLabel("Historial de Consultas: ");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        lblTitulo.setForeground(TEXT_COLOR);
+        lblTitulo.setForeground(TEXTO_COLOR);
 
         lblNombrePaciente = new JLabel("Cargando...");
         lblNombrePaciente.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        lblNombrePaciente.setForeground(TEXT_COLOR);
+        lblNombrePaciente.setForeground(TEXTO_COLOR);
 
         titlePanel.add(lblTitulo);
         titlePanel.add(lblNombrePaciente);
@@ -108,7 +108,7 @@ public class HistorialConsultasViewLayout extends ViewLayout {
 
         // Panel superior de búsqueda por fecha
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(BACKGROUND_COLOR);
+        topPanel.setBackground(FONDO_COLOR);
         topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
@@ -176,7 +176,7 @@ public class HistorialConsultasViewLayout extends ViewLayout {
 
         // Panel de botones inferiores
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-        buttonPanel.setBackground(BACKGROUND_COLOR);
+        buttonPanel.setBackground(FONDO_COLOR);
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         btnAgregar = crearBotonNegro("Agregar Consulta");

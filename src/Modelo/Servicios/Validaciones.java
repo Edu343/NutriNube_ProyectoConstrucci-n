@@ -46,7 +46,8 @@ public class Validaciones {
      */
     public boolean isValidConsulta(Consulta consulta) {
 
-        if (consulta.getCaloriasCalculo().getPeso() <= 0) return false;
+        if (consulta.getCaloriasCalculo() == null ||
+            consulta.getCaloriasCalculo().getPeso() <= 0) return false;
 
         if (consulta.getClavePaciente() == null ||
             consulta.getClavePaciente().trim().isEmpty()) return false;

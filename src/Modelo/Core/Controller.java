@@ -2,7 +2,10 @@ package Modelo.Core;
 
 
 import Modelo.POJOs.Paciente;
+import Modelo.POJOs.Consulta;
 import Modelo.Servicios.NutriNubeModelo;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Clase base abstracta para todos los controladores del sistema.
@@ -73,19 +76,16 @@ public abstract class Controller {
         
     }
     
-    public void handleGuardarConsulta(String clavePaciente, String claveConsulta, String nombre, String apellido,
-            String correo, int sexo, String telefono, String fechaNacimiento, double altura,
-            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
-            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
-            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
-            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
-            double proteinas, double lipidos, String modo) {
+    public void handleGuardarConsulta(Paciente paciente, Consulta consulta, String modo) {
         
     }
-    public void handleSalir() {
-    	
-    }
-    
 
-   
+    public void handleSalir() {
+
+    }
+
+    public List<Consulta> buscarConsultasPorFecha(String clavePaciente, String fecha) {
+        return Collections.emptyList();
+    }
+
 }

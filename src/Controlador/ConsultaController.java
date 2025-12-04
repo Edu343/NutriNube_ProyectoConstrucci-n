@@ -1,14 +1,14 @@
 package Controlador;
 
-import Vista.ConsultaFormularioView;
 import javax.swing.JOptionPane;
 import Modelo.Core.Controller;
 import Modelo.Core.MainViewLayout;
+import Modelo.POJOs.Consulta;
+import Modelo.POJOs.Paciente;
 
 /**
  * Controlador responsable del formulario de consulta.
- * Coordina la creación, edición y guardado de consultas,
- * así como navegación y cálculo de calorías según los datos ingresados.
+ * Coordina la creación, edición y guardado de consultas.
  */
 public class ConsultaController extends Controller {
 
@@ -36,57 +36,37 @@ public class ConsultaController extends Controller {
     }
 
     @Override
-    public void handleGuardarConsulta(String clavePaciente, String claveConsulta, String nombre, String apellido,
-            String correo, int sexo, String telefono, String fechaNacimiento, double altura,
-            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
-            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
-            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
-            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
-            double proteinas, double lipidos, String modo) {
+    public void handleGuardarConsulta(Paciente paciente, Consulta consulta, String modo) {
 
         try {
-            String claveNutriologo = myModel.getNutriologoActual().getClaveNutriologo();
-
             if (modo.equals(MODO_AGREGAR)) {
                 
-                boolean claveValida = clavePaciente == null || clavePaciente.isEmpty();
-                boolean nombreValido = nombre != null && !nombre.isEmpty();
-
-                boolean esNuevoPaciente = claveValida && nombreValido;
-
+                // Si el paciente no existía previamente en la BD (es un registro nuevo completo)
+                // Verificamos si es nuevo revisando si NO hay un paciente seleccionado en el modelo
+                boolean esNuevoPaciente = (paciente != null && myModel.getPacienteSeleccionado() == null);
+                
                 if (esNuevoPaciente) {
-                    myModel.guardarNuevoPacienteYConsulta(claveNutriologo, nombre, apellido, correo, sexo, telefono,
-                            fechaNacimiento, altura,
-                            condicionesMedicas, medicacion, historialCirugias, alergias, preferenciaComida,
-                            horarioSueno, nivelEstres,
-                            habitosAlimenticios, tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia,
-                            peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+                    // Guardar Paciente Nuevo + Su Primera Consulta
+                    myModel.guardarNuevoPacienteYConsulta(paciente, consulta);
                 } else {
-                    myModel.guardarNuevaConsulta(clavePaciente, claveNutriologo, condicionesMedicas, medicacion,
-                            historialCirugias, alergias,
-                            preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos,
-                            cantidadLiquidoConsumido,
-                            barreraAlimenticia, peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos,
-                            proteinas, lipidos);
-
+                    // Guardar Solo Consulta (para paciente existente)
+                    myModel.guardarNuevaConsulta(consulta);
                 }
-            } else if (modo.equals(MODO_EDITAR)) {
 
-                myModel.actualizarConsulta(claveConsulta, clavePaciente, claveNutriologo,
-                        nombre, apellido, correo, sexo, telefono, fechaNacimiento, altura,
-                        condicionesMedicas, medicacion, historialCirugias, alergias,
-                        preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos,
-                        cantidadLiquidoConsumido,
-                        barreraAlimenticia, peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos,
-                        proteinas, lipidos);
+            } else if (modo.equals(MODO_EDITAR)) {
+                // Actualizar ambos
+                myModel.actualizarConsulta(paciente, consulta);
             }
 
-            String returnViewTag = ((ConsultaFormularioView) myView).getViewAnteriorTag();
+            // Lógica de retorno a la vista anterior
+            String returnViewTag = myView.getViewAnteriorTag();
 
             if (returnViewTag.equals("PACIENTES")) {
                 cambiarVista(returnViewTag, null);
             } else {
-                String claveRetorno = clavePaciente;
+                // Si venimos del historial, necesitamos la clave para volver a cargar la lista
+                String claveRetorno = (paciente != null) ? paciente.getClavePaciente() : consulta.getClavePaciente();
+                
                 if (claveRetorno == null && myModel.getPacienteSeleccionado() != null) {
                     claveRetorno = myModel.getPacienteSeleccionado().getClavePaciente();
                 }
@@ -96,7 +76,7 @@ public class ConsultaController extends Controller {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "No se pudo guardar la consulta.\n" +
-                    "Verifica que todos los campos obligatorios estén completos.",
+                    "Verifica que todos los campos obligatorios estén completos.\n\nDetalle: " + e.getMessage(),
                     "Error al guardar",
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -105,8 +85,8 @@ public class ConsultaController extends Controller {
 
     @Override
     public void handleSalir() {
-        String returnViewTag = ((ConsultaFormularioView) myView).getViewAnteriorTag();
-        String clavePaciente = ((ConsultaFormularioView) myView).getClavePacienteActual();
+        String returnViewTag = myView.getViewAnteriorTag();
+        String clavePaciente = myView.getClavePacienteActual();
         cambiarVista(returnViewTag, clavePaciente);
     }
 
@@ -114,6 +94,4 @@ public class ConsultaController extends Controller {
         myModel.logout();
         cambiarVista(MainViewLayout.LOGIN_VIEW, null);
     }
-
-    
 }
