@@ -118,7 +118,7 @@ public class PacienteListView extends View {
                 pacientes = myModel.getNutriologoDAO()
                         .obtenerListaPacientes(myModel.getNutriologoActual()
                         .getClaveNutriologo());
-            } catch (SQLException _) {
+            } catch (SQLException e) {
             }
             
             DefaultTableModel model = 
