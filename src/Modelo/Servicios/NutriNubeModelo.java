@@ -173,21 +173,7 @@ public class NutriNubeModelo {
         notifyObservers("LOGOUT_SUCCESS");
     }
 
-    /**
-     * Valida e inserta un nuevo paciente.
-     *
-     * @param paciente Paciente a registrar.
-     */
-    public void agregarPaciente(Paciente paciente) {
-        if (validacionServicio.isValidPaciente(paciente)) {
-            try {
-                paciente.setClaveNutriologo(nutriologoActual.getClaveNutriologo());
-                pacienteDAO.insertar(paciente);
-                notifyObservers("PACIENTES");
-            } catch (SQLException e) {
-            }
-        }
-    }
+    
 
     /**
      * Elimina un paciente de la base de datos.
