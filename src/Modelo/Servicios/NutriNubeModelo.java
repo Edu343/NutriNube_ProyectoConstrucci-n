@@ -95,11 +95,11 @@ public class NutriNubeModelo {
      */
     public LoginEstado obtenerEstadoLogin(String claveNutriologo, String contrasena) {
         try {
-            Nutriologo n = nutriologoDAO.leerPorClave(claveNutriologo);
-            if (n == null)
+            Nutriologo nutriologo = nutriologoDAO.leerPorClave(claveNutriologo);
+            if (nutriologo == null)
                 return LoginEstado.NOT_FOUND;
 
-            boolean ok = HashingServicio.verificarContrasena(contrasena, n.getSaltContrasena(), n.getHashContrasena());
+            boolean ok = HashingServicio.verificarContrasena(contrasena, nutriologo.getSaltContrasena(), nutriologo.getHashContrasena());
             return ok ? LoginEstado.SUCCESS : LoginEstado.WRONG_PASSWORD;
 
         } catch (SQLException e) {
