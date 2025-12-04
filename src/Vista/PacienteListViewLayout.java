@@ -2,6 +2,9 @@ package Vista;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import Modelo.Core.ViewLayout;
+
 import java.awt.*;
 
 /**
@@ -10,14 +13,7 @@ import java.awt.*;
  * encabezado, buscador, botones y tabla de pacientes.
  * Esta clase no contiene lógica de negocio; solo construcción de interfaz.
  */
-public class PacienteListViewLayout extends JPanel {
-
-    // Constantes de estilo compartidas con otras vistas
-    private static final Color HEADER_COLOR = new Color(44, 54, 73);
-    private static final Color TEXT_COLOR = Color.BLACK;
-    private static final Color BACKGROUND_COLOR = Color.WHITE;
-    private static final Color BUTTON_COLOR = Color.BLACK;
-    private static final Color BUTTON_TEXT_COLOR = Color.WHITE;
+public class PacienteListViewLayout extends ViewLayout {
 
     // Componentes principales de la vista
     private JTable tablePacientes;
@@ -31,7 +27,6 @@ public class PacienteListViewLayout extends JPanel {
 
     /**
      * Constructor que inicializa y arma todo el layout de la vista.
-     * Configura encabezado, buscador, botones y la tabla.
      */
     public PacienteListViewLayout() {
 
@@ -44,19 +39,7 @@ public class PacienteListViewLayout extends JPanel {
         headerPanel.setPreferredSize(new Dimension(900, 60));
 
         // Logo de la aplicación
-        JLabel lblLogo = new JLabel();
-        lblLogo.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
-        
-        java.net.URL imgUrlLogo = getClass().getResource("NutriNube.png");
-
-        if (imgUrlLogo != null) {
-            ImageIcon iconLogo = new ImageIcon(imgUrlLogo);
-            Image scaledLogo = iconLogo.getImage().getScaledInstance(80, 50, Image.SCALE_SMOOTH);
-            lblLogo.setIcon(new ImageIcon(scaledLogo));
-        } else {
-            lblLogo.setText("NutriNube");
-            lblLogo.setForeground(Color.WHITE);
-        }
+        JLabel lblLogo = crearLogo();
 
         headerPanel.add(lblLogo, BorderLayout.WEST);
 
@@ -65,23 +48,9 @@ public class PacienteListViewLayout extends JPanel {
         headerPanel.add(centerMenu, BorderLayout.CENTER);
 
         // Botón Log Out
-        btnLogout = new JButton("Log Out");
-        btnLogout.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        btnLogout.setForeground(Color.WHITE);
-        btnLogout.setBackground(HEADER_COLOR);
-        btnLogout.setBorderPainted(false);
-        btnLogout.setFocusPainted(false);
-        btnLogout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        
-        java.net.URL logoutUrl = getClass().getResource("salir_logo.png");
-        if (logoutUrl != null) {
-            ImageIcon logoutIcon = new ImageIcon(logoutUrl);
-            Image scaledLogout = logoutIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-            btnLogout.setIcon(new ImageIcon(scaledLogout));
-            btnLogout.setText(null);
-            btnLogout.setMargin(new Insets(0, 0, 0, 10));
-        }
-        
+        btnLogout = crearBotonLogout();
+        btnLogout.setMargin(new Insets(0, 0, 0, 10));
+
         headerPanel.add(btnLogout, BorderLayout.EAST);
 
         add(headerPanel, BorderLayout.NORTH);
@@ -114,36 +83,11 @@ public class PacienteListViewLayout extends JPanel {
         topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Cuadro de búsqueda
-        JPanel searchPanel = new JPanel(new BorderLayout());
-        searchPanel.setBackground(Color.WHITE);
-        searchPanel.setBorder(BorderFactory.createLineBorder(new Color(210, 210, 210)));
-
         txtBuscar = new JTextField(" Buscar paciente");
-        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtBuscar.setBorder(null);
-        txtBuscar.setForeground(Color.GRAY);
 
-        txtBuscar.addFocusListener(new java.awt.event.FocusAdapter() {
-            @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                if (txtBuscar.getText().equals(" Buscar paciente")) {
-                    txtBuscar.setText("");
-                    txtBuscar.setForeground(Color.BLACK);
-                }
-            }
+        agregarPlaceholderBehavior(txtBuscar, " Buscar paciente");
 
-            @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
-                if (txtBuscar.getText().isEmpty()) {
-                    txtBuscar.setForeground(Color.GRAY);
-                    txtBuscar.setText(" Buscar paciente");
-                }
-            }
-        });
-
-        searchPanel.add(new JLabel(" 🔍 "), BorderLayout.WEST);
-        searchPanel.add(txtBuscar, BorderLayout.CENTER);
-        searchPanel.setPreferredSize(new Dimension(200, 30));
+        JPanel searchPanel = crearPanelBusqueda(txtBuscar);
 
         topPanel.add(searchPanel);
 
@@ -151,8 +95,8 @@ public class PacienteListViewLayout extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
         buttonPanel.setBackground(BACKGROUND_COLOR);
 
-        btnAgregar = createBlackButton("Añadir Paciente");
-        btnEliminar = createBlackButton("Eliminar Paciente");
+        btnAgregar = crearBotonNegro("Añadir Paciente");
+        btnEliminar = crearBotonNegro("Eliminar Paciente");
 
         buttonPanel.add(btnAgregar);
         buttonPanel.add(btnEliminar);
@@ -163,26 +107,14 @@ public class PacienteListViewLayout extends JPanel {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
         // Tabla de pacientes
-        DefaultTableModel modelo = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // tabla de solo lectura
-            }
-        };
+        DefaultTableModel modelo = crearModeloTablaNoEditable();
 
         modelo.addColumn("Clave");
         modelo.addColumn("Nombre Completo");
         modelo.addColumn("Última Visita");
 
         tablePacientes = new JTable(modelo);
-        tablePacientes.setRowHeight(28);
-        tablePacientes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tablePacientes.setShowGrid(false);
-        tablePacientes.setIntercellSpacing(new Dimension(0, 0));
-        tablePacientes.setFillsViewportHeight(true);
-        tablePacientes.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        tablePacientes.getTableHeader().setReorderingAllowed(false);
-        tablePacientes.getTableHeader().setResizingAllowed(false);
+        configurarTabla(tablePacientes);
 
         JScrollPane scrollTabla = new JScrollPane(tablePacientes);
         scrollTabla.setBorder(BorderFactory.createEmptyBorder());
@@ -192,20 +124,6 @@ public class PacienteListViewLayout extends JPanel {
         mainPanel.add(scrollTabla);
 
         add(mainPanel, BorderLayout.CENTER);
-    }
-
-    /**
-     * Crea un botón estilizado con el tema negro principal de la aplicación.
-     */
-    private JButton createBlackButton(String text) {
-        JButton btn = new JButton(text);
-        btn.setBackground(BUTTON_COLOR);
-        btn.setForeground(BUTTON_TEXT_COLOR);
-        btn.setFocusPainted(false);
-        btn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return btn;
     }
 
     /** @return tabla donde se muestran los pacientes. */

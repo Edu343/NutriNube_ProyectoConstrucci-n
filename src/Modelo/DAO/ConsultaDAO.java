@@ -15,6 +15,11 @@ import java.util.List;
  */
 public class ConsultaDAO extends DatabaseManager {
 
+    private static final String COLUMN_CLAVE_CONSULTA = "claveConsulta";
+    private static final String COLUMN_CLAVE_PACIENTE = "clavePaciente";
+    private static final String COLUMN_CLAVE_NUTRIOLOGO = "claveNutriologo";
+    private static final String COLUMN_FECHA = "fecha";
+
     /**
      * Inserta una nueva consulta con todos los campos requeridos.
      */
@@ -152,6 +157,52 @@ public class ConsultaDAO extends DatabaseManager {
     }
 
     /**
+     * Mapea un ResultSet a un objeto Consulta completo con sus objetos anidados.
+     * Método reutilizable para evitar duplicación de código.
+     */
+    private Consulta mapearConsulta(ResultSet resultSet) throws SQLException {
+        Consulta consulta = new Consulta();
+        consulta.setClaveConsulta(resultSet.getString(COLUMN_CLAVE_CONSULTA));
+        consulta.setClavePaciente(resultSet.getString(COLUMN_CLAVE_PACIENTE));
+        consulta.setClaveNutriologo(resultSet.getString(COLUMN_CLAVE_NUTRIOLOGO));
+        consulta.setFechaVisita(resultSet.getString(COLUMN_FECHA));
+        consulta.setEdad(resultSet.getInt("edad"));
+        consulta.setAltura(resultSet.getDouble("altura"));
+
+        // ---- Calorías ----
+        CaloriasCalculo calorias = new CaloriasCalculo();
+        calorias.setPeso(resultSet.getDouble("peso"));
+        calorias.setCalorias(resultSet.getDouble("calorias"));
+        calorias.setNivelActividadFisica(resultSet.getInt("nivelActividadFisica"));
+        calorias.setRazonConsulta(resultSet.getInt("razonConsulta"));
+        consulta.setTotalCalorias(calorias);
+
+        // ---- Macronutrientes ----
+        Macronutrientes macros = new Macronutrientes();
+        macros.setCarbohidratos(resultSet.getDouble("carbohidratos"));
+        macros.setProteinas(resultSet.getDouble("proteinas"));
+        macros.setLipidos(resultSet.getDouble("lipidos"));
+        consulta.setMacronutrientes(macros);
+
+        // ---- Anamnesis ----
+        AnamnesisData anamnesis = new AnamnesisData();
+        anamnesis.setCondicionesMedicas(resultSet.getString("condicionesMedicas"));
+        anamnesis.setMedicacion(resultSet.getString("medicacion"));
+        anamnesis.setHistorialCirugias(resultSet.getString("historialCirugias"));
+        anamnesis.setAlergias(resultSet.getString("alergias"));
+        anamnesis.setPreferenciaComida(resultSet.getString("preferenciaComida"));
+        anamnesis.setHorarioSueno(resultSet.getString("horarioSueno"));
+        anamnesis.setNivelEstres(resultSet.getInt("nivelEstres"));
+        anamnesis.setHabitoAlimenticio(resultSet.getString("habitosAlimenticios"));
+        anamnesis.setTipoLiquidoConsumido(resultSet.getString("tipoLiquidos"));
+        anamnesis.setCantidadLiquidoConsumido(resultSet.getDouble("cantidadLiquidos"));
+        anamnesis.setBarreraAlimenticia(resultSet.getString("dificultades"));
+        consulta.setAnamnesisData(anamnesis);
+
+        return consulta;
+    }
+
+    /**
      * Recupera una consulta completa, incluyendo sus objetos anidados
      * como calorías, anamnesis y macronutrientes.
      */
@@ -169,45 +220,7 @@ public class ConsultaDAO extends DatabaseManager {
                 return null;
             }
 
-            Consulta consulta = new Consulta();
-            consulta.setClaveConsulta(claveConsulta);
-            consulta.setClavePaciente(resultSet.getString("clavePaciente"));
-            consulta.setClaveNutriologo(resultSet.getString("claveNutriologo"));
-            consulta.setFechaVisita(resultSet.getString("fecha"));
-            consulta.setEdad(resultSet.getInt("edad"));
-            consulta.setAltura(resultSet.getDouble("altura"));
-
-            // ---- Calorías ----
-            CaloriasCalculo calorias = new CaloriasCalculo();
-            calorias.setPeso(resultSet.getDouble("peso"));
-            calorias.setCalorias(resultSet.getDouble("calorias"));
-            calorias.setNivelActividadFisica(resultSet.getInt("nivelActividadFisica"));
-            calorias.setRazonConsulta(resultSet.getInt("razonConsulta"));
-            consulta.setTotalCalorias(calorias);
-
-            // ---- Macronutrientes ----
-            Macronutrientes macros = new Macronutrientes();
-            macros.setCarbohidratos(resultSet.getDouble("carbohidratos"));
-            macros.setProteinas(resultSet.getDouble("proteinas"));
-            macros.setLipidos(resultSet.getDouble("lipidos"));
-            consulta.setMacronutrientes(macros);
-
-            // ---- Anamnesis ----
-            AnamnesisData anamnesis = new AnamnesisData();
-            anamnesis.setCondicionesMedicas(resultSet.getString("condicionesMedicas"));
-            anamnesis.setMedicacion(resultSet.getString("medicacion"));
-            anamnesis.setHistorialCirugias(resultSet.getString("historialCirugias"));
-            anamnesis.setAlergias(resultSet.getString("alergias"));
-            anamnesis.setPreferenciaComida(resultSet.getString("preferenciaComida"));
-            anamnesis.setHorarioSueno(resultSet.getString("horarioSueno"));
-            anamnesis.setNivelEstres(resultSet.getInt("nivelEstres"));
-            anamnesis.setHabitoAlimenticio(resultSet.getString("habitosAlimenticios"));
-            anamnesis.setTipoLiquidoConsumido(resultSet.getString("tipoLiquidos"));
-            anamnesis.setCantidadLiquidoConsumido(resultSet.getDouble("cantidadLiquidos"));
-            anamnesis.setBarreraAlimenticia(resultSet.getString("dificultades"));
-            consulta.setAnamnesisData(anamnesis);
-
-            return consulta;
+            return mapearConsulta(resultSet);
         }
     }
     
@@ -227,7 +240,7 @@ public class ConsultaDAO extends DatabaseManager {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                String claveConsulta = resultSet.getString("claveConsulta");
+                String claveConsulta = resultSet.getString(COLUMN_CLAVE_CONSULTA);
 
                 // Reutilizamos tu método existente que reconstruye la consulta
                 Consulta consulta = leerPorClave(claveConsulta);
@@ -242,10 +255,10 @@ public class ConsultaDAO extends DatabaseManager {
     /**
      * Recupera la fecha más reciente de consulta registrada
      * para un paciente.
-     */ 
+     */
     public String obtenerUltimaFechaPorPaciente(String clavePaciente) throws SQLException {
         String fecha = "Sin historial";
-        
+
         String sql = "SELECT fecha FROM consulta WHERE clavePaciente = ? ORDER BY fecha DESC LIMIT 1";
 
         try (Connection connection = getConnection();
@@ -255,7 +268,7 @@ public class ConsultaDAO extends DatabaseManager {
             ResultSet rs = statement.executeQuery();
 
             if (rs.next()) {
-                fecha = rs.getString("fecha");
+                fecha = rs.getString(COLUMN_FECHA);
             }
         }
         return fecha;
@@ -266,7 +279,6 @@ public class ConsultaDAO extends DatabaseManager {
      * reconstruyendo todos sus objetos internos.
      */
     public Consulta obtenerUltimaConsultaObjeto(String clavePaciente) throws SQLException {
-        // Ordenamos por fecha descendente y tomamos 1
         String sql = "SELECT * FROM consulta WHERE clavePaciente = ? ORDER BY fecha DESC LIMIT 1";
 
         try (Connection connection = getConnection();
@@ -278,44 +290,8 @@ public class ConsultaDAO extends DatabaseManager {
             if (!resultSet.next()) {
                 return null;
             }
-            
-            String claveConsulta = resultSet.getString("claveConsulta");
-            Consulta consulta = new Consulta();
-            consulta.setClaveConsulta(claveConsulta);
-            consulta.setClavePaciente(resultSet.getString("clavePaciente"));
-            consulta.setClaveNutriologo(resultSet.getString("claveNutriologo"));
-            consulta.setFechaVisita(resultSet.getString("fecha"));
-            consulta.setEdad(resultSet.getInt("edad"));
-            consulta.setAltura(resultSet.getDouble("altura"));
 
-            CaloriasCalculo calorias = new CaloriasCalculo();
-            calorias.setPeso(resultSet.getDouble("peso"));
-            calorias.setCalorias(resultSet.getDouble("calorias"));
-            calorias.setNivelActividadFisica(resultSet.getInt("nivelActividadFisica"));
-            calorias.setRazonConsulta(resultSet.getInt("razonConsulta"));
-            consulta.setTotalCalorias(calorias);
-
-            Macronutrientes macros = new Macronutrientes();
-            macros.setCarbohidratos(resultSet.getDouble("carbohidratos"));
-            macros.setProteinas(resultSet.getDouble("proteinas"));
-            macros.setLipidos(resultSet.getDouble("lipidos"));
-            consulta.setMacronutrientes(macros);
-
-            AnamnesisData anamnesis = new AnamnesisData();
-            anamnesis.setCondicionesMedicas(resultSet.getString("condicionesMedicas"));
-            anamnesis.setMedicacion(resultSet.getString("medicacion"));
-            anamnesis.setHistorialCirugias(resultSet.getString("historialCirugias"));
-            anamnesis.setAlergias(resultSet.getString("alergias"));
-            anamnesis.setPreferenciaComida(resultSet.getString("preferenciaComida"));
-            anamnesis.setHorarioSueno(resultSet.getString("horarioSueno"));
-            anamnesis.setNivelEstres(resultSet.getInt("nivelEstres"));
-            anamnesis.setHabitoAlimenticio(resultSet.getString("habitosAlimenticios"));
-            anamnesis.setTipoLiquidoConsumido(resultSet.getString("tipoLiquidos"));
-            anamnesis.setCantidadLiquidoConsumido(resultSet.getDouble("cantidadLiquidos"));
-            anamnesis.setBarreraAlimenticia(resultSet.getString("dificultades"));
-            consulta.setAnamnesisData(anamnesis);
-
-            return consulta;
+            return mapearConsulta(resultSet);
         }
     }
 
@@ -335,8 +311,8 @@ public class ConsultaDAO extends DatabaseManager {
 
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
-                    String claveConsulta = rs.getString("claveConsulta");
-                    Consulta c = leerPorClave(claveConsulta); // reutiliza tu mapeo
+                    String claveConsulta = rs.getString(COLUMN_CLAVE_CONSULTA);
+                    Consulta c = leerPorClave(claveConsulta);
                     if (c != null) lista.add(c);
                 }
             }

@@ -2,6 +2,9 @@ package Vista;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import Modelo.Core.ViewLayout;
+
 import java.awt.*;
 
 /**
@@ -9,13 +12,7 @@ import java.awt.*;
  * Define la estructura visual completa: encabezados,
  * buscador de fecha, tabla de consultas y botones de acción.
  */
-public class HistorialConsultasViewLayout extends JPanel {
-
-    private static final Color HEADER_COLOR = new Color(44, 54, 73);
-    private static final Color TEXT_COLOR = Color.BLACK;
-    private static final Color BACKGROUND_COLOR = Color.WHITE;
-    private static final Color BUTTON_COLOR = Color.BLACK;
-    private static final Color BUTTON_TEXT_COLOR = Color.WHITE;
+public class HistorialConsultasViewLayout extends ViewLayout {
 
     private JTable tableConsultas;
 
@@ -46,18 +43,11 @@ public class HistorialConsultasViewLayout extends JPanel {
         headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         // Colocar logo a la izquierda del encabezado
-        JLabel lblLogo = new JLabel();
-        lblLogo.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
-        
-        java.net.URL imgUrlLogo = getClass().getResource("NutriNube.png");
-
-        if (imgUrlLogo != null) {
-            ImageIcon iconLogo = new ImageIcon(imgUrlLogo);
-            Image scaledLogo = iconLogo.getImage().getScaledInstance(100, 55, Image.SCALE_SMOOTH);
+        JLabel lblLogo = crearLogo();
+        ImageIcon currentIcon = (ImageIcon) lblLogo.getIcon();
+        if (currentIcon != null) {
+            Image scaledLogo = currentIcon.getImage().getScaledInstance(100, 55, Image.SCALE_SMOOTH);
             lblLogo.setIcon(new ImageIcon(scaledLogo));
-        } else {
-            lblLogo.setText("NutriNube");
-            lblLogo.setForeground(Color.WHITE);
         }
 
         headerPanel.add(lblLogo, BorderLayout.WEST);
@@ -77,33 +67,9 @@ public class HistorialConsultasViewLayout extends JPanel {
         centerMenu.add(btnPacientes);
 
         // Botón de logout alineado a la derecha del encabezado
-        btnLogout = new JButton("Log Out");
-        btnLogout.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        btnLogout.setForeground(Color.WHITE);
-        btnLogout.setBackground(HEADER_COLOR);
-        btnLogout.setBorderPainted(false);
-        btnLogout.setFocusPainted(false);
+        btnLogout = crearBotonLogout();
         btnLogout.setBorder(BorderFactory.createEmptyBorder(11, 0, 0, 14));
         btnLogout.setMargin(new Insets(0, 0, 0, 0));
-        btnLogout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        // Intentar cargar icono del botón de logout
-        java.net.URL logoutUrl = getClass().getResource("salir_logo.png");
-        
-        if (logoutUrl != null) {
-            ImageIcon logoutIcon = new ImageIcon(logoutUrl);
-            Image scaledLogout = logoutIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-            btnLogout.setIcon(new ImageIcon(scaledLogout));
-            btnLogout.setText(null);
-            btnLogout.setToolTipText("Log Out");
-            btnLogout.setBorderPainted(false);
-            btnLogout.setContentAreaFilled(false);
-            btnLogout.setOpaque(false);
-        } else {
-            // Fallback si ocurre cualquier error
-            btnLogout.setText("Log Out");
-        }
-        
 
         // Panel derecho del header para alinear botón a la orilla
         JPanel eastPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -149,33 +115,9 @@ public class HistorialConsultasViewLayout extends JPanel {
         topPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 30));
 
         // Campo de búsqueda con placeholder y validación
-        JPanel searchPanel = new JPanel(new BorderLayout());
-        searchPanel.setBackground(Color.WHITE);
-        searchPanel.setBorder(BorderFactory.createLineBorder(new Color(210, 210, 210)));
-
-        searchPanel.setMaximumSize(new Dimension(200, 30));
-        searchPanel.setPreferredSize(new Dimension(200, 30));
-
         txtBuscar = new JTextField("AAAA-MM-DD");
 
-        // Lógica del placeholder del campo de búsqueda
-        txtBuscar.addFocusListener(new java.awt.event.FocusAdapter() {
-            @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                if (txtBuscar.getText().equals("AAAA-MM-DD")) {
-                    txtBuscar.setText("");
-                    txtBuscar.setForeground(Color.BLACK);
-                }
-            }
-
-            @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
-                if (txtBuscar.getText().trim().isEmpty()) {
-                    txtBuscar.setText("AAAA-MM-DD");
-                    txtBuscar.setForeground(Color.GRAY);
-                }
-            }
-        });
+        agregarPlaceholderBehavior(txtBuscar, "AAAA-MM-DD");
 
         // Listener de documento para filtrar en tiempo real
         txtBuscar.getDocument().addDocumentListener(
@@ -204,25 +146,16 @@ public class HistorialConsultasViewLayout extends JPanel {
             @Override public void changedUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
         });
 
-        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtBuscar.setBorder(null);
-        txtBuscar.setForeground(Color.GRAY);
+        JPanel panelBusqueda = crearPanelBusqueda(txtBuscar);
+        panelBusqueda.setMaximumSize(new Dimension(200, 30));
 
-        searchPanel.add(new JLabel(" 🔍 "), BorderLayout.WEST);
-        searchPanel.add(txtBuscar, BorderLayout.CENTER);
-
-        topPanel.add(searchPanel, BorderLayout.EAST);
+        topPanel.add(panelBusqueda, BorderLayout.EAST);
 
         mainPanel.add(topPanel);
         mainPanel.add(Box.createRigidArea(new Dimension(200, 30)));
 
         // Configuración de la tabla del historial
-        DefaultTableModel modelo = new DefaultTableModel() {
-             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        DefaultTableModel modelo = crearModeloTablaNoEditable();
 
         modelo.addColumn("Clave Consulta");
         modelo.addColumn("Fecha");
@@ -230,15 +163,7 @@ public class HistorialConsultasViewLayout extends JPanel {
 
         tableConsultas = new JTable(modelo);
 
-        tableConsultas.setRowHeight(28);
-        tableConsultas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tableConsultas.setShowGrid(false);
-        tableConsultas.setIntercellSpacing(new Dimension(0, 0));
-        tableConsultas.setFillsViewportHeight(true);
-        tableConsultas.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-
-        tableConsultas.getTableHeader().setReorderingAllowed(false);
-        tableConsultas.getTableHeader().setResizingAllowed(false);
+        configurarTabla(tableConsultas);
 
         JScrollPane scrollTabla = new JScrollPane(tableConsultas);
         scrollTabla.setBorder(BorderFactory.createEmptyBorder());
@@ -254,8 +179,8 @@ public class HistorialConsultasViewLayout extends JPanel {
         buttonPanel.setBackground(BACKGROUND_COLOR);
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        btnAgregar = createBlackButton("Agregar Consulta");
-        btnEliminar = createBlackButton("Eliminar");
+        btnAgregar = crearBotonNegro("Agregar Consulta");
+        btnEliminar = crearBotonNegro("Eliminar");
 
         buttonPanel.add(btnAgregar);
         buttonPanel.add(btnEliminar);
@@ -263,22 +188,6 @@ public class HistorialConsultasViewLayout extends JPanel {
         mainPanel.add(buttonPanel);
 
         add(mainPanel, BorderLayout.CENTER);
-    }
-
-    /**
-     * Crea un botón estilizado en negro utilizado en la parte inferior del layout.
-     * @param text texto que aparecerá en el botón.
-     * @return botón configurado.
-     */
-    private JButton createBlackButton(String text) {
-        JButton btn = new JButton(text);
-        btn.setBackground(BUTTON_COLOR);
-        btn.setForeground(BUTTON_TEXT_COLOR);
-        btn.setFocusPainted(false);
-        btn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return btn;
     }
 
     public JTable getTablaConsultas() {

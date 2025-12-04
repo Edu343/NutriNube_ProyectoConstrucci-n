@@ -122,8 +122,7 @@ public class NutriNubeModelo {
         if (estado == LoginEstado.SUCCESS) {
             try {
                 this.nutriologoActual = nutriologoDAO.leerPorClave(claveNutriologo);
-                this.pacienteSeleccionado = null;
-                this.consultaSeleccionada = null;
+                limpiarSelecciones();
                 notifyObservers("LOGIN_SUCCESS");
                 return true;
             } catch (SQLException e) {
@@ -174,8 +173,7 @@ public class NutriNubeModelo {
      */
     public void logout() {
         this.nutriologoActual = null;
-        this.pacienteSeleccionado = null;
-        this.consultaSeleccionada = null;
+        limpiarSelecciones();
         notifyObservers("LOGOUT_SUCCESS");
     }
 
@@ -376,8 +374,7 @@ public class NutriNubeModelo {
         pacienteDAO.insertar(nuevoPaciente);
         consultaDAO.insertar(nuevaConsulta);
 
-        this.pacienteSeleccionado = null;
-        this.consultaSeleccionada = null;
+        limpiarSelecciones();
         notifyObservers();
     }
 
@@ -411,8 +408,7 @@ public class NutriNubeModelo {
      */
     public void actualizarConsulta(String claveConsulta, String clavePaciente, String claveNutriologo,
             String nombre, String apellido, String correo, int sexo, String telefono, String fechaNacimiento,
-            double altura,
-            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
+            double altura, String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
             String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
             String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
             double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
@@ -432,15 +428,30 @@ public class NutriNubeModelo {
         pacienteDAO.actualizar(pacienteActualizado);
 
         Consulta consultaEditada = crearConsulta(claveConsulta, clavePaciente, claveNutriologo, condicionesMedicas,
-                medicacion, historialCirugias, alergias,
-                preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos,
-                cantidadLiquidoConsumido, barreraAlimenticia,
-                peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+                medicacion, historialCirugias, alergias, preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, 
+                tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia, peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
 
         consultaDAO.actualizar(consultaEditada);
 
         this.consultaSeleccionada = null;
         notifyObservers();
+    }
+
+    /**
+     * Genera una clave única de 8 caracteres alfanuméricos en mayúsculas.
+     *
+     * @return Clave única generada.
+     */
+    private String generarClaveUnica() {
+        return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    /**
+     * Limpia la selección actual de paciente y consulta.
+     */
+    private void limpiarSelecciones() {
+        this.pacienteSeleccionado = null;
+        this.consultaSeleccionada = null;
     }
 
     /**
@@ -451,7 +462,7 @@ public class NutriNubeModelo {
      */
     private Paciente crearPaciente(String claveNutriologo, String nombre, String apellido, String correo, int sexo,
             String telefono, String fechaNacimiento, double altura) {
-        String clavePaciente = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String clavePaciente = generarClaveUnica();
 
         return new Paciente(clavePaciente, claveNutriologo, nombre, apellido, correo, sexo, telefono, fechaNacimiento,
                 altura);
@@ -472,7 +483,7 @@ public class NutriNubeModelo {
             double proteinas, double lipidos) throws Exception {
 
         if (claveConsulta == null || claveConsulta.isEmpty()) {
-            claveConsulta = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            claveConsulta = generarClaveUnica();
         }
 
         String fechaVisita = LocalDate.now().toString();

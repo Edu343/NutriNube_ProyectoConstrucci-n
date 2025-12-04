@@ -1,13 +1,14 @@
 package Vista;
 
 import javax.swing.*;
+
+import Modelo.Core.ViewLayout;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 // vista  del login de la aplicacion NutriNube
 
-public class LoginViewLayout extends JPanel {
+public class LoginViewLayout extends ViewLayout {
 
     private JLabel lblLogo;
     private JLabel lblTitle;
@@ -83,12 +84,14 @@ public class LoginViewLayout extends JPanel {
         // Campo de Usuario (con placeholder)
         txtUser = new JTextField(20);
         txtUser.setFont(new Font("Arial", Font.PLAIN, 14));
-        addPlaceholder(txtUser, "Usuario");
+        txtUser.setText("Usuario");
+        txtUser.setForeground(Color.GRAY);
+        agregarPlaceholderBehavior(txtUser, "Usuario");
 
         // Campo de Contraseña (con placeholder)
         txtPassword = new JPasswordField(20);
         txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        addPlaceholder(txtPassword, "Contraseña");
+        agregarPlaceholderPasswordBehavior(txtPassword, "Contraseña");
 
         // Botón "Acceder"
         btnLogin = new JButton("Acceder");
@@ -115,50 +118,6 @@ public class LoginViewLayout extends JPanel {
         this.add(btnLogin, gbcNoFill);
     }
 
-    /**
-     * Método práctico para agregar texto de "placeholder" (texto guía)
-     * a un JTextField o JPasswordField.
-     */
-    public void addPlaceholder(JTextField textField, String placeholder) {
-        final char defaultEchoChar = (textField instanceof JPasswordField) ? ((JPasswordField) textField).getEchoChar()
-                : 0;
-
-        textField.setText(placeholder);
-        textField.setForeground(Color.GRAY);
-
-        if (textField instanceof JPasswordField) {
-            ((JPasswordField) textField).setEchoChar((char) 0);
-        }
-
-        textField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (textField.getText().equals(placeholder)) {
-                    textField.setText("");
-                    textField.setForeground(Color.BLACK);
-                    if (textField instanceof JPasswordField) {
-                        ((JPasswordField) textField).setEchoChar(defaultEchoChar);
-                    }
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                String currentText = (textField instanceof JPasswordField)
-                        ? new String(((JPasswordField) textField).getPassword())
-                        : textField.getText();
-
-                if (currentText.isEmpty()) {
-                    textField.setForeground(Color.GRAY);
-                    textField.setText(placeholder);
-                    if (textField instanceof JPasswordField) {
-                        ((JPasswordField) textField).setEchoChar((char) 0);
-                    }
-                }
-            }
-        });
-    }
-
     public void limpiarCampos() {
         txtUser.setText("Usuario");
         txtUser.setForeground(Color.GRAY);
@@ -178,7 +137,7 @@ public class LoginViewLayout extends JPanel {
     }
 
     public String getTxtUsuario() {
-        return txtUser.getText();
+        return getTxtUser();
     }
 
     public String getTxtPassword() {
@@ -186,7 +145,7 @@ public class LoginViewLayout extends JPanel {
     }
 
     public String getTxtContrasena() {
-        return new String(txtPassword.getPassword());
+        return getTxtPassword();
     }
 
     public JButton getBtnLogin() {
@@ -194,7 +153,7 @@ public class LoginViewLayout extends JPanel {
     }
 
     public JButton getBtnAcceder() {
-        return btnLogin;
+        return getBtnLogin();
     }
 
     public JTextField getTxtUserField() {
