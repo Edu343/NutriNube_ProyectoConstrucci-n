@@ -102,7 +102,7 @@ public class NutriNubeModelo {
             boolean ok = HashingServicio.verificarContrasena(contrasena, n.getSaltContrasena(), n.getHashContrasena());
             return ok ? LoginEstado.SUCCESS : LoginEstado.WRONG_PASSWORD;
 
-        } catch (SQLException _) {
+        } catch (SQLException e) {
             return LoginEstado.ERROR;
         }
     }
