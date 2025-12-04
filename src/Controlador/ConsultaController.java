@@ -25,7 +25,7 @@ public class ConsultaController extends Controller {
         try {
             myModel.calcularCaloriasYMacronutrientes(
                     clavePaciente, peso, nivelActividadFisica, razonConsulta, sexo, altura, fechaNacimiento);
-        } catch (Exception _) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "No se pudo realizar el cálculo nutricional.\n" +
                     "Verifica que todos los campos estén completos y correctos.",
