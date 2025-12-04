@@ -192,7 +192,7 @@ public class ConsultaFormularioView extends View {
 
             } catch (Exception ex) {
                 mostrarError("Error al intentar guardar: " + ex.getMessage());
-                ex.printStackTrace();
+                
             }
         });
     }

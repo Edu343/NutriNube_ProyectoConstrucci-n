@@ -102,8 +102,7 @@ public class NutriNubeModelo {
             boolean ok = HashingServicio.verificarContrasena(contrasena, n.getSaltContrasena(), n.getHashContrasena());
             return ok ? LoginEstado.SUCCESS : LoginEstado.WRONG_PASSWORD;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException _) {
             return LoginEstado.ERROR;
         }
     }
@@ -125,8 +124,7 @@ public class NutriNubeModelo {
                 limpiarSelecciones();
                 notifyObservers("LOGIN_SUCCESS");
                 return true;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException _) {
                 return false;
             }
         }
@@ -143,8 +141,7 @@ public class NutriNubeModelo {
     public boolean nutriologoExiste(String claveNutriologo) {
         try {
             return nutriologoDAO.leerPorClave(claveNutriologo) != null;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException _) {
             return false;
         }
     }
@@ -162,8 +159,7 @@ public class NutriNubeModelo {
             nutriologoDAO.insertar(nutriologo);
             notifyObservers("NUTRIOLOGO_CREATED");
             return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException _) {
             return false;
         }
     }
@@ -188,8 +184,7 @@ public class NutriNubeModelo {
                 paciente.setClaveNutriologo(nutriologoActual.getClaveNutriologo());
                 pacienteDAO.insertar(paciente);
                 notifyObservers("PACIENTES");
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException _) {
             }
         }
     }
@@ -203,8 +198,7 @@ public class NutriNubeModelo {
         try {
             pacienteDAO.eliminar(clavePaciente);
             notifyObservers("PACIENTES");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException _) {
         }
     }
 
@@ -217,7 +211,7 @@ public class NutriNubeModelo {
         try {
             this.pacienteSeleccionado = pacienteDAO.leerPorClave(clavePaciente);
         } catch (SQLException e) {
-            e.printStackTrace();
+            this.pacienteSeleccionado = null;
         }
     }
 
@@ -238,8 +232,9 @@ public class NutriNubeModelo {
             consultaDAO.eliminar(claveConsulta);
             notifyObservers("HISTORIAL");
         } catch (SQLException e) {
-            e.printStackTrace();
         }
+            
+        
     }
 
     /**
@@ -251,7 +246,7 @@ public class NutriNubeModelo {
         try {
             this.consultaSeleccionada = consultaDAO.leerPorClave(claveConsulta);
         } catch (SQLException e) {
-            e.printStackTrace();
+            
             this.consultaSeleccionada = null;
         }
     }

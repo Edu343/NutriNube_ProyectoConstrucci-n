@@ -202,7 +202,7 @@ public class HistorialConsultasView extends View {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            
         }
             
         DefaultTableModel model = 
