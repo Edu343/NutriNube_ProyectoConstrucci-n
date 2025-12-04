@@ -173,7 +173,7 @@ public class NutriNubeModelo {
         notifyObservers("LOGOUT_SUCCESS");
     }
 
-    
+ 
 
     /**
      * Elimina un paciente de la base de datos.
@@ -308,32 +308,37 @@ public class NutriNubeModelo {
      * @throws Exception Si los datos están incompletos o son inválidos.
      */
     public void guardarNuevoPacienteYConsulta(Paciente nuevoPaciente, Consulta nuevaConsulta) throws Exception {
-
-        if (!validacionServicio.isValidPaciente(nuevoPaciente)) {
-            throw new Exception("Datos de paciente incompletos o inválidos.");
-        }
-
-        // Asegurar consistencia de claves
-        if (nuevaConsulta.getClavePaciente() == null || !nuevaConsulta.getClavePaciente().equals(nuevoPaciente.getClavePaciente())) {
-            nuevaConsulta.setClavePaciente(nuevoPaciente.getClavePaciente());
-        }
-        
-        // Calcular edad y altura final para la consulta basado en el paciente
-        nuevaConsulta.setAltura(nuevoPaciente.getAltura());
-        nuevaConsulta.setEdad(nutricionServicio.calcularEdad(nuevoPaciente.getFechaNacimiento()));
-        nuevaConsulta.setFechaVisita(LocalDate.now().toString());
-
-        if (!validacionServicio.isValidConsulta(nuevaConsulta)) {
-            throw new Exception("Datos de la primera consulta incompletos o inválidos.");
-        }
-
-        pacienteDAO.insertar(nuevoPaciente);
-        consultaDAO.insertar(nuevaConsulta);
-
+        registrarPaciente(nuevoPaciente);
+        registrarConsultaInicial(nuevaConsulta, nuevoPaciente);
         limpiarSelecciones();
         notifyObservers();
     }
 
+    private void registrarPaciente(Paciente paciente) throws Exception {
+        if (validacionServicio.isValidPaciente(paciente)) {
+            pacienteDAO.insertar(paciente);
+        } else {
+            throw new Exception("Datos de paciente incompletos o inválidos.");
+        }
+    }
+    
+    private void registrarConsultaInicial(Consulta consulta, Paciente paciente) throws Exception {
+     
+        if (consulta.getClavePaciente() == null || !consulta.getClavePaciente().equals(paciente.getClavePaciente())) {
+            consulta.setClavePaciente(paciente.getClavePaciente());
+        }
+
+        consulta.setAltura(paciente.getAltura());
+        consulta.setEdad(nutricionServicio.calcularEdad(paciente.getFechaNacimiento()));
+        consulta.setFechaVisita(LocalDate.now().toString());
+
+        // La inserción solo ocurre si la validación es exitosa
+        if (validacionServicio.isValidConsulta(consulta)) {
+            consultaDAO.insertar(consulta);
+        } else {
+            throw new Exception("Datos de la primera consulta incompletos o inválidos.");
+        }
+    }
     /**
      * Crea y guarda una nueva consulta para un paciente ya existente.
      *
