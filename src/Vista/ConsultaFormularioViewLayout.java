@@ -15,6 +15,8 @@ import java.util.Date;
  */
 public class ConsultaFormularioViewLayout extends JPanel {
 
+    private static final String FONT_FAMILY = "Arial";
+
     private final Color PRIMARY_BG_COLOR = new Color(44, 50, 64);
     private final Color ACCENT_COLOR = new Color(0, 150, 136);
     private final Color INPUT_BG_COLOR = new Color(245, 245, 245);
@@ -101,7 +103,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbcHeader.fill = GridBagConstraints.HORIZONTAL;
         headerPanel.add(Box.createGlue(), gbcHeader);
 
-        btnPatients = createHeaderButton("Pacientes");
+        btnPatients = crearBtnHeader("Pacientes");
         try {
             ImageIcon stethIcon = new ImageIcon("stethoscope.png");
             Image st = stethIcon.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH);
@@ -112,10 +114,10 @@ public class ConsultaFormularioViewLayout extends JPanel {
         }
         gbcHeader.gridx = 2;
         headerPanel.add(btnPatients, gbcHeader);
-        btnExpedients = createHeaderButton("Expedientes");
+        btnExpedients = crearBtnHeader("Expedientes");
         gbcHeader.gridx = 3;
         headerPanel.add(btnExpedients, gbcHeader);
-        btnLogout = createHeaderButton("Log Out");
+        btnLogout = crearBtnHeader("Log Out");
         gbcHeader.gridx = 4;
         headerPanel.add(btnLogout, gbcHeader);
 
@@ -127,6 +129,8 @@ public class ConsultaFormularioViewLayout extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(mainContentPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setBlockIncrement(80);
         this.add(scrollPane, BorderLayout.CENTER);
 
         GridBagConstraints gbcMain = new GridBagConstraints();
@@ -136,7 +140,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbcMain.gridwidth = GridBagConstraints.REMAINDER;
 
         lblConsultaPaciente = new JLabel("Consulta de Paciente");
-        lblConsultaPaciente.setFont(new Font("Arial", Font.BOLD, 26));
+        lblConsultaPaciente.setFont(new Font(FONT_FAMILY, Font.BOLD, 26));
         lblConsultaPaciente.setForeground(PRIMARY_BG_COLOR);
         gbcMain.insets = new Insets(20, 40, 20, 40);
         mainContentPanel.add(lblConsultaPaciente, gbcMain);
@@ -150,17 +154,17 @@ public class ConsultaFormularioViewLayout extends JPanel {
                     "yyyy-MM-dd");
         } catch (Exception e) {
             // Fallback a JTextField si JCalendar no está disponible
-            JTextField fallback = createTextField();
+            JTextField fallback = crearTextField();
             fallback.setText("AAAA-MM-DD");
             fechaNacimientoChooser = fallback;
         }
 
-        personalInfoPanel = crearPanelInformacionPersonal("Información Personal",
+        personalInfoPanel = crearPanel("Información Personal",
                 new String[] { "Nombre(s)", "Apellido", "Fecha de Nacimiento", "Sexo", "Correo Electrónico", "Teléfono",
                         "Altura (cm)", "Peso (kg)" });
         mainContentPanel.add(personalInfoPanel, gbcMain);
 
-        medicalHistoryPanel = crearPanelHistorialMedico("Historial Médico",
+        medicalHistoryPanel = crearPanel("Historial Médico",
                 new String[] { "Condiciones Médicas", "Historial de cirugías", "Medicación" });
         mainContentPanel.add(medicalHistoryPanel, gbcMain);
 
@@ -201,7 +205,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbcGD.gridy = 0;
         goalsAndDispositionContainer.add(dispositionPanel, gbcGD);
 
-        btnCalcular = createActionButton("Calcular");
+        btnCalcular = crearBtn("Calcular");
         btnCalcular.setBackground(ACCENT_COLOR);
 
         JPanel btnCalcularContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -218,7 +222,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         mainContentPanel.add(goalsAndDispositionContainer, gbcMain);
 
         JLabel lblResultsTitle = new JLabel("Distribución Nutricional");
-        lblResultsTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        lblResultsTitle.setFont(new Font(FONT_FAMILY, Font.BOLD, 18));
         lblResultsTitle.setForeground(PRIMARY_BG_COLOR);
         gbcMain.insets = new Insets(20, 40, 5, 40);
         mainContentPanel.add(lblResultsTitle, gbcMain);
@@ -232,33 +236,33 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbcResults.fill = GridBagConstraints.HORIZONTAL;
         gbcResults.weightx = 0.5;
 
-        txtProteinas = createTextField();
-        txtCarbohidratos = createTextField();
-        txtLipidos = createTextField();
-        txtCaloriasTotales = createTextField();
+        txtProteinas = crearTextField();
+        txtCarbohidratos = crearTextField();
+        txtLipidos = crearTextField();
+        txtCaloriasTotales = crearTextField();
 
         gbcResults.gridx = 0;
         gbcResults.gridy = 0;
         gbcResults.anchor = GridBagConstraints.EAST;
-        resultsPanel.add(createLabel("Proteínas (g):"), gbcResults);
+        resultsPanel.add(crearLabel("Proteínas (g):"), gbcResults);
         gbcResults.gridx = 1;
         resultsPanel.add(txtProteinas, gbcResults);
 
         gbcResults.gridx = 2;
         gbcResults.gridy = 0;
-        resultsPanel.add(createLabel("Lípidos (g):"), gbcResults);
+        resultsPanel.add(crearLabel("Lípidos (g):"), gbcResults);
         gbcResults.gridx = 3;
         resultsPanel.add(txtLipidos, gbcResults);
 
         gbcResults.gridx = 0;
         gbcResults.gridy = 1;
-        resultsPanel.add(createLabel("Carbohidratos (g):"), gbcResults);
+        resultsPanel.add(crearLabel("Carbohidratos (g):"), gbcResults);
         gbcResults.gridx = 1;
         resultsPanel.add(txtCarbohidratos, gbcResults);
 
         gbcResults.gridx = 2;
         gbcResults.gridy = 1;
-        resultsPanel.add(createLabel("Calorías Totales (kcal):"), gbcResults);
+        resultsPanel.add(crearLabel("Calorías Totales (kcal):"), gbcResults);
         gbcResults.gridx = 3;
         resultsPanel.add(txtCaloriasTotales, gbcResults);
 
@@ -267,15 +271,15 @@ public class ConsultaFormularioViewLayout extends JPanel {
 
         JPanel actionButtonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
         actionButtonsPanel.setBackground(Color.WHITE);
-        btnGuardar = createActionButton("Guardar");
-        btnSalir = createActionButton("Salir");
+        btnGuardar = crearBtn("Guardar");
+        btnSalir = crearBtn("Salir");
         actionButtonsPanel.add(btnGuardar);
         actionButtonsPanel.add(btnSalir);
         gbcMain.insets = new Insets(20, 40, 20, 40);
         mainContentPanel.add(actionButtonsPanel, gbcMain);
 
         JLabel lblExpedienteFooter = new JLabel("Expediente");
-        lblExpedienteFooter.setFont(new Font("Arial", Font.BOLD, 20));
+        lblExpedienteFooter.setFont(new Font(FONT_FAMILY, Font.BOLD, 20));
         lblExpedienteFooter.setForeground(PRIMARY_BG_COLOR);
 
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 40, 15));
@@ -287,19 +291,41 @@ public class ConsultaFormularioViewLayout extends JPanel {
     }
 
     /**
+     * Crea la estructura base de un panel de sección con título y panel de campos.
+     */
+    private JPanel[] crearBaseEstructura(String title) {
+        JPanel sectionPanel = new JPanel(new BorderLayout());
+        sectionPanel.setBackground(Color.WHITE);
+        sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+
+        JLabel sectionTitle = new JLabel(title);
+        sectionTitle.setFont(new Font(FONT_FAMILY, Font.BOLD, 18));
+        sectionTitle.setForeground(PRIMARY_BG_COLOR);
+        sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        sectionPanel.add(sectionTitle, BorderLayout.NORTH);
+
+        JPanel fieldsPanel = new JPanel(new GridBagLayout());
+        fieldsPanel.setBackground(Color.WHITE);
+
+        sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
+
+        return new JPanel[]{sectionPanel, fieldsPanel};
+    }
+
+    /**
      * Crea un panel genérico con título y una lista de campos.
      *
      * @param title      Título de la sección.
      * @param fieldNames Nombres de cada campo incluido.
      * @return Panel construido.
      */
-    private JPanel createSectionPanel(String title, String[] fieldNames) {
+    private JPanel crearPanel(String title, String[] fieldNames) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setBackground(Color.WHITE);
         sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
 
         JLabel sectionTitle = new JLabel(title);
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        sectionTitle.setFont(new Font(FONT_FAMILY, Font.BOLD, 18));
         sectionTitle.setForeground(PRIMARY_BG_COLOR);
         sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         sectionPanel.add(sectionTitle, BorderLayout.NORTH);
@@ -311,7 +337,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         for (int i = 0; i < fieldNames.length; i++) {
-            JLabel label = createLabel(fieldNames[i]);
+            JLabel label = crearLabel(fieldNames[i]);
             Component inputComponent = null;
 
             // Lógica para asignar el JDateChooser
@@ -319,11 +345,11 @@ public class ConsultaFormularioViewLayout extends JPanel {
                 inputComponent = (Component) fechaNacimientoChooser;
                 ((Component) inputComponent).setPreferredSize(new Dimension(250, 30));
             } else if (title.equals("Información Personal") && fieldNames[i].equals("Sexo")) {
-                inputComponent = createComboBox(new String[] { "Mujer", "Hombre" });
+                inputComponent = crearComboBox(new String[] { "Mujer", "Hombre" });
                 cmbSexo = (JComboBox<String>) inputComponent;
             } else {
                 // Caso por defecto: siempre crear un JTextField si no es un componente especial
-                inputComponent = createTextField();
+                inputComponent = crearTextField();
 
                 if (title.equals("Información Personal")) {
                     if (fieldNames[i].equals("Nombre(s)"))
@@ -385,50 +411,27 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return sectionPanel;
     }
 
-    /**
-     * Construye la sección específica del formulario: Información Personal.
-     */
-    private JPanel crearPanelInformacionPersonal(String title, String[] fieldNames) {
-        JPanel panel = createSectionPanel(title, fieldNames);
-        return panel;
-    }
-
-    /**
-     * Construye la sección específica del formulario: Historial Medico.
-     */
-    private JPanel crearPanelHistorialMedico(String title, String[] fieldNames) {
-        JPanel panel = createSectionPanel(title, fieldNames);
-        return panel;
-    }
 
     /**
      * Construye la sección específica del formulario: Historial Alimenticio.
      */
     private JPanel crearPanelHistorialAlimenticio(String title, String[] fieldNames) {
-        JPanel sectionPanel = new JPanel(new BorderLayout());
-        sectionPanel.setBackground(Color.WHITE);
-        sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        JPanel[] panels = crearBaseEstructura(title);
+        JPanel sectionPanel = panels[0];
+        JPanel fieldsPanel = panels[1];
 
-        JLabel sectionTitle = new JLabel(title);
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setForeground(PRIMARY_BG_COLOR);
-        sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        sectionPanel.add(sectionTitle, BorderLayout.NORTH);
-
-        JPanel fieldsPanel = new JPanel(new GridBagLayout());
-        fieldsPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        txtAlergiasField = createTextField();
-        txtPreferenciaComidaField = createTextField();
+        txtAlergiasField = crearTextField();
+        txtPreferenciaComidaField = crearTextField();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[0]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[0]), gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -438,13 +441,12 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[1]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[1]), gbc);
         gbc.gridx = 3;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtPreferenciaComidaField, gbc);
 
-        sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
 
@@ -452,35 +454,26 @@ public class ConsultaFormularioViewLayout extends JPanel {
      * Construye la sección específica del formulario: Nivel de actividad fisica.
      */
     private JPanel crearPanelNivelActividadFisica(String title, String[] fieldNames) {
-        JPanel sectionPanel = new JPanel(new BorderLayout());
-        sectionPanel.setBackground(Color.WHITE);
-        sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        JPanel[] panels = crearBaseEstructura(title);
+        JPanel sectionPanel = panels[0];
+        JPanel fieldsPanel = panels[1];
 
-        JLabel sectionTitle = new JLabel(title);
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setForeground(PRIMARY_BG_COLOR);
-        sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        sectionPanel.add(sectionTitle, BorderLayout.NORTH);
-
-        JPanel fieldsPanel = new JPanel(new GridBagLayout());
-        fieldsPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        cmbNivelActividad = createComboBox(new String[] { "Bajo", "Moderado", "Alto" });
+        cmbNivelActividad = crearComboBox(new String[] { "Bajo", "Moderado", "Alto" });
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[0]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[0]), gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(cmbNivelActividad, gbc);
 
-        sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
 
@@ -488,31 +481,23 @@ public class ConsultaFormularioViewLayout extends JPanel {
      * Construye la sección específica del formulario: Estilo de Vida
      */
     private JPanel crearPanelEstiloDeVida(String title, String[] fieldNames) {
-        JPanel sectionPanel = new JPanel(new BorderLayout());
-        sectionPanel.setBackground(Color.WHITE);
-        sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        JPanel[] panels = crearBaseEstructura(title);
+        JPanel sectionPanel = panels[0];
+        JPanel fieldsPanel = panels[1];
 
-        JLabel sectionTitle = new JLabel(title);
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setForeground(PRIMARY_BG_COLOR);
-        sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        sectionPanel.add(sectionTitle, BorderLayout.NORTH);
-
-        JPanel fieldsPanel = new JPanel(new GridBagLayout());
-        fieldsPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        txtHorarioSueno = createTextField();
-        cmbNivelEstres = createComboBox(new String[] { "Bajo", "Medio", "Alto" });
-        txtHabitoAlimenticio = createTextField();
+        txtHorarioSueno = crearTextField();
+        cmbNivelEstres = crearComboBox(new String[] { "Bajo", "Medio", "Alto" });
+        txtHabitoAlimenticio = crearTextField();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[0]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[0]), gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -522,7 +507,7 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[1]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[1]), gbc);
         gbc.gridx = 3;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -532,13 +517,12 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.gridy = 1;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[2]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[2]), gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtHabitoAlimenticio, gbc);
 
-        sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
 
@@ -546,30 +530,22 @@ public class ConsultaFormularioViewLayout extends JPanel {
      * Construye la sección específica del formulario: Consumo de Liquidos
      */
     private JPanel crearPanelConsumoDeLiquidos(String title, String[] fieldNames) {
-        JPanel sectionPanel = new JPanel(new BorderLayout());
-        sectionPanel.setBackground(Color.WHITE);
-        sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        JPanel[] panels = crearBaseEstructura(title);
+        JPanel sectionPanel = panels[0];
+        JPanel fieldsPanel = panels[1];
 
-        JLabel sectionTitle = new JLabel(title);
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setForeground(PRIMARY_BG_COLOR);
-        sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        sectionPanel.add(sectionTitle, BorderLayout.NORTH);
-
-        JPanel fieldsPanel = new JPanel(new GridBagLayout());
-        fieldsPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        txtTipoLiquidoConsumido = createTextField();
-        txtCantidadLiquido = createTextField();
+        txtTipoLiquidoConsumido = crearTextField();
+        txtCantidadLiquido = crearTextField();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[0]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[0]), gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -579,13 +555,12 @@ public class ConsultaFormularioViewLayout extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[1]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[1]), gbc);
         gbc.gridx = 3;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtCantidadLiquido, gbc);
 
-        sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
 
@@ -593,36 +568,27 @@ public class ConsultaFormularioViewLayout extends JPanel {
      * Construye la sección específica del formulario: Meta Nutricional
      */
     private JPanel crearPanelMetaNutricional(String title, String[] fieldNames) {
-        JPanel sectionPanel = new JPanel(new BorderLayout());
-        sectionPanel.setBackground(Color.WHITE);
-        sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        JPanel[] panels = crearBaseEstructura(title);
+        JPanel sectionPanel = panels[0];
+        JPanel fieldsPanel = panels[1];
 
-        JLabel sectionTitle = new JLabel(title);
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setForeground(PRIMARY_BG_COLOR);
-        sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        sectionPanel.add(sectionTitle, BorderLayout.NORTH);
-
-        JPanel fieldsPanel = new JPanel(new GridBagLayout());
-        fieldsPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        cmbRazonConsulta = createComboBox(
+        cmbRazonConsulta = crearComboBox(
                 new String[] { "Perder % de grasa", "Ganar masa muscular", "Recomposición Corporal", "Mejorar salud" });
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[0]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[0]), gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(cmbRazonConsulta, gbc);
 
-        sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
 
@@ -630,49 +596,40 @@ public class ConsultaFormularioViewLayout extends JPanel {
      * Construye la sección específica del formulario: Disposicion
      */
     private JPanel crearPanelDisposicion(String title, String[] fieldNames) {
-        JPanel sectionPanel = new JPanel(new BorderLayout());
-        sectionPanel.setBackground(Color.WHITE);
-        sectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        JPanel[] panels = crearBaseEstructura(title);
+        JPanel sectionPanel = panels[0];
+        JPanel fieldsPanel = panels[1];
 
-        JLabel sectionTitle = new JLabel(title);
-        sectionTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        sectionTitle.setForeground(PRIMARY_BG_COLOR);
-        sectionTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        sectionPanel.add(sectionTitle, BorderLayout.NORTH);
-
-        JPanel fieldsPanel = new JPanel(new GridBagLayout());
-        fieldsPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        txtBarreraAlimenticia = createTextField();
+        txtBarreraAlimenticia = crearTextField();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.EAST;
-        fieldsPanel.add(createLabel(fieldNames[0]), gbc);
+        fieldsPanel.add(crearLabel(fieldNames[0]), gbc);
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         fieldsPanel.add(txtBarreraAlimenticia, gbc);
 
-        sectionPanel.add(fieldsPanel, BorderLayout.CENTER);
         return sectionPanel;
     }
 
-    private JLabel createLabel(String text) {
+    private JLabel crearLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.PLAIN, 14));
+        label.setFont(new Font(FONT_FAMILY, Font.PLAIN, 14));
         label.setForeground(PRIMARY_BG_COLOR.darker());
         label.setHorizontalAlignment(SwingConstants.RIGHT);
         return label;
     }
 
-    private JTextField createTextField() {
+    private JTextField crearTextField() {
         JTextField textField = new JTextField(20);
-        textField.setFont(new Font("Arial", Font.PLAIN, 14));
+        textField.setFont(new Font(FONT_FAMILY, Font.PLAIN, 14));
         textField.setBackground(INPUT_BG_COLOR);
         textField.setForeground(PRIMARY_BG_COLOR);
         textField.setCaretColor(PRIMARY_BG_COLOR);
@@ -683,9 +640,9 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return textField;
     }
 
-    private JComboBox<String> createComboBox(String[] options) {
+    private JComboBox<String> crearComboBox(String[] options) {
         JComboBox<String> cmb = new JComboBox<>(options);
-        cmb.setFont(new Font("Arial", Font.PLAIN, 14));
+        cmb.setFont(new Font(FONT_FAMILY, Font.PLAIN, 14));
         cmb.setBackground(Color.WHITE);
         cmb.setForeground(PRIMARY_BG_COLOR);
         cmb.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
@@ -694,9 +651,9 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return cmb;
     }
 
-    private JButton createActionButton(String text) {
+    private JButton crearBtn(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setFont(new Font(FONT_FAMILY, Font.BOLD, 14));
         button.setBackground(PRIMARY_BG_COLOR);
         button.setForeground(Color.WHITE);
         button.setOpaque(true);
@@ -706,9 +663,9 @@ public class ConsultaFormularioViewLayout extends JPanel {
         return button;
     }
 
-    private JButton createHeaderButton(String text) {
+    private JButton crearBtnHeader(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setFont(new Font(FONT_FAMILY, Font.BOLD, 14));
         button.setForeground(Color.WHITE);
         button.setBackground(PRIMARY_BG_COLOR);
         button.setBorderPainted(false);
