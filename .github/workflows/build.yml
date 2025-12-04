@@ -2,7 +2,7 @@ name: Build and Sonar Analysis
 on:
   push:
     branches:
-      - main
+      - '**' 
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch: 
@@ -39,23 +39,21 @@ jobs:
         run: |
           mkdir -p target
           
-          # 1. Buscamos el lanzador de JUnit 5 (1.x)
-          # Asegurate de tener junit-platform-console-standalone-1.10.0.jar (o similar 1.x)
+          # Busqueda de JARs
           JUNIT_LAUNCHER=$(find lib -name "junit-platform-console-standalone-1*.jar" -print -quit)
           
-          # 2. Buscamos el agente runtime de JaCoCo
-          # Intenta encontrar el que dice 'runtime', si no, usa el que encuentres.
+          # Busqueda del agente (runtime o standard)
           JACOCO_AGENT=$(find lib -name "*jacoco.agent*runtime.jar" -print -quit)
           if [ -z "$JACOCO_AGENT" ]; then
              JACOCO_AGENT=$(find lib -name "org.jacoco.agent-*.jar" -print -quit)
           fi
           
           if [ -z "$JACOCO_AGENT" ] || [ -z "$JUNIT_LAUNCHER" ]; then
-            echo "ERROR: Faltan JARs. Se esperaba 'junit-platform-console-standalone-1*.jar' y el agente JaCoCo."
+            echo "ERROR: Faltan JARs. Launcher o Agente no encontrados."
             exit 1
           fi
 
-          # Ejecución con sintaxis de JUnit 5 (1.x)
+          # Ejecución JUnit 5
           java -javaagent:"$JACOCO_AGENT"=destfile=target/jacoco.exec,includes=Modelo.*:Controlador.*:Vista.*:Servicios.* \
             -Djava.net.preferIPv4Stack=true \
             -jar "$JUNIT_LAUNCHER" \
@@ -69,8 +67,7 @@ jobs:
         run: |
           mkdir -p target/site/jacoco
           
-          # 3. Buscamos el CLI nodeps (El ejecutable que encontraste)
-          # El patrón *nodep*.jar encontrará tanto 'nodep.jar' como 'nodeps.jar'
+          # Busqueda del CLI nodeps
           JACOCO_CLI=$(find lib -name "*jacoco.cli*nodep*.jar" -print -quit)
 
           if [ -z "$JACOCO_CLI" ]; then
