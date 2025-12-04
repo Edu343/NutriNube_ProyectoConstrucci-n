@@ -27,7 +27,6 @@ public class PacienteListViewLayout extends ViewLayout {
 
     /**
      * Constructor que inicializa y arma todo el layout de la vista.
-     * Configura encabezado, buscador, botones y la tabla.
      */
     public PacienteListViewLayout() {
 
