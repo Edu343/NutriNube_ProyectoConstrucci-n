@@ -4,6 +4,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+/**
+ * Clase base abstracta para todos los layouts de vistas de la aplicación.
+ * Centraliza la funcionalidad común de UI compartida entre las diferentes vistas,
+ * incluyendo estilos, colores, creación de componentes estándar y comportamientos reutilizables.
+ *
+ */
 public abstract class ViewLayout extends JPanel {
 
     protected static final Color HEADER_COLOR = new Color(44, 54, 73);
