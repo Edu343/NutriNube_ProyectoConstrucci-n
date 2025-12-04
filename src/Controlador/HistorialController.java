@@ -103,7 +103,7 @@ public class HistorialController extends Controller {
 
         try {
             return myModel.obtenerConsultasPorPacienteYFecha(clavePaciente, fecha);
-        } catch (SQLException _) {
+        } catch (SQLException e) {
             return Collections.emptyList();
         }
     }
