@@ -5,7 +5,6 @@ import Modelo.Core.MainViewLayout;
 import Modelo.Servicios.NutriNubeModelo;
 import Modelo.Servicios.NutriNubeModelo.LoginEstado;
 import Modelo.POJOs.Nutriologo;
-import Vista.LoginView;
 import javax.swing.JOptionPane;
 
 /**
@@ -24,10 +23,7 @@ public class LoginController extends Controller {
     @Override
     public void handleLogin(String usuario, String contrasena) {
         if (usuario == null || usuario.trim().isEmpty() || contrasena == null) {
-            // puedes informar a la vista con mostrarError si lo deseas
-            if (myView instanceof LoginView) {
-                ((LoginView) myView).mostrarError("Usuario o contraseña vacíos.");
-            }
+            myView.mostrarError("Usuario o contraseña vacíos.");
             return;
         }
 

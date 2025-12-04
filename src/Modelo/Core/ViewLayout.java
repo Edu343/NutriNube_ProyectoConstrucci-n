@@ -13,15 +13,15 @@ import java.awt.*;
 public abstract class ViewLayout extends JPanel {
 
     protected static final Color HEADER_COLOR = new Color(44, 54, 73);
-    protected static final Color TEXT_COLOR = Color.BLACK;
-    protected static final Color BACKGROUND_COLOR = Color.WHITE;
-    protected static final Color BUTTON_COLOR = Color.BLACK;
-    protected static final Color BUTTON_TEXT_COLOR = Color.WHITE;
+    protected static final Color TEXTO_COLOR = Color.BLACK;
+    protected static final Color FONDO_COLOR = Color.WHITE;
+    protected static final Color BOTON_COLOR = Color.BLACK;
+    protected static final Color BOTON_TEXTO_COLOR = Color.WHITE;
 
-    protected JButton crearBotonNegro(String text) {
-        JButton btn = new JButton(text);
-        btn.setBackground(BUTTON_COLOR);
-        btn.setForeground(BUTTON_TEXT_COLOR);
+    protected JButton crearBotonNegro(String texto) {
+        JButton btn = new JButton(texto);
+        btn.setBackground(BOTON_COLOR);
+        btn.setForeground(BOTON_TEXTO_COLOR);
         btn.setFocusPainted(false);
         btn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
@@ -127,31 +127,31 @@ public abstract class ViewLayout extends JPanel {
         });
     }
 
-    protected void agregarPlaceholderPasswordBehavior(JPasswordField passwordField, String placeholder) {
-        final char defaultEchoChar = passwordField.getEchoChar();
+    protected void agregarPlaceholderContrasenaBehavior(JPasswordField contrasenaField, String placeholder) {
+        final char defaultEchoChar = contrasenaField.getEchoChar();
 
-        passwordField.setText(placeholder);
-        passwordField.setForeground(Color.GRAY);
-        passwordField.setEchoChar((char) 0);
+        contrasenaField.setText(placeholder);
+        contrasenaField.setForeground(Color.GRAY);
+        contrasenaField.setEchoChar((char) 0);
 
-        passwordField.addFocusListener(new java.awt.event.FocusAdapter() {
+        contrasenaField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
-                String currentText = new String(passwordField.getPassword());
+                String currentText = new String(contrasenaField.getPassword());
                 if (currentText.equals(placeholder)) {
-                    passwordField.setText("");
-                    passwordField.setForeground(Color.BLACK);
-                    passwordField.setEchoChar(defaultEchoChar);
+                    contrasenaField.setText("");
+                    contrasenaField.setForeground(Color.BLACK);
+                    contrasenaField.setEchoChar(defaultEchoChar);
                 }
             }
 
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
-                String currentText = new String(passwordField.getPassword());
+                String currentText = new String(contrasenaField.getPassword());
                 if (currentText.isEmpty()) {
-                    passwordField.setForeground(Color.GRAY);
-                    passwordField.setText(placeholder);
-                    passwordField.setEchoChar((char) 0);
+                    contrasenaField.setForeground(Color.GRAY);
+                    contrasenaField.setText(placeholder);
+                    contrasenaField.setEchoChar((char) 0);
                 }
             }
         });

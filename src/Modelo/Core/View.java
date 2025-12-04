@@ -48,4 +48,15 @@ public abstract class View implements Observer {
     public void cargarDatos(Object data) {
     }
 
+    public String getViewAnteriorTag() {
+        return null;
+    }
+
+    public String getClavePacienteActual() {
+        return null;
+    }
+
+    public void mostrarError(String mensaje) {
+    }
+
 }	

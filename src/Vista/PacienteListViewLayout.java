@@ -57,14 +57,14 @@ public class PacienteListViewLayout extends ViewLayout {
 
         // Panel principal
         JPanel mainPanel = new JPanel();
-        mainPanel.setBackground(BACKGROUND_COLOR);
+        mainPanel.setBackground(FONDO_COLOR);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
         // Título de la vista
         JLabel lblTitulo = new JLabel("Pacientes");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        lblTitulo.setForeground(TEXT_COLOR);
+        lblTitulo.setForeground(TEXTO_COLOR);
         lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
         mainPanel.add(lblTitulo);
 
@@ -79,7 +79,7 @@ public class PacienteListViewLayout extends ViewLayout {
 
         // Panel de buscador y botones
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        topPanel.setBackground(BACKGROUND_COLOR);
+        topPanel.setBackground(FONDO_COLOR);
         topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Cuadro de búsqueda
@@ -93,7 +93,7 @@ public class PacienteListViewLayout extends ViewLayout {
 
         // Botones de acciones
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
-        buttonPanel.setBackground(BACKGROUND_COLOR);
+        buttonPanel.setBackground(FONDO_COLOR);
 
         btnAgregar = crearBotonNegro("Añadir Paciente");
         btnEliminar = crearBotonNegro("Eliminar Paciente");

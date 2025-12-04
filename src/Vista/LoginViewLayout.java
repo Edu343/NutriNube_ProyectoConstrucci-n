@@ -91,7 +91,7 @@ public class LoginViewLayout extends ViewLayout {
         // Campo de Contraseña (con placeholder)
         txtPassword = new JPasswordField(20);
         txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        agregarPlaceholderPasswordBehavior(txtPassword, "Contraseña");
+        agregarPlaceholderContrasenaBehavior(txtPassword, "Contraseña");
 
         // Botón "Acceder"
         btnLogin = new JButton("Acceder");

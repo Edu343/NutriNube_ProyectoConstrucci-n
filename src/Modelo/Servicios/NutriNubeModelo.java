@@ -226,16 +226,7 @@ public class NutriNubeModelo {
      *
      * @param c Consulta a guardar.
      */
-    public void guardarConsulta(Consulta c) {
-        if (validacionServicio.isValidConsulta(c)) {
-            try {
-                consultaDAO.insertar(c);
-                notifyObservers("HISTORIAL");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    
 
     /**
      * Elimina una consulta del historial mediante su clave.
@@ -318,7 +309,9 @@ public class NutriNubeModelo {
         if (this.consultaSeleccionada == null) {
             this.consultaSeleccionada = new Consulta();
             this.consultaSeleccionada.setClavePaciente(clavePaciente);
-            this.consultaSeleccionada.setClaveNutriologo(this.nutriologoActual.getClaveNutriologo());
+            if (this.nutriologoActual != null) {
+                this.consultaSeleccionada.setClaveNutriologo(this.nutriologoActual.getClaveNutriologo());
+            }
         }
         this.consultaSeleccionada.setTotalCalorias(calculoData);
         this.consultaSeleccionada.setMacronutrientes(macros);
@@ -326,46 +319,28 @@ public class NutriNubeModelo {
         notifyObservers();
     }
 
-    /**
-     * Realiza el cálculo completo usando exclusivamente datos almacenados
-     * del paciente existente.
-     *
-     * @throws Exception Si el paciente no existe.
-     */
-    public void calcularCaloriasYMacronutrientes(String clavePaciente, double peso, int nivelActividadFisica,
-            int razonConsulta) throws Exception {
-        Paciente paciente = pacienteDAO.leerPorClave(clavePaciente);
-        if (paciente == null) {
-            throw new Exception("Debe seleccionar un paciente y completar los campos demográficos.");
-        }
-        calcularCaloriasYMacronutrientes(clavePaciente, peso, nivelActividadFisica, razonConsulta,
-                paciente.getSexo(), paciente.getAltura(), paciente.getFechaNacimiento());
-    }
+   
 
     /**
      * Crea un nuevo paciente y su primera consulta dentro de una misma operación.
      *
      * @throws Exception Si los datos están incompletos o son inválidos.
      */
-    public void guardarNuevoPacienteYConsulta(String claveNutriologo, String nombre, String apellido, String correo,
-            int sexo, String telefono, String fechaNacimiento, double altura,
-            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
-            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
-            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
-            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
-            double proteinas, double lipidos) throws Exception {
+    public void guardarNuevoPacienteYConsulta(Paciente nuevoPaciente, Consulta nuevaConsulta) throws Exception {
 
-        Paciente nuevoPaciente = crearPaciente(claveNutriologo, nombre, apellido, correo, sexo, telefono,
-                fechaNacimiento, altura);
         if (!validacionServicio.isValidPaciente(nuevoPaciente)) {
             throw new Exception("Datos de paciente incompletos o inválidos.");
         }
 
-        Consulta nuevaConsulta = crearConsulta(null, nuevoPaciente.getClavePaciente(), claveNutriologo,
-                condicionesMedicas, medicacion, historialCirugias, alergias,
-                preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos,
-                cantidadLiquidoConsumido, barreraAlimenticia,
-                peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+        // Asegurar consistencia de claves
+        if (nuevaConsulta.getClavePaciente() == null || !nuevaConsulta.getClavePaciente().equals(nuevoPaciente.getClavePaciente())) {
+            nuevaConsulta.setClavePaciente(nuevoPaciente.getClavePaciente());
+        }
+        
+        // Calcular edad y altura final para la consulta basado en el paciente
+        nuevaConsulta.setAltura(nuevoPaciente.getAltura());
+        nuevaConsulta.setEdad(nutricionServicio.calcularEdad(nuevoPaciente.getFechaNacimiento()));
+        nuevaConsulta.setFechaVisita(LocalDate.now().toString());
 
         if (!validacionServicio.isValidConsulta(nuevaConsulta)) {
             throw new Exception("Datos de la primera consulta incompletos o inválidos.");
@@ -383,18 +358,18 @@ public class NutriNubeModelo {
      *
      * @throws Exception Si los datos son inválidos.
      */
-    public void guardarNuevaConsulta(String clavePaciente, String claveNutriologo,
-            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
-            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
-            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
-            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
-            double proteinas, double lipidos) throws Exception {
-
-        Consulta nuevaConsulta = crearConsulta(null, clavePaciente, claveNutriologo, condicionesMedicas, medicacion,
-                historialCirugias, alergias,
-                preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, tipoLiquidosConsumidos,
-                cantidadLiquidoConsumido, barreraAlimenticia,
-                peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+    public void guardarNuevaConsulta(Consulta nuevaConsulta) throws Exception {
+        
+        // Actualizar datos de visita
+        nuevaConsulta.setFechaVisita(LocalDate.now().toString());
+        
+        // Calcular edad actualizada del paciente existente
+        if (nuevaConsulta.getClavePaciente() != null) {
+            Paciente p = pacienteDAO.leerPorClave(nuevaConsulta.getClavePaciente());
+            if (p != null) {
+                nuevaConsulta.setEdad(nutricionServicio.calcularEdad(p.getFechaNacimiento()));
+            }
+        }
 
         consultaDAO.insertar(nuevaConsulta);
         this.consultaSeleccionada = null;
@@ -406,30 +381,13 @@ public class NutriNubeModelo {
      *
      * @throws Exception Si los datos son incompletos o inválidos.
      */
-    public void actualizarConsulta(String claveConsulta, String clavePaciente, String claveNutriologo,
-            String nombre, String apellido, String correo, int sexo, String telefono, String fechaNacimiento,
-            double altura, String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
-            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
-            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
-            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
-            double proteinas, double lipidos) throws Exception {
+    public void actualizarConsulta(Paciente pacienteActualizado, Consulta consultaEditada) throws Exception {
 
-        Paciente pacienteActualizado = new Paciente();
-        pacienteActualizado.setClavePaciente(clavePaciente);
-        pacienteActualizado.setClaveNutriologo(claveNutriologo);
-        pacienteActualizado.setNombre(nombre);
-        pacienteActualizado.setApellido(apellido);
-        pacienteActualizado.setCorreo(correo);
-        pacienteActualizado.setSexo(sexo);
-        pacienteActualizado.setTelefono(telefono);
-        pacienteActualizado.setFechaNacimiento(fechaNacimiento);
-        pacienteActualizado.setAltura(altura);
-
-        pacienteDAO.actualizar(pacienteActualizado);
-
-        Consulta consultaEditada = crearConsulta(claveConsulta, clavePaciente, claveNutriologo, condicionesMedicas,
-                medicacion, historialCirugias, alergias, preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios, 
-                tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia, peso, nivelActividadFisica, razonConsulta, calorias, carbohidratos, proteinas, lipidos);
+        if (pacienteActualizado != null) {
+             pacienteDAO.actualizar(pacienteActualizado);
+             consultaEditada.setAltura(pacienteActualizado.getAltura());
+             consultaEditada.setEdad(nutricionServicio.calcularEdad(pacienteActualizado.getFechaNacimiento()));
+        }
 
         consultaDAO.actualizar(consultaEditada);
 
@@ -442,7 +400,7 @@ public class NutriNubeModelo {
      *
      * @return Clave única generada.
      */
-    private String generarClaveUnica() {
+    public String generarClaveUnica() {
         return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
@@ -454,62 +412,7 @@ public class NutriNubeModelo {
         this.consultaSeleccionada = null;
     }
 
-    /**
-     * Crea un nuevo objeto Paciente, asignándole una clave única generada.
-     *
-     * @param claveNutriologo Clave del nutriólogo propietario.
-     * @return Paciente generado.
-     */
-    private Paciente crearPaciente(String claveNutriologo, String nombre, String apellido, String correo, int sexo,
-            String telefono, String fechaNacimiento, double altura) {
-        String clavePaciente = generarClaveUnica();
-
-        return new Paciente(clavePaciente, claveNutriologo, nombre, apellido, correo, sexo, telefono, fechaNacimiento,
-                altura);
-    }
-
-    /**
-     * Crea un objeto Consulta completo, construyendo sus datos
-     * de anamnesis, cálculo de calorías, macronutrientes y fecha de visita.
-     *
-     * @return Consulta recién construida.
-     * @throws Exception Si los datos son inválidos.
-     */
-    private Consulta crearConsulta(String claveConsulta, String clavePaciente, String claveNutriologo,
-            String condicionesMedicas, String medicacion, String historialCirugias, String alergias,
-            String preferenciaComida, String horarioSueno, int nivelEstres, String habitosAlimenticios,
-            String tipoLiquidosConsumidos, double cantidadLiquidoConsumido, String barreraAlimenticia,
-            double peso, int nivelActividadFisica, int razonConsulta, double calorias, double carbohidratos,
-            double proteinas, double lipidos) throws Exception {
-
-        if (claveConsulta == null || claveConsulta.isEmpty()) {
-            claveConsulta = generarClaveUnica();
-        }
-
-        String fechaVisita = LocalDate.now().toString();
-        double alturaFinal = 0.0;
-        int edadCalculada = 0;
-
-        if (clavePaciente != null) {
-            Paciente pacienteNuevo = pacienteDAO.leerPorClave(clavePaciente);
-            if (pacienteNuevo != null) {
-                alturaFinal = pacienteNuevo.getAltura();
-                edadCalculada = nutricionServicio.calcularEdad(pacienteNuevo.getFechaNacimiento());
-            }
-        }
-
-        AnamnesisData anamnesis = new AnamnesisData(condicionesMedicas, medicacion, historialCirugias, alergias,
-                preferenciaComida, horarioSueno, nivelEstres, habitosAlimenticios,
-                tipoLiquidosConsumidos, cantidadLiquidoConsumido, barreraAlimenticia);
-
-        CaloriasCalculo calculo = new CaloriasCalculo(peso, nivelActividadFisica, razonConsulta, calorias);
-
-        Macronutrientes macros = new Macronutrientes(carbohidratos, proteinas, lipidos);
-
-        return new Consulta(claveConsulta, clavePaciente, claveNutriologo, fechaVisita,
-                edadCalculada, alturaFinal, anamnesis, calculo, macros);
-    }
-
+    
     /**
      * Busca pacientes pertenecientes al nutriólogo actual
      * filtrando por nombre o apellido.
